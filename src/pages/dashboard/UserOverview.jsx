@@ -1,15 +1,4 @@
-import {
-  AlertCircle,
-  Calendar,
-  ChevronDown,
-  Compass,
-  FileText,
-  HardDrive,
-  Lock,
-  MessageSquare,
-  Sparkles,
-  Timer,
-} from 'lucide-react';
+import { WarningCircleIcon as AlertCircle, CalendarIcon as Calendar, CaretDownIcon as ChevronDown, CompassIcon as Compass, FileTextIcon as FileText, HardDriveIcon as HardDrive, LockIcon as Lock, ChatCircleIcon as MessageSquare, SparkleIcon as Sparkles, TimerIcon as Timer } from '@phosphor-icons/react';
 import { Link } from 'react-router-dom';
 import { useDashboard } from '../../api/hooks';
 import { useSession } from '../../auth/SessionContext';
@@ -38,7 +27,7 @@ function Welcome({ name }) {
   });
 
   return (
-    <div className="relative mb-2.5 overflow-hidden rounded-2xl border border-line bg-gradient-to-br from-primary/[0.07] via-card to-card p-5 shadow-soft dark:border-line-dark dark:from-primary/15 dark:via-card-dark dark:to-card-dark">
+    <div className="relative mb-2.5 overflow-hidden rounded-2xl border border-line bg-primary/[0.04] p-5 shadow-soft dark:border-line-dark dark:bg-primary/10">
       <div aria-hidden="true" className="pointer-events-none absolute -right-8 -top-16 h-44 w-44 rounded-full bg-primary/10 blur-3xl dark:bg-primary/20" />
       <div aria-hidden="true" className="pointer-events-none absolute -bottom-20 right-32 h-36 w-36 rounded-full bg-accent/10 blur-3xl dark:bg-accent/20" />
 

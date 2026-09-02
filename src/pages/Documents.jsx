@@ -1,9 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
-import {
-  Archive, CheckCircle2, ChevronDown, Download, ExternalLink, FileText, Filter, HardDrive, History,
-  Network, Share2, Star, Trash2, UploadCloud, X, Zap,
-} from 'lucide-react';
+import { ArchiveIcon as Archive, CheckCircleIcon as CheckCircle2, CaretDownIcon as ChevronDown, DownloadSimpleIcon as Download, ArrowSquareOutIcon as ExternalLink, FileTextIcon as FileText, FunnelIcon as Filter, HardDriveIcon as HardDrive, ClockCounterClockwiseIcon as History, ShareNetworkIcon as Network, ShareNetworkIcon as Share2, StarIcon as Star, TrashIcon as Trash2, CloudArrowUpIcon as UploadCloud, XIcon as X, LightningIcon as Zap } from '@phosphor-icons/react';
 import {
   useBulkDocumentAction, useDeleteDocument, useDocuments, useDocumentsMeta, useEmbedDocument, useToggleArchive,
   useToggleFavorite, useUploadDocument, fetchDocumentPreview, fetchDocumentStatus,
@@ -153,7 +150,7 @@ export default function Documents() {
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                 <div>
                   <label className="mb-1.5 block text-xs font-medium text-muted dark:text-muted-dark">Add to Collection (optional)</label>
-                  <select name="collection_id" className="w-full rounded-lg border border-line bg-surface px-3.5 py-2 text-sm text-ink focus:border-primary focus:outline-none dark:border-line-dark dark:bg-white/5 dark:text-ink-dark">
+                  <select name="collection_id" className="w-full rounded-lg border border-line bg-surface px-3.5 py-2 text-sm text-ink focus:border-2 focus:border-ink focus:outline-none dark:focus:border-ink-dark dark:border-line-dark dark:bg-white/5 dark:text-ink-dark">
                     <option value="">No collection</option>
                     {meta?.collections.map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}
                   </select>
@@ -184,7 +181,7 @@ export default function Documents() {
         <form key={searchParams.toString()} onSubmit={onFilterSubmit} className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-6">
           <div className="lg:col-span-2">
             <label className="mb-1 block text-xs font-medium text-muted dark:text-muted-dark">Search</label>
-            <input type="text" name="q" defaultValue={filters.q} placeholder="Title…" className="w-full rounded-lg border border-line bg-transparent px-3 py-2 text-sm text-ink placeholder:text-muted focus:border-primary focus:outline-none dark:border-line-dark dark:text-ink-dark" />
+            <input type="text" name="q" defaultValue={filters.q} placeholder="Title…" className="w-full rounded-lg border border-line bg-transparent px-3 py-2 text-sm text-ink placeholder:text-muted focus:border-2 focus:border-ink focus:outline-none dark:focus:border-ink-dark dark:border-line-dark dark:text-ink-dark" />
           </div>
           <Select name="status" label="Status" defaultValue={filters.status} options={STATUS_OPTIONS} />
           <Select name="file_type" label="Type" defaultValue={filters.file_type} options={TYPE_OPTIONS} />
@@ -218,7 +215,7 @@ export default function Documents() {
             <select
               value={bulkCollectionId}
               onChange={(e) => { setBulkCollectionId(e.target.value); if (e.target.value) runBulkAction('add_to_collection', { collection_id: Number(e.target.value) }); }}
-              className="rounded-lg border border-line bg-transparent px-2.5 py-1.5 text-xs text-ink focus:border-primary focus:outline-none dark:border-line-dark dark:text-ink-dark"
+              className="rounded-lg border border-line bg-transparent px-2.5 py-1.5 text-xs text-ink focus:border-2 focus:border-ink focus:outline-none dark:focus:border-ink-dark dark:border-line-dark dark:text-ink-dark"
             >
               <option value="">Add to collection…</option>
               {meta?.collections.map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}
@@ -318,7 +315,7 @@ function Select({ name, label, defaultValue, options }) {
   return (
     <div>
       <label className="mb-1 block text-xs font-medium text-muted dark:text-muted-dark">{label}</label>
-      <select name={name} defaultValue={defaultValue} className="w-full rounded-lg border border-line bg-transparent px-3 py-2 text-sm text-ink focus:border-primary focus:outline-none dark:border-line-dark dark:text-ink-dark">
+      <select name={name} defaultValue={defaultValue} className="w-full rounded-lg border border-line bg-transparent px-3 py-2 text-sm text-ink focus:border-2 focus:border-ink focus:outline-none dark:focus:border-ink-dark dark:border-line-dark dark:text-ink-dark">
         {options.map(([value, text]) => <option key={value} value={value}>{text}</option>)}
       </select>
     </div>

@@ -1,5 +1,5 @@
 import { Suspense, useState } from 'react';
-import { Outlet } from 'react-router-dom';
+import { Outlet, useLocation } from 'react-router-dom';
 import Sidebar from './Sidebar';
 import Topbar from './Topbar';
 import Breadcrumbs from './Breadcrumbs';
@@ -8,6 +8,7 @@ import usePageTitle from '../hooks/usePageTitle';
 
 export default function AppShell() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const location = useLocation();
   usePageTitle();
 
   return (
@@ -22,7 +23,13 @@ export default function AppShell() {
           <Suspense
             fallback={<PageSkeleton variant="list" />}
           >
-            <Outlet />
+            {/* Keyed by path so each real navigation re-triggers the fade
+               (React remounts the div instead of leaving the old one in
+               place), giving the SPA the same quiet cross-fade the
+               server-rendered pages get from the View Transitions API. */}
+            <div key={location.pathname} className="fade-in-up">
+              <Outlet />
+            </div>
           </Suspense>
         </main>
       </div>

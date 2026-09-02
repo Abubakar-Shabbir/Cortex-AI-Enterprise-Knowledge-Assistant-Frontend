@@ -1,4 +1,4 @@
-import { Download, ExternalLink } from 'lucide-react';
+import { DownloadSimpleIcon as Download, ArrowSquareOutIcon as ExternalLink } from '@phosphor-icons/react';
 import { getApiBaseUrl } from '../api/client';
 
 const STATUS_CLASSES = {

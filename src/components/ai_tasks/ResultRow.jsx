@@ -1,4 +1,4 @@
-import { Check, FileText, Sparkles, X } from 'lucide-react';
+import { CheckIcon as Check, FileTextIcon as FileText, SparkleIcon as Sparkles, XIcon as X } from '@phosphor-icons/react';
 import { renderCitedText } from '../../lib/renderCitedText';
 
 const SEVERITY_CLASSES = {

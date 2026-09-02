@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { UserPlus, X } from 'lucide-react';
+import { UserPlusIcon as UserPlus, XIcon as X } from '@phosphor-icons/react';
 import { createDocumentShare, fetchDocumentShares, revokeDocumentShare } from '../api/hooks';
 import { SkeletonRows } from './PageSkeleton';
 
@@ -50,14 +50,14 @@ export default function ShareModal({ doc, roles, onClose }) {
 
         <form onSubmit={onSubmit} className="mb-4 flex flex-col gap-2">
           <div className="flex gap-2">
-            <select value={targetType} onChange={(e) => { setTargetType(e.target.value); setTargetValue(''); }} className="rounded-lg border border-line bg-transparent px-2.5 py-2 text-sm text-ink focus:border-primary focus:outline-none dark:border-line-dark dark:text-ink-dark">
+            <select value={targetType} onChange={(e) => { setTargetType(e.target.value); setTargetValue(''); }} className="rounded-lg border border-line bg-transparent px-2.5 py-2 text-sm text-ink focus:border-2 focus:border-ink focus:outline-none dark:focus:border-ink-dark dark:border-line-dark dark:text-ink-dark">
               <option value="user">User</option>
               <option value="role">Role</option>
             </select>
             {targetType === 'user' ? (
-              <input type="text" value={targetValue} onChange={(e) => setTargetValue(e.target.value)} placeholder="Username or email" className="flex-1 rounded-lg border border-line bg-transparent px-3 py-2 text-sm text-ink placeholder:text-muted focus:border-primary focus:outline-none dark:border-line-dark dark:text-ink-dark" />
+              <input type="text" value={targetValue} onChange={(e) => setTargetValue(e.target.value)} placeholder="Username or email" className="flex-1 rounded-lg border border-line bg-transparent px-3 py-2 text-sm text-ink placeholder:text-muted focus:border-2 focus:border-ink focus:outline-none dark:focus:border-ink-dark dark:border-line-dark dark:text-ink-dark" />
             ) : (
-              <select value={targetValue} onChange={(e) => setTargetValue(e.target.value)} className="flex-1 rounded-lg border border-line bg-transparent px-3 py-2 text-sm text-ink focus:border-primary focus:outline-none dark:border-line-dark dark:text-ink-dark">
+              <select value={targetValue} onChange={(e) => setTargetValue(e.target.value)} className="flex-1 rounded-lg border border-line bg-transparent px-3 py-2 text-sm text-ink focus:border-2 focus:border-ink focus:outline-none dark:focus:border-ink-dark dark:border-line-dark dark:text-ink-dark">
                 <option value="">Select a role…</option>
                 {roles.map((role) => <option key={role.id} value={role.id}>{role.name}</option>)}
               </select>

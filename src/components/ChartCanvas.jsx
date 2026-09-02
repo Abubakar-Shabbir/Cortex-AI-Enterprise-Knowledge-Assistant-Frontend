@@ -5,7 +5,7 @@ Chart.register(...registerables);
 
 Chart.defaults.font.family = 'Inter, ui-sans-serif, system-ui, sans-serif';
 Chart.defaults.font.size = 11;
-Chart.defaults.color = '#8a7d7d';
+Chart.defaults.color = '#6A6A6A';
 Chart.defaults.layout.padding = 0;
 Chart.defaults.plugins.legend.labels.boxWidth = 9;
 Chart.defaults.plugins.legend.labels.boxHeight = 9;

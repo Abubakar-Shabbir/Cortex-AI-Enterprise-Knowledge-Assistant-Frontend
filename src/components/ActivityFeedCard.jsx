@@ -1,4 +1,4 @@
-import { Check, FileUp, MessageSquare } from 'lucide-react';
+import { CheckIcon as Check, FileArrowUpIcon as FileUp, ChatCircleIcon as MessageSquare } from '@phosphor-icons/react';
 import { Link } from 'react-router-dom';
 import { useSession } from '../auth/SessionContext';
 import { timeAgo } from '../lib/timeAgo';
@@ -6,7 +6,7 @@ import { timeAgo } from '../lib/timeAgo';
 // activity_feed events only ever carry these two icon names - see
 // RAG.api.dashboard_views (both dashboard_view and admin_overview_view
 // build this list the same way context_processors.sidebar_status does).
-const ACTIVITY_ICONS = { 'file-up': FileUp, 'message-square': MessageSquare };
+const ACTIVITY_ICONS = { 'file-arrow-up': FileUp, 'chat-circle': MessageSquare };
 
 // Port of templates/dashboard/_activity_feed.html - shared verbatim by
 // both Admin Overview and User Overview.

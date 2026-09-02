@@ -1,4 +1,4 @@
-import { Compass, Download, FileText, Minus, MessageSquare, Sparkles, TrendingDown, TrendingUp } from 'lucide-react';
+import { CompassIcon as Compass, DownloadSimpleIcon as Download, FileTextIcon as FileText, MinusIcon as Minus, ChatCircleIcon as MessageSquare, SparkleIcon as Sparkles, TrendDownIcon as TrendingDown, TrendUpIcon as TrendingUp } from '@phosphor-icons/react';
 import PageHeader from '../components/PageHeader';
 import TrendBadge from '../components/TrendBadge';
 import PageSkeleton from '../components/PageSkeleton';

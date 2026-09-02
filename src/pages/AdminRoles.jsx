@@ -1,8 +1,5 @@
 import { useState } from 'react';
-import {
-  Bell, ChevronDown, Eye, FileDown, FileText, Plus, Save, ScrollText, Search,
-  Settings as SettingsIcon, Shield, ShieldCheck, Sparkles, Trash2, Users, BarChart3, HeartPulse, MessageSquare, Share2,
-} from 'lucide-react';
+import { BellIcon as Bell, CaretDownIcon as ChevronDown, EyeIcon as Eye, FileArrowDownIcon as FileDown, FileTextIcon as FileText, PlusIcon as Plus, FloppyDiskIcon as Save, ScrollIcon as ScrollText, MagnifyingGlassIcon as Search, GearSixIcon as SettingsIcon, ShieldIcon as Shield, ShieldCheckIcon as ShieldCheck, SparkleIcon as Sparkles, TrashIcon as Trash2, UsersIcon as Users, ChartBarIcon as BarChart3, HeartbeatIcon as HeartPulse, ChatCircleIcon as MessageSquare, ShareNetworkIcon as Share2 } from '@phosphor-icons/react';
 import { useAdminRoles, useCreateAdminRole, useDeleteAdminRole, useUpdateRolePermissions } from '../api/hooks';
 import PageSkeleton from '../components/PageSkeleton';
 import Spinner from '../components/Spinner';
@@ -171,11 +168,11 @@ export default function AdminRoles() {
           {error && <p className="text-xs text-danger dark:text-danger-dark sm:basis-full">{error}</p>}
           <div className="flex-1">
             <label className="mb-1 block text-xs font-medium text-muted dark:text-muted-dark">Name</label>
-            <input type="text" value={name} onChange={(e) => setName(e.target.value)} required placeholder="e.g. Auditor" className="w-full rounded-lg border border-line bg-surface px-3 py-2 text-sm text-ink focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/15 dark:border-line-dark dark:bg-white/5 dark:text-ink-dark" />
+            <input type="text" value={name} onChange={(e) => setName(e.target.value)} required placeholder="e.g. Auditor" className="w-full rounded-lg border border-line bg-surface px-3 py-2 text-sm text-ink focus:border-2 focus:border-ink focus:outline-none dark:focus:border-ink-dark dark:border-line-dark dark:bg-white/5 dark:text-ink-dark" />
           </div>
           <div className="flex-[2]">
             <label className="mb-1 block text-xs font-medium text-muted dark:text-muted-dark">Description</label>
-            <input type="text" value={description} onChange={(e) => setDescription(e.target.value)} placeholder="Read-only access for compliance review" className="w-full rounded-lg border border-line bg-surface px-3 py-2 text-sm text-ink focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/15 dark:border-line-dark dark:bg-white/5 dark:text-ink-dark" />
+            <input type="text" value={description} onChange={(e) => setDescription(e.target.value)} placeholder="Read-only access for compliance review" className="w-full rounded-lg border border-line bg-surface px-3 py-2 text-sm text-ink focus:border-2 focus:border-ink focus:outline-none dark:focus:border-ink-dark dark:border-line-dark dark:bg-white/5 dark:text-ink-dark" />
           </div>
           <button type="submit" disabled={createRole.isPending} className="inline-flex items-center gap-2 rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-primary-dark disabled:opacity-60">
             {createRole.isPending ? <Spinner size={16} /> : <Plus className="h-4 w-4" />} {createRole.isPending ? 'Creating…' : 'Create Role'}

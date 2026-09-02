@@ -1,4 +1,4 @@
-import { ArrowUpRight, BarChart3, Compass, MessageSquare, Settings, Sparkles, Upload, Users } from 'lucide-react';
+import { ArrowUpRightIcon as ArrowUpRight, ChartBarIcon as BarChart3, CompassIcon as Compass, ChatCircleIcon as MessageSquare, GearSixIcon as Settings, SparkleIcon as Sparkles, UploadSimpleIcon as Upload, UsersIcon as Users } from '@phosphor-icons/react';
 import { Link } from 'react-router-dom';
 import { useSession } from '../auth/SessionContext';
 

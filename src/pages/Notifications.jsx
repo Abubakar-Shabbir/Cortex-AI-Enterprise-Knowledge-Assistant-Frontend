@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { Bell, CheckCheck } from 'lucide-react';
+import { BellIcon as Bell, ChecksIcon as CheckCheck } from '@phosphor-icons/react';
 import PageHeader from '../components/PageHeader';
 import PageSkeleton from '../components/PageSkeleton';
 import Spinner from '../components/Spinner';

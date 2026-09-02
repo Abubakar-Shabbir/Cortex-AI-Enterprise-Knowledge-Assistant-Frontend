@@ -1,7 +1,5 @@
 import { Link } from 'react-router-dom';
-import {
-  Activity, CheckCircle2, Compass, Database, FileUp, Gauge, GitBranch, HardDrive, MessageSquare, PieChart, Sparkles, Timer,
-} from 'lucide-react';
+import { ActivityIcon as Activity, CheckCircleIcon as CheckCircle2, CompassIcon as Compass, DatabaseIcon as Database, FileArrowUpIcon as FileUp, GaugeIcon as Gauge, GitBranchIcon as GitBranch, HardDriveIcon as HardDrive, ChatCircleIcon as MessageSquare, ChartPieIcon as PieChart, SparkleIcon as Sparkles, TimerIcon as Timer } from '@phosphor-icons/react';
 import PageHeader from '../components/PageHeader';
 import StatCard from '../components/StatCard';
 import EmptyState from '../components/EmptyState';
@@ -9,18 +7,18 @@ import ChartCanvas from '../components/ChartCanvas';
 import PageSkeleton from '../components/PageSkeleton';
 import { useAnalytics } from '../api/hooks';
 
-const GRID_COLOR = 'rgba(109, 102, 101, 0.10)';
-const TICK_COLOR = '#8a7d7d';
-const PRIMARY = '#8B1E2D';
-const WINE = '#6D1B27';
-const ROSE = '#A6333F';
-const INFO = '#2A78D6';
-const SUCCESS = '#1F7A4D';
-const WARNING = '#C77700';
-const ACCENT = '#4A3AA7';
-const PALETTE = [PRIMARY, INFO, SUCCESS, WARNING, ACCENT, ROSE, '#0F9B8E', '#D6336C'];
+const GRID_COLOR = 'rgba(106, 106, 106, 0.10)';
+const TICK_COLOR = '#6A6A6A';
+const PRIMARY = '#FF385C';
+const PRIMARY_DARK = '#E00B41';
+const PRIMARY_LIGHT = '#FF6B85';
+const INFO = '#0EA5E9';
+const SUCCESS = '#16A34A';
+const WARNING = '#D97706';
+const ACCENT = '#460479';
+const PALETTE = [PRIMARY, INFO, SUCCESS, WARNING, ACCENT, PRIMARY_LIGHT, '#0F9B8E', '#D6336C'];
 const STORAGE_COLOR_MAP = { PDF: PRIMARY, DOCX: WARNING, TXT: SUCCESS };
-const AI_TASK_STATUS_COLOR_MAP = { Completed: SUCCESS, Failed: PRIMARY, Running: WARNING, Pending: TICK_COLOR, Cancelled: '#A9989A' };
+const AI_TASK_STATUS_COLOR_MAP = { Completed: SUCCESS, Failed: PRIMARY, Running: WARNING, Pending: TICK_COLOR, Cancelled: '#A3A3A3' };
 
 // Port of templates/analytics.html - every Chart.js definition ported
 // 1:1 (same types, colors, scales), now driven by React state /
@@ -149,7 +147,7 @@ export default function Analytics() {
           <div className="h-56">
             <ChartCanvas config={{
               type: 'bar',
-              data: { labels: data.storage_type_labels, datasets: [{ label: 'Bytes', data: data.storage_type_values, backgroundColor: data.storage_type_labels.map((l) => STORAGE_COLOR_MAP[l] || WINE), borderRadius: 6, maxBarThickness: 36 }] },
+              data: { labels: data.storage_type_labels, datasets: [{ label: 'Bytes', data: data.storage_type_values, backgroundColor: data.storage_type_labels.map((l) => STORAGE_COLOR_MAP[l] || PRIMARY_DARK), borderRadius: 6, maxBarThickness: 36 }] },
               options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { grid: { display: false } }, y: { grid: { color: GRID_COLOR }, beginAtZero: true } } },
             }} />
           </div>

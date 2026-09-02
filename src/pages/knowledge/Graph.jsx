@@ -1,10 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { DataSet } from 'vis-data/standalone';
 import { Network } from 'vis-network/standalone';
-import {
-  Crosshair, ExternalLink, FileText, Maximize, Minimize2, Network as NetworkIcon,
-  Search, Share2, SlidersHorizontal, Star, Tag, UnfoldVertical, X, ZoomIn, ZoomOut,
-} from 'lucide-react';
+import { CrosshairIcon as Crosshair, ArrowSquareOutIcon as ExternalLink, FileTextIcon as FileText, ArrowsOutIcon as Maximize, ArrowsInIcon as Minimize2, ShareNetworkIcon as NetworkIcon, MagnifyingGlassIcon as Search, ShareNetworkIcon as Share2, FadersHorizontalIcon as SlidersHorizontal, StarIcon as Star, TagIcon as Tag, ArrowsOutLineVerticalIcon as UnfoldVertical, XIcon as X, MagnifyingGlassPlusIcon as ZoomIn, MagnifyingGlassMinusIcon as ZoomOut } from '@phosphor-icons/react';
 import { Link } from 'react-router-dom';
 import PageHeader from '../../components/PageHeader';
 import StatCard from '../../components/StatCard';
@@ -13,9 +10,9 @@ import PageSkeleton, { SkeletonFields } from '../../components/PageSkeleton';
 import KnowledgeTabs from '../../layout/KnowledgeTabs';
 import { fetchGraphEdgeDetail, useGraphNodeDetail, useKnowledgeGraph } from '../../api/hooks';
 
-const DIMMED_COLOR = { border: '#c9bdbd', background: '#e9e2e2' };
-const HIGHLIGHT_EDGE_COLOR = '#8B1E2D';
-const IDLE_EDGE_COLOR = 'rgba(109, 102, 101, 0.35)';
+const DIMMED_COLOR = { border: '#DDDDDD', background: '#F7F7F7' };
+const HIGHLIGHT_EDGE_COLOR = '#FF385C';
+const IDLE_EDGE_COLOR = 'rgba(106, 106, 106, 0.35)';
 
 // Port of templates/knowledge/graph.html's knowledgeGraphExplorer()
 // Alpine component - same vis-network config/behavior, now as a real
@@ -54,7 +51,7 @@ export default function KnowledgeGraph() {
 
     const typeCounts = {};
     graphData.nodes.forEach((n) => { typeCounts[n.group] = (typeCounts[n.group] || 0) + 1; });
-    const types = Object.keys(typeCounts).sort().map((name) => ({ name, count: typeCounts[name], color: colors[name] || '#8a7d7d' }));
+    const types = Object.keys(typeCounts).sort().map((name) => ({ name, count: typeCounts[name], color: colors[name] || '#6A6A6A' }));
     setEntityTypes(types);
     setActiveTypes(Object.fromEntries(types.map((t) => [t.name, true])));
 
@@ -69,11 +66,11 @@ export default function KnowledgeGraph() {
       groups[t.name] = { color: { border: t.color, background: `${t.color}33`, highlight: { border: t.color, background: `${t.color}55` }, hover: { border: t.color, background: `${t.color}44` } } };
     });
 
-    const nodes = new DataSet(graphData.nodes.map((n) => ({ ...n, font: { color: '#8a7d7d', face: 'Inter, ui-sans-serif, system-ui, sans-serif', size: 13 } })));
+    const nodes = new DataSet(graphData.nodes.map((n) => ({ ...n, font: { color: '#6A6A6A', face: 'Inter, ui-sans-serif, system-ui, sans-serif', size: 13 } })));
     const edges = new DataSet(graphData.edges.map((e, idx) => ({
       ...e, id: idx, arrows: { to: { scaleFactor: 0.6 } },
       color: { color: IDLE_EDGE_COLOR, highlight: HIGHLIGHT_EDGE_COLOR, hover: HIGHLIGHT_EDGE_COLOR },
-      font: { color: '#8a7d7d', size: 10, strokeWidth: 0, align: 'middle' },
+      font: { color: '#6A6A6A', size: 10, strokeWidth: 0, align: 'middle' },
     })));
 
     nodesRef.current = nodes;
@@ -81,8 +78,8 @@ export default function KnowledgeGraph() {
 
     const network = new Network(containerRef.current, { nodes, edges }, {
       groups,
-      nodes: { shape: 'dot', scaling: { min: 10, max: 36 }, borderWidth: 2, borderWidthSelected: 4, shadow: { enabled: true, color: 'rgba(31,27,27,0.18)', size: 8, x: 0, y: 2 } },
-      edges: { smooth: { type: 'continuous', roundness: 0.55 }, width: 1.5, hoverWidth: 0.5, selectionWidth: 1, shadow: { enabled: true, color: 'rgba(31,27,27,0.06)', size: 4, x: 0, y: 1 } },
+      nodes: { shape: 'dot', scaling: { min: 10, max: 36 }, borderWidth: 2, borderWidthSelected: 4, shadow: { enabled: true, color: 'rgba(0,0,0,0.18)', size: 8, x: 0, y: 2 } },
+      edges: { smooth: { type: 'continuous', roundness: 0.55 }, width: 1.5, hoverWidth: 0.5, selectionWidth: 1, shadow: { enabled: true, color: 'rgba(0,0,0,0.06)', size: 4, x: 0, y: 1 } },
       physics: { stabilization: { iterations: 120 }, barnesHut: { gravitationalConstant: -6500, springLength: 150 } },
       interaction: { hover: true, tooltipDelay: 150, hideEdgesOnDrag: true },
     });
@@ -186,7 +183,7 @@ export default function KnowledgeGraph() {
     nodesRef.current.update(rawNodesRef.current.map((n) => ({ id: n.id, color: connected.has(n.id) ? undefined : DIMMED_COLOR })));
     edgesRef.current.update(rawEdgesRef.current.map((e, idx) => ({
       id: idx,
-      color: { color: (connected.has(e.from) && connected.has(e.to)) ? IDLE_EDGE_COLOR : 'rgba(109, 102, 101, 0.08)', highlight: HIGHLIGHT_EDGE_COLOR },
+      color: { color: (connected.has(e.from) && connected.has(e.to)) ? IDLE_EDGE_COLOR : 'rgba(106, 106, 106, 0.08)', highlight: HIGHLIGHT_EDGE_COLOR },
     })));
     networkRef.current.focus(id, { scale: 1.1, animation: true });
   };
@@ -236,7 +233,7 @@ export default function KnowledgeGraph() {
               <Search className="pointer-events-none absolute left-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-muted dark:text-muted-dark" />
               <input
                 type="text" value={search} onChange={(e) => onSearchChange(e.target.value)} placeholder="Search topics…"
-                className="w-full rounded-lg border border-line bg-surface py-1.5 pl-8 pr-3 text-sm text-ink focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/15 dark:border-line-dark dark:bg-white/5 dark:text-ink-dark"
+                className="w-full rounded-lg border border-line bg-surface py-1.5 pl-8 pr-3 text-sm text-ink focus:border-2 focus:border-ink focus:outline-none dark:focus:border-ink-dark dark:border-line-dark dark:bg-white/5 dark:text-ink-dark"
               />
             </div>
 
@@ -246,11 +243,11 @@ export default function KnowledgeGraph() {
             </button>
 
             <div className="flex items-center gap-0.5 rounded-lg border border-line p-0.5 dark:border-line-dark">
-              <button type="button" onClick={zoomOut} title="Zoom out" className="rounded-md p-1.5 text-muted transition-colors hover:bg-surface hover:text-ink dark:text-muted-dark dark:hover:bg-white/5 dark:hover:text-ink-dark"><ZoomOut className="h-4 w-4" /></button>
-              <button type="button" onClick={zoomIn} title="Zoom in" className="rounded-md p-1.5 text-muted transition-colors hover:bg-surface hover:text-ink dark:text-muted-dark dark:hover:bg-white/5 dark:hover:text-ink-dark"><ZoomIn className="h-4 w-4" /></button>
+              <button type="button" onClick={zoomOut} data-tooltip="Zoom out" className="rounded-md p-1.5 text-muted transition-colors hover:bg-surface hover:text-ink dark:text-muted-dark dark:hover:bg-white/5 dark:hover:text-ink-dark"><ZoomOut className="h-4 w-4" /></button>
+              <button type="button" onClick={zoomIn} data-tooltip="Zoom in" className="rounded-md p-1.5 text-muted transition-colors hover:bg-surface hover:text-ink dark:text-muted-dark dark:hover:bg-white/5 dark:hover:text-ink-dark"><ZoomIn className="h-4 w-4" /></button>
               <span className="h-4 w-px bg-line dark:bg-line-dark"></span>
-              <button type="button" onClick={fit} title="Fit to view" className="rounded-md p-1.5 text-muted transition-colors hover:bg-surface hover:text-ink dark:text-muted-dark dark:hover:bg-white/5 dark:hover:text-ink-dark"><Maximize className="h-4 w-4" /></button>
-              <button type="button" onClick={toggleFullscreen} title={isFullscreen ? 'Exit fullscreen' : 'Fullscreen'} className="rounded-md p-1.5 text-muted transition-colors hover:bg-surface hover:text-ink dark:text-muted-dark dark:hover:bg-white/5 dark:hover:text-ink-dark">
+              <button type="button" onClick={fit} data-tooltip="Fit to view" className="rounded-md p-1.5 text-muted transition-colors hover:bg-surface hover:text-ink dark:text-muted-dark dark:hover:bg-white/5 dark:hover:text-ink-dark"><Maximize className="h-4 w-4" /></button>
+              <button type="button" onClick={toggleFullscreen} data-tooltip={isFullscreen ? 'Exit fullscreen' : 'Fullscreen'} className="rounded-md p-1.5 text-muted transition-colors hover:bg-surface hover:text-ink dark:text-muted-dark dark:hover:bg-white/5 dark:hover:text-ink-dark">
                 {isFullscreen ? <Minimize2 className="h-4 w-4" /> : <Maximize className="h-4 w-4" />}
               </button>
             </div>
@@ -307,7 +304,7 @@ export default function KnowledgeGraph() {
             <div className="relative flex-1 p-2">
               <div
                 ref={containerRef}
-                className={`w-full rounded-lg bg-surface transition-[height] duration-200 dark:bg-white/[0.02] [background-image:radial-gradient(circle,rgba(109,102,101,0.16)_1px,transparent_1px)] [background-size:20px_20px] dark:[background-image:radial-gradient(circle,rgba(169,152,154,0.14)_1px,transparent_1px)] ${isFullscreen ? 'h-[calc(100vh-7.5rem)]' : 'h-[620px]'}`}
+                className={`w-full rounded-lg bg-surface transition-[height] duration-200 dark:bg-white/[0.02] [background-image:radial-gradient(circle,rgba(106,106,106,0.16)_1px,transparent_1px)] [background-size:20px_20px] dark:[background-image:radial-gradient(circle,rgba(163,163,163,0.14)_1px,transparent_1px)] ${isFullscreen ? 'h-[calc(100vh-7.5rem)]' : 'h-[620px]'}`}
               ></div>
             </div>
 

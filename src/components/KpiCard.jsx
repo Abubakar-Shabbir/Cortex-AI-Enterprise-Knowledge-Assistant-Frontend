@@ -1,4 +1,4 @@
-import { Minus, TrendingDown, TrendingUp } from 'lucide-react';
+import { MinusIcon as Minus, TrendDownIcon as TrendingDown, TrendUpIcon as TrendingUp } from '@phosphor-icons/react';
 import CountUp from './CountUp';
 import ChartCanvas from './ChartCanvas';
 
@@ -46,9 +46,9 @@ export default function KpiCard({ icon: Icon, iconBg, iconColor, label, value, n
     : null;
 
   return (
-    <div className="min-w-0 rounded-xl border border-line bg-card p-3 shadow-soft transition-transform hover:-translate-y-0.5 dark:border-line-dark dark:bg-card-dark">
+    <div className="group min-w-0 rounded-xl border border-line bg-card p-3 shadow-soft transition-transform hover:-translate-y-0.5 dark:border-line-dark dark:bg-card-dark">
       <div className="flex items-center justify-between">
-        <div className={`flex h-7 w-7 items-center justify-center rounded-lg ${iconBg} ${iconColor}`}>
+        <div className={`flex h-7 w-7 items-center justify-center rounded-lg transition-transform duration-200 group-hover:scale-105 ${iconBg} ${iconColor}`}>
           <Icon className="h-4 w-4" />
         </div>
       </div>

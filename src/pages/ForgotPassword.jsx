@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { AlertCircle, ArrowLeft, Mail, CheckCircle2 } from 'lucide-react';
+import { WarningCircleIcon as AlertCircle, ArrowLeftIcon as ArrowLeft, EnvelopeSimpleIcon as Mail, CheckCircleIcon as CheckCircle2 } from '@phosphor-icons/react';
 import { Link, useNavigate } from 'react-router-dom';
 import AuthLayout from '../layout/AuthLayout';
 import Spinner from '../components/Spinner';
@@ -50,7 +50,7 @@ export default function ForgotPassword() {
             <input
               id="email" type="email" value={email} onChange={(e) => setEmail(e.target.value)}
               placeholder="Enter your account email" required autoFocus autoComplete="email"
-              className="w-full rounded-lg border border-line bg-surface py-2.5 pl-10 pr-9 text-sm text-ink placeholder:text-muted transition-all duration-150 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/15 dark:border-line-dark dark:bg-white/5 dark:text-ink-dark dark:placeholder:text-muted-dark"
+              className="w-full rounded-lg border border-line bg-surface py-2.5 pl-10 pr-9 text-sm text-ink placeholder:text-muted transition-all duration-150 focus:border-2 focus:border-ink focus:outline-none dark:focus:border-ink-dark dark:border-line-dark dark:bg-white/5 dark:text-ink-dark dark:placeholder:text-muted-dark"
             />
             {emailValid && <CheckCircle2 className="field-valid-icon pointer-events-none absolute right-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-success dark:text-success-dark" />}
           </div>

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Folder, FolderPlus, MoreVertical, Pencil, Trash2, X } from 'lucide-react';
+import { FolderNotchIcon as Folder, FolderNotchPlusIcon as FolderPlus, DotsThreeVerticalIcon as MoreVertical, PencilSimpleIcon as Pencil, TrashIcon as Trash2, XIcon as X } from '@phosphor-icons/react';
 import PageHeader from '../components/PageHeader';
 import EmptyState from '../components/EmptyState';
 import PageSkeleton from '../components/PageSkeleton';
@@ -55,7 +55,7 @@ function CollectionCard({ collection, onRename, onDelete }) {
             >
               <input
                 type="text" value={name} onChange={(e) => setName(e.target.value)} required
-                className="w-full rounded-lg border border-line bg-transparent px-3 py-2 text-sm text-ink focus:border-primary focus:outline-none dark:border-line-dark dark:text-ink-dark"
+                className="w-full rounded-lg border border-line bg-transparent px-3 py-2 text-sm text-ink focus:border-2 focus:border-ink focus:outline-none dark:focus:border-ink-dark dark:border-line-dark dark:text-ink-dark"
               />
               <div className="flex justify-end gap-2">
                 <button type="button" onClick={() => setRenameOpen(false)} className="rounded-lg border border-line px-3.5 py-2 text-sm font-medium text-ink hover:bg-surface dark:border-line-dark dark:text-ink-dark dark:hover:bg-white/5">Cancel</button>
@@ -126,11 +126,11 @@ export default function Collections() {
               {error && <p className="text-xs text-danger dark:text-danger-dark">{error}</p>}
               <input
                 type="text" value={name} onChange={(e) => setName(e.target.value)} placeholder="Collection name" required
-                className="w-full rounded-lg border border-line bg-transparent px-3 py-2 text-sm text-ink placeholder:text-muted focus:border-primary focus:outline-none dark:border-line-dark dark:text-ink-dark"
+                className="w-full rounded-lg border border-line bg-transparent px-3 py-2 text-sm text-ink placeholder:text-muted focus:border-2 focus:border-ink focus:outline-none dark:focus:border-ink-dark dark:border-line-dark dark:text-ink-dark"
               />
               <textarea
                 value={description} onChange={(e) => setDescription(e.target.value)} placeholder="Description (optional)" rows={2}
-                className="w-full rounded-lg border border-line bg-transparent px-3 py-2 text-sm text-ink placeholder:text-muted focus:border-primary focus:outline-none dark:border-line-dark dark:text-ink-dark"
+                className="w-full rounded-lg border border-line bg-transparent px-3 py-2 text-sm text-ink placeholder:text-muted focus:border-2 focus:border-ink focus:outline-none dark:focus:border-ink-dark dark:border-line-dark dark:text-ink-dark"
               />
               <div className="flex justify-end gap-2">
                 <button type="button" onClick={() => setCreateOpen(false)} className="rounded-lg border border-line px-3.5 py-2 text-sm font-medium text-ink hover:bg-surface dark:border-line-dark dark:text-ink-dark dark:hover:bg-white/5">Cancel</button>

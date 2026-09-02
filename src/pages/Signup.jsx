@@ -1,8 +1,6 @@
 import { useMemo, useState } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
-import {
-  AlertCircle, AtSign, Check, CheckCircle2, Circle, Eye, EyeOff, Lock, Mail, UserRound,
-} from 'lucide-react';
+import { WarningCircleIcon as AlertCircle, AtIcon as AtSign, CheckIcon as Check, CheckCircleIcon as CheckCircle2, CircleIcon as Circle, EyeIcon as Eye, EyeSlashIcon as EyeOff, LockIcon as Lock, EnvelopeSimpleIcon as Mail, UserCircleIcon as UserRound } from '@phosphor-icons/react';
 import AuthLayout from '../layout/AuthLayout';
 import Spinner from '../components/Spinner';
 import { useSignup } from '../api/hooks';
@@ -68,6 +66,9 @@ export default function Signup() {
 
   return (
     <AuthLayout title="Sign up">
+      <div className="auth-pop-in mb-5 flex h-11 w-11 items-center justify-center rounded-xl bg-primary/10 text-primary dark:text-primary-soft">
+        <UserRound className="h-5 w-5" />
+      </div>
       <h1 className="auth-pop-in text-xl font-bold tracking-tight text-ink dark:text-ink-dark">Create your account</h1>
       <p className="mb-6 mt-1 text-sm text-muted dark:text-muted-dark">Fill in your details below to get started.</p>
 
@@ -87,7 +88,7 @@ export default function Signup() {
               id="full_name" type="text" value={fullName} onChange={(e) => setFullName(e.target.value)}
               placeholder="Enter your full name" required autoFocus autoComplete="name"
               aria-invalid={!!fieldErrors.full_name}
-              className={`w-full rounded-lg border ${errClass('full_name')} bg-surface py-2.5 pl-10 pr-3.5 text-sm text-ink placeholder:text-muted transition-all duration-150 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/15 dark:bg-white/5 dark:text-ink-dark dark:placeholder:text-muted-dark`}
+              className={`w-full rounded-lg border ${errClass('full_name')} bg-surface py-2.5 pl-10 pr-3.5 text-sm text-ink placeholder:text-muted transition-all duration-150 focus:border-2 focus:border-ink focus:outline-none dark:focus:border-ink-dark dark:bg-white/5 dark:text-ink-dark dark:placeholder:text-muted-dark`}
             />
           </div>
           {fieldErrors.full_name && <p className="mt-1 text-xs text-danger dark:text-danger-dark">{fieldErrors.full_name[0]}</p>}
@@ -101,7 +102,7 @@ export default function Signup() {
               id="email" type="email" value={email} onChange={(e) => setEmail(e.target.value)}
               placeholder="Enter your email" required autoComplete="email"
               aria-invalid={!!fieldErrors.email}
-              className={`w-full rounded-lg border ${errClass('email')} bg-surface py-2.5 pl-10 pr-9 text-sm text-ink placeholder:text-muted transition-all duration-150 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/15 dark:bg-white/5 dark:text-ink-dark dark:placeholder:text-muted-dark`}
+              className={`w-full rounded-lg border ${errClass('email')} bg-surface py-2.5 pl-10 pr-9 text-sm text-ink placeholder:text-muted transition-all duration-150 focus:border-2 focus:border-ink focus:outline-none dark:focus:border-ink-dark dark:bg-white/5 dark:text-ink-dark dark:placeholder:text-muted-dark`}
             />
             {emailValid && <CheckCircle2 className="field-valid-icon pointer-events-none absolute right-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-success dark:text-success-dark" />}
           </div>
@@ -116,7 +117,7 @@ export default function Signup() {
               id="username" type="text" value={username} onChange={(e) => setUsername(e.target.value)}
               placeholder="Choose a username" required autoComplete="username"
               aria-invalid={!!fieldErrors.username}
-              className={`w-full rounded-lg border ${errClass('username')} bg-surface py-2.5 pl-10 pr-3.5 text-sm text-ink placeholder:text-muted transition-all duration-150 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/15 dark:bg-white/5 dark:text-ink-dark dark:placeholder:text-muted-dark`}
+              className={`w-full rounded-lg border ${errClass('username')} bg-surface py-2.5 pl-10 pr-3.5 text-sm text-ink placeholder:text-muted transition-all duration-150 focus:border-2 focus:border-ink focus:outline-none dark:focus:border-ink-dark dark:bg-white/5 dark:text-ink-dark dark:placeholder:text-muted-dark`}
             />
           </div>
           {fieldErrors.username && <p className="mt-1 text-xs text-danger dark:text-danger-dark">{fieldErrors.username[0]}</p>}
@@ -131,7 +132,7 @@ export default function Signup() {
                 type={showPassword ? 'text' : 'password'} id="password" value={password} onChange={(e) => setPassword(e.target.value)}
                 placeholder="Create a password" required autoComplete="new-password"
                 aria-invalid={!!fieldErrors.password}
-                className={`w-full rounded-lg border ${errClass('password')} bg-surface py-2.5 pl-10 pr-9 text-sm text-ink placeholder:text-muted transition-all duration-150 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/15 dark:bg-white/5 dark:text-ink-dark dark:placeholder:text-muted-dark`}
+                className={`w-full rounded-lg border ${errClass('password')} bg-surface py-2.5 pl-10 pr-9 text-sm text-ink placeholder:text-muted transition-all duration-150 focus:border-2 focus:border-ink focus:outline-none dark:focus:border-ink-dark dark:bg-white/5 dark:text-ink-dark dark:placeholder:text-muted-dark`}
               />
               <button type="button" onClick={() => setShowPassword((v) => !v)} className="absolute right-3 top-1/2 -translate-y-1/2 text-muted transition-colors hover:text-ink dark:text-muted-dark dark:hover:text-ink-dark" aria-label={showPassword ? 'Hide password' : 'Show password'}>
                 {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
@@ -147,7 +148,7 @@ export default function Signup() {
                 type={showConfirm ? 'text' : 'password'} id="confirm_password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)}
                 placeholder="Re-enter password" required autoComplete="new-password"
                 aria-invalid={!!fieldErrors.confirm_password}
-                className={`w-full rounded-lg border ${fieldErrors.confirm_password || passwordsMismatch ? 'border-danger' : 'border-line dark:border-line-dark'} bg-surface py-2.5 pl-10 pr-9 text-sm text-ink placeholder:text-muted transition-all duration-150 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/15 dark:bg-white/5 dark:text-ink-dark dark:placeholder:text-muted-dark`}
+                className={`w-full rounded-lg border ${fieldErrors.confirm_password || passwordsMismatch ? 'border-danger' : 'border-line dark:border-line-dark'} bg-surface py-2.5 pl-10 pr-9 text-sm text-ink placeholder:text-muted transition-all duration-150 focus:border-2 focus:border-ink focus:outline-none dark:focus:border-ink-dark dark:bg-white/5 dark:text-ink-dark dark:placeholder:text-muted-dark`}
               />
               <button type="button" onClick={() => setShowConfirm((v) => !v)} className="absolute right-3 top-1/2 -translate-y-1/2 text-muted transition-colors hover:text-ink dark:text-muted-dark dark:hover:text-ink-dark" aria-label={showConfirm ? 'Hide password' : 'Show password'}>
                 {showConfirm ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}

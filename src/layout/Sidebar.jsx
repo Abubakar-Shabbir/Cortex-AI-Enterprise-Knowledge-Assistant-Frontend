@@ -1,7 +1,4 @@
-import {
-  BarChart3, FileDown, FileText, HeartPulse, Home, LogOut, MessageSquare, Search, Settings, Share2,
-  Shield, Sparkles, Terminal, Users, UserRound, ChevronDown, Sun, Moon,
-} from 'lucide-react';
+import { ChartBarIcon as BarChart3, FileArrowDownIcon as FileDown, FileTextIcon as FileText, HeartbeatIcon as HeartPulse, HouseIcon as Home, SignOutIcon as LogOut, ChatCircleIcon as MessageSquare, MagnifyingGlassIcon as Search, GearSixIcon as Settings, ShareNetworkIcon as Share2, ShieldIcon as Shield, SparkleIcon as Sparkles, TerminalWindowIcon as Terminal, UsersIcon as Users, UserCircleIcon as UserRound, CaretDownIcon as ChevronDown, SunIcon as Sun, MoonIcon as Moon } from '@phosphor-icons/react';
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useSession } from '../auth/SessionContext';
@@ -83,7 +80,7 @@ export default function Sidebar({ open, onClose }) {
         <div className="border-t border-white/10 p-3">
           <div className="relative">
             <button onClick={() => setMenuOpen((v) => !v)} className="flex w-full items-center gap-2.5 rounded-lg px-2 py-2 text-left transition-colors duration-150 hover:bg-primary/15">
-              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-primary-light to-primary-dark text-xs font-semibold text-white ring-2 ring-white/10">
+              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-primary text-xs font-semibold text-white ring-2 ring-white/10">
                 {initials || 'U'}
               </div>
               <div className="min-w-0 flex-1 leading-tight">

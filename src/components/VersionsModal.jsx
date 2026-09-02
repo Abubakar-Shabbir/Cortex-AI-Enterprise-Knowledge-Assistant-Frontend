@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Upload, X } from 'lucide-react';
+import { UploadSimpleIcon as Upload, XIcon as X } from '@phosphor-icons/react';
 import { getApiBaseUrl } from '../api/client';
 import { fetchDocumentVersions, useUploadDocumentVersion } from '../api/hooks';
 import Spinner from './Spinner';

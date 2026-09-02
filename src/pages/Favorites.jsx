@@ -1,5 +1,5 @@
 import { useSearchParams } from 'react-router-dom';
-import { FileText, Star, StarOff } from 'lucide-react';
+import { FileTextIcon as FileText, StarIcon as Star, StarIcon as StarOff } from '@phosphor-icons/react';
 import PageHeader from '../components/PageHeader';
 import EmptyState from '../components/EmptyState';
 import PageSkeleton from '../components/PageSkeleton';

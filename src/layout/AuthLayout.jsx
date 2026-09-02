@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
-import { Lock } from 'lucide-react';
+import { LockIcon as Lock } from '@phosphor-icons/react';
 import Logo from '../components/Logo';
 
 // Port of templates/auth_base.html — the split brand-panel shell every
@@ -156,8 +156,9 @@ export default function AuthLayout({ title, children }) {
         </Link>
 
         <div className="relative w-full max-w-[400px]">
-          <div className="auth-card rounded-2xl border border-line bg-card p-8 shadow-soft dark:border-line-dark dark:bg-card-dark">
-            {children}
+          <div className="auth-card overflow-hidden rounded-2xl border border-line bg-card shadow-soft dark:border-line-dark dark:bg-card-dark">
+            <div className="h-1 w-full bg-primary" aria-hidden="true"></div>
+            <div className="p-8">{children}</div>
           </div>
 
           <p className="mt-6 flex items-center justify-center gap-1.5 text-center text-xs text-muted dark:text-muted-dark">

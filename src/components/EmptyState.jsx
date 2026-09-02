@@ -1,4 +1,4 @@
-import { Inbox } from 'lucide-react';
+import { TrayIcon as Inbox } from '@phosphor-icons/react';
 import { Link } from 'react-router-dom';
 
 // Port of templates/partials/_empty_state.html. `actionTo` uses React

@@ -1,7 +1,5 @@
 import { Link } from 'react-router-dom';
-import {
-  BadgeAlert, Check, Clock, Compass, Copy, FileText, GitBranch, Network, PieChart, SearchX, Star, Tag,
-} from 'lucide-react';
+import { WarningCircleIcon as BadgeAlert, CheckIcon as Check, ClockIcon as Clock, CompassIcon as Compass, CopyIcon as Copy, FileTextIcon as FileText, GitBranchIcon as GitBranch, ShareNetworkIcon as Network, ChartPieIcon as PieChart, MagnifyingGlassIcon as SearchX, StarIcon as Star, TagIcon as Tag } from '@phosphor-icons/react';
 import PageHeader from '../../components/PageHeader';
 import StatCard from '../../components/StatCard';
 import PageSkeleton from '../../components/PageSkeleton';

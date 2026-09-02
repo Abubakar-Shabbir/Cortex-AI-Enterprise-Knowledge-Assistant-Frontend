@@ -1,9 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import {
-  ArrowRight, Bot, Cog, Cpu, Database, MemoryStick, RefreshCw, ServerCog, SlidersHorizontal,
-  Terminal, TriangleAlert, Zap,
-} from 'lucide-react';
+import { ArrowRightIcon as ArrowRight, RobotIcon as Bot, GearIcon as Cog, CpuIcon as Cpu, DatabaseIcon as Database, CpuIcon as MemoryStick, ArrowsClockwiseIcon as RefreshCw, HardDrivesIcon as ServerCog, FadersHorizontalIcon as SlidersHorizontal, TerminalWindowIcon as Terminal, WarningIcon as TriangleAlert, LightningIcon as Zap } from '@phosphor-icons/react';
 import PageSkeleton from '../components/PageSkeleton';
 import Spinner from '../components/Spinner';
 import { timeAgo } from '../lib/timeAgo';

@@ -1,5 +1,5 @@
 import { useSearchParams } from 'react-router-dom';
-import { Share2 } from 'lucide-react';
+import { ShareNetworkIcon as Share2 } from '@phosphor-icons/react';
 import PageHeader from '../components/PageHeader';
 import EmptyState from '../components/EmptyState';
 import PageSkeleton from '../components/PageSkeleton';

@@ -1,5 +1,5 @@
 import { Link, useParams } from 'react-router-dom';
-import { ArrowLeft, ArrowRight, ExternalLink, Folder, FolderOpen, Library, Sparkles, Tag as TagIcon, User } from 'lucide-react';
+import { ArrowLeftIcon as ArrowLeft, ArrowRightIcon as ArrowRight, ArrowSquareOutIcon as ExternalLink, FolderNotchIcon as Folder, FolderNotchOpenIcon as FolderOpen, BooksIcon as Library, SparkleIcon as Sparkles, TagIcon, UserIcon as User } from '@phosphor-icons/react';
 import AppLoader from '../../components/AppLoader';
 import { getApiBaseUrl } from '../../api/client';
 import { timeAgo } from '../../lib/timeAgo';

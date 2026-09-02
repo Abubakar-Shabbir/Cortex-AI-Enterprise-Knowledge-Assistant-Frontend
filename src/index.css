@@ -10,6 +10,62 @@ html, body, #root {
   min-height: 100%;
 }
 
+/* ============================================================
+   Hover tooltip - a small, animated popup for icon-only buttons
+   (toolbar actions, topbar icons) where a bare native `title`
+   attribute only gives the browser's slow, unstyled default. Add
+   `data-tooltip="Label"` to any element; no JS required, pure CSS
+   fade + scale + rise on hover/focus.
+   ============================================================ */
+[data-tooltip] { position: relative; }
+[data-tooltip]::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  bottom: calc(100% + 8px);
+  left: 50%;
+  background: #222222;
+  color: #fff;
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 1.3;
+  white-space: nowrap;
+  padding: 5px 9px;
+  border-radius: 6px;
+  box-shadow: rgba(0,0,0,0.02) 0 0 0 1px, rgba(0,0,0,0.04) 0 2px 6px 0;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transform: translate(-50%, 4px) scale(0.92);
+  transition: opacity 0.15s ease, transform 0.15s ease, visibility 0.15s;
+  z-index: 50;
+}
+[data-tooltip]::before {
+  content: '';
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  border: 4px solid transparent;
+  border-top-color: #222222;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transform: translate(-50%, 4px);
+  transition: opacity 0.15s ease, transform 0.15s ease, visibility 0.15s;
+  z-index: 50;
+}
+[data-tooltip]:hover::after, [data-tooltip]:focus-visible::after,
+[data-tooltip]:hover::before, [data-tooltip]:focus-visible::before {
+  opacity: 1;
+  visibility: visible;
+  transform: translate(-50%, 0) scale(1);
+}
+[data-tooltip]:hover::before, [data-tooltip]:focus-visible::before {
+  transform: translate(-50%, 0);
+}
+@media (prefers-reduced-motion: reduce) {
+  [data-tooltip]::after, [data-tooltip]::before { transition: opacity 0.1s linear; }
+}
+
 /* Always reserve the vertical scrollbar's width, whether or not the page
    is currently tall enough to need one. Without this, any page whose
    height crosses the viewport threshold (a new chat message, an expanded
@@ -50,8 +106,8 @@ html {
 .field-valid-icon { transition: opacity 0.2s ease, transform 0.2s ease; }
 
 .auth-card { transition: box-shadow 0.35s ease, border-color 0.35s ease; }
-.auth-card:focus-within { box-shadow: 0 0 0 4px rgba(139,30,45,0.07), 0 10px 30px rgba(31,27,27,0.08); }
-.dark .auth-card:focus-within { box-shadow: 0 0 0 4px rgba(231,200,204,0.06), 0 10px 30px rgba(0,0,0,0.35); }
+.auth-card:focus-within { box-shadow: 0 0 0 4px rgba(255,56,92,0.09), 0 10px 30px rgba(0,0,0,0.08); }
+.dark .auth-card:focus-within { box-shadow: 0 0 0 4px rgba(255,209,218,0.07), 0 10px 30px rgba(0,0,0,0.35); }
 
 @keyframes shake-in {
   0% { opacity: 0; transform: translateX(0); }
@@ -160,4 +216,51 @@ html {
   .btn-sheen::before { display: none; }
   .auth-particle { display: none; }
   #auth-parallax-layer { transition: none !important; }
+}
+
+/* ============================================================
+   Primary buttons - flat fill (Airbnb-style system): a solid
+   `bg-primary` fill IS the button, no gradient, no lift, no colored
+   glow - those read as "SaaS trying hard" rather than the confident,
+   restrained single-accent look this system follows. The one
+   flourish kept is a quiet, one-shot diagonal light-sweep on hover
+   (the same mechanism as `.btn-sheen` above, applied globally so
+   every primary button gets it without needing the class by hand) -
+   subtle enough not to fight the flat aesthetic. Press feedback is
+   still just a plain color swap to `primary-dark`, no transform.
+   ============================================================ */
+button.bg-primary.text-white,
+a.bg-primary.text-white {
+  position: relative;
+  overflow: hidden;
+}
+button.bg-primary.text-white::before,
+a.bg-primary.text-white::before {
+  content: '';
+  position: absolute;
+  top: 0; left: -60%;
+  width: 40%; height: 100%;
+  background: linear-gradient(115deg, transparent, rgba(255,255,255,0.25), transparent);
+  transform: skewX(-20deg);
+  transition: left 0.65s ease;
+}
+button.bg-primary.text-white:hover::before,
+a.bg-primary.text-white:hover::before {
+  left: 130%;
+}
+button.bg-primary.text-white:active,
+a.bg-primary.text-white:active {
+  background-color: #E00B41;
+  transform: none;
+}
+button.bg-primary.text-white:disabled {
+  background-color: #FFD1DA;
+  color: #FFFFFF;
+  transform: none;
+}
+@media (prefers-reduced-motion: reduce) {
+  button.bg-primary.text-white::before,
+  a.bg-primary.text-white::before {
+    display: none;
+  }
 }

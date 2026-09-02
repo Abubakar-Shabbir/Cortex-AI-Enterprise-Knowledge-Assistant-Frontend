@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { FileText, HardDrive, Library, LibraryBig, Search } from 'lucide-react';
+import { FileTextIcon as FileText, HardDriveIcon as HardDrive, BooksIcon as Library, BooksIcon as LibraryBig, MagnifyingGlassIcon as Search } from '@phosphor-icons/react';
 import PageHeader from '../components/PageHeader';
 import StatCard from '../components/StatCard';
 import EmptyState from '../components/EmptyState';
@@ -51,7 +51,7 @@ export default function OrgLibrary() {
               <input
                 type="text" value={searchInput} onChange={(e) => setSearchInput(e.target.value)}
                 placeholder="Search by title, any user's document…"
-                className="w-full rounded-lg border border-line bg-transparent px-3 py-2 text-sm text-ink placeholder:text-muted focus:border-primary focus:outline-none dark:border-line-dark dark:text-ink-dark"
+                className="w-full rounded-lg border border-line bg-transparent px-3 py-2 text-sm text-ink placeholder:text-muted focus:border-2 focus:border-ink focus:outline-none dark:focus:border-ink-dark dark:border-line-dark dark:text-ink-dark"
               />
             </div>
             <button type="submit" className="inline-flex items-center gap-2 rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-primary-dark">

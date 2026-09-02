@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link, Navigate, useLocation, useNavigate } from 'react-router-dom';
-import { AlertCircle, Eye, EyeOff, Lock, UserRound } from 'lucide-react';
+import { WarningCircleIcon as AlertCircle, EyeIcon as Eye, EyeSlashIcon as EyeOff, LockIcon as Lock, UserCircleIcon as UserRound } from '@phosphor-icons/react';
 import { useSession } from '../auth/SessionContext';
 import AuthLayout from '../layout/AuthLayout';
 import Spinner from '../components/Spinner';
@@ -46,6 +46,9 @@ export default function Login() {
 
   return (
     <AuthLayout title="Log in">
+      <div className="auth-pop-in mb-5 flex h-11 w-11 items-center justify-center rounded-xl bg-primary/10 text-primary dark:text-primary-soft">
+        <Lock className="h-5 w-5" />
+      </div>
       <h1 className="auth-pop-in text-xl font-bold tracking-tight text-ink dark:text-ink-dark">Log in to your account</h1>
       <p className="mb-6 mt-1 text-sm text-muted dark:text-muted-dark">Enter your details below to continue.</p>
 
@@ -65,7 +68,7 @@ export default function Login() {
               id="username" type="text" value={username} onChange={(e) => setUsername(e.target.value)}
               placeholder="Enter your username" required autoFocus autoComplete="username"
               aria-invalid={!!error}
-              className="w-full rounded-lg border border-line bg-surface py-2.5 pl-10 pr-3.5 text-sm text-ink placeholder:text-muted transition-all duration-150 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/15 dark:border-line-dark dark:bg-white/5 dark:text-ink-dark dark:placeholder:text-muted-dark"
+              className="w-full rounded-lg border border-line bg-surface py-2.5 pl-10 pr-3.5 text-sm text-ink placeholder:text-muted transition-all duration-150 focus:border-2 focus:border-ink focus:outline-none dark:focus:border-ink-dark dark:border-line-dark dark:bg-white/5 dark:text-ink-dark dark:placeholder:text-muted-dark"
             />
           </div>
         </div>
@@ -78,7 +81,7 @@ export default function Login() {
               type={showPassword ? 'text' : 'password'} id="password" value={password} onChange={(e) => setPassword(e.target.value)}
               placeholder="Enter your password" required autoComplete="current-password"
               aria-invalid={!!error}
-              className="w-full rounded-lg border border-line bg-surface py-2.5 pl-10 pr-10 text-sm text-ink placeholder:text-muted transition-all duration-150 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/15 dark:border-line-dark dark:bg-white/5 dark:text-ink-dark dark:placeholder:text-muted-dark"
+              className="w-full rounded-lg border border-line bg-surface py-2.5 pl-10 pr-10 text-sm text-ink placeholder:text-muted transition-all duration-150 focus:border-2 focus:border-ink focus:outline-none dark:focus:border-ink-dark dark:border-line-dark dark:bg-white/5 dark:text-ink-dark dark:placeholder:text-muted-dark"
             />
             <button
               type="button" onClick={() => setShowPassword((v) => !v)}

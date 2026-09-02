@@ -2,6 +2,7 @@ import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { BrowserRouter } from 'react-router-dom'
+import { IconContext } from '@phosphor-icons/react'
 import './index.css'
 import App from './App.jsx'
 import { SessionProvider } from './auth/SessionContext.jsx'
@@ -22,12 +23,16 @@ const queryClient = new QueryClient({
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
-    <BrowserRouter basename="/">
-      <QueryClientProvider client={queryClient}>
-        <SessionProvider>
-          <App />
-        </SessionProvider>
-      </QueryClientProvider>
-    </BrowserRouter>
+    {/* "regular" weight matches Lucide's outline look most closely - set
+       once here rather than passing weight="regular" to every icon. */}
+    <IconContext.Provider value={{ weight: 'regular' }}>
+      <BrowserRouter basename="/">
+        <QueryClientProvider client={queryClient}>
+          <SessionProvider>
+            <App />
+          </SessionProvider>
+        </QueryClientProvider>
+      </BrowserRouter>
+    </IconContext.Provider>
   </StrictMode>,
 )

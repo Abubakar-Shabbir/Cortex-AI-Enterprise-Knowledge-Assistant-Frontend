@@ -1,19 +1,5 @@
 import { useRef, useState } from 'react';
-import {
-  Check,
-  CheckCircle2,
-  Copy,
-  FileText,
-  Gauge,
-  GitMerge,
-  History,
-  Layers,
-  Quote,
-  SearchX,
-  ServerCrash,
-  Sparkles,
-  Timer,
-} from 'lucide-react';
+import { CheckIcon as Check, CheckCircleIcon as CheckCircle2, CopyIcon as Copy, FileTextIcon as FileText, GaugeIcon as Gauge, GitMergeIcon as GitMerge, ClockCounterClockwiseIcon as History, StackIcon as Layers, QuotesIcon as Quote, MagnifyingGlassIcon as SearchX, HardDrivesIcon as ServerCrash, SparkleIcon as Sparkles, TimerIcon as Timer } from '@phosphor-icons/react';
 
 // Mirrors partials/_ask_ai_result.html: one self-contained result card,
 // sources rendered inline at the bottom rather than in a separate panel -
@@ -30,7 +16,7 @@ export default function AskResult({ result, appliedFilterLabels = [], onAskAgain
     return (
       <div className="relative overflow-hidden rounded-2xl border border-dashed border-line bg-card px-6 py-14 text-center dark:border-line-dark dark:bg-card-dark">
         <div className="pointer-events-none absolute inset-0 ask-hero-mesh opacity-60" aria-hidden="true" />
-        <div className="relative mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-primary to-primary-light text-white shadow-soft">
+        <div className="relative mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-primary text-white shadow-soft">
           <Sparkles className="h-6 w-6" />
         </div>
         <p className="relative mt-4 text-base font-semibold text-ink dark:text-ink-dark">

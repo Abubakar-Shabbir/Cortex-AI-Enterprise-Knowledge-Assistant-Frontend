@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
 import ChartCanvas from './ChartCanvas';
 
-const GRID_COLOR = 'rgba(109, 102, 101, 0.12)';
+const GRID_COLOR = 'rgba(106, 106, 106, 0.12)';
 
 // Port of templates/dashboard/_knowledge_snapshot.html. `showChart`
 // (unset by default) renders the polar-area "Topics by Category"

@@ -1,4 +1,4 @@
-import { Menu, Moon, Plus, Search, Sun } from 'lucide-react';
+import { ListIcon as Menu, MoonIcon as Moon, PlusIcon as Plus, MagnifyingGlassIcon as Search, SunIcon as Sun } from '@phosphor-icons/react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import { useSession } from '../auth/SessionContext';
@@ -32,7 +32,7 @@ export default function Topbar({ onOpenSidebar }) {
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           placeholder="Search documents…"
-          className="w-full rounded-lg border border-line bg-surface py-2 pl-9 pr-16 text-sm text-ink placeholder:text-muted focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/15 dark:border-line-dark dark:bg-white/5 dark:text-ink-dark dark:placeholder:text-muted-dark"
+          className="w-full rounded-lg border border-line bg-surface py-2 pl-9 pr-16 text-sm text-ink placeholder:text-muted focus:border-2 focus:border-ink focus:outline-none dark:focus:border-ink-dark dark:border-line-dark dark:bg-white/5 dark:text-ink-dark dark:placeholder:text-muted-dark"
         />
       </form>
 
@@ -52,7 +52,8 @@ export default function Topbar({ onOpenSidebar }) {
 
         <button
           onClick={toggle}
-          className="rounded-lg border border-line p-2 text-muted hover:bg-surface dark:border-line-dark dark:text-muted-dark dark:hover:bg-white/5"
+          data-tooltip={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
+          className="rounded-lg border border-line p-2 text-muted transition-colors hover:bg-surface dark:border-line-dark dark:text-muted-dark dark:hover:bg-white/5"
           aria-label="Toggle dark mode"
         >
           {isDark ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}

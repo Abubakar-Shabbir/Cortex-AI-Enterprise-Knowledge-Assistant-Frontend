@@ -1,9 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import {
-  ChevronLeft, ChevronRight, Columns3, CopyIcon, FileOutput, FileText, FolderTree,
-  History, Info, ListChecks, PackageCheck, SearchCheck, ShieldCheck, Sparkles,
-} from 'lucide-react';
+import { CaretLeftIcon as ChevronLeft, CaretRightIcon as ChevronRight, ColumnsIcon as Columns3, CopyIcon, FileArrowUpIcon as FileOutput, FileTextIcon as FileText, TreeStructureIcon as FolderTree, ClockCounterClockwiseIcon as History, InfoIcon as Info, ListChecksIcon as ListChecks, PackageIcon as PackageCheck, MagnifyingGlassIcon as SearchCheck, ShieldCheckIcon as ShieldCheck, SparkleIcon as Sparkles } from '@phosphor-icons/react';
 import SelectDocumentsDialog from '../components/SelectDocumentsDialog';
 import Spinner from '../components/Spinner';
 import { useAiTasksConfig, useCreateAiTask } from '../api/hooks';
@@ -186,7 +183,7 @@ export default function AiTasks() {
                 <textarea
                   value={taskConfig.criteria || ''} onChange={(e) => setTaskConfig({ ...taskConfig, criteria: e.target.value })} rows={4}
                   placeholder="e.g. Requires 5+ years of Python experience, a relevant degree, and at least one cloud certification."
-                  className="w-full rounded-lg border border-line bg-surface p-3 text-sm text-ink placeholder:text-muted focus:border-primary focus:outline-none dark:border-line-dark dark:bg-white/5 dark:text-ink-dark"
+                  className="w-full rounded-lg border border-line bg-surface p-3 text-sm text-ink placeholder:text-muted focus:border-2 focus:border-ink focus:outline-none dark:focus:border-ink-dark dark:border-line-dark dark:bg-white/5 dark:text-ink-dark"
                 />
               </div>
             )}
@@ -198,7 +195,7 @@ export default function AiTasks() {
                   type="text"
                   onChange={(e) => setTaskConfig({ ...taskConfig, fields: e.target.value.split(',').map((f) => f.trim()).filter(Boolean) })}
                   placeholder="e.g. name, date, amount, parties"
-                  className="w-full rounded-lg border border-line bg-surface px-3 py-2 text-sm text-ink placeholder:text-muted focus:border-primary focus:outline-none dark:border-line-dark dark:bg-white/5 dark:text-ink-dark"
+                  className="w-full rounded-lg border border-line bg-surface px-3 py-2 text-sm text-ink placeholder:text-muted focus:border-2 focus:border-ink focus:outline-none dark:focus:border-ink-dark dark:border-line-dark dark:bg-white/5 dark:text-ink-dark"
                 />
                 <p className="mt-1 text-[11px] text-muted dark:text-muted-dark">Leave blank to let the AI infer the most salient fields.</p>
               </div>
@@ -209,7 +206,7 @@ export default function AiTasks() {
                 <label className="mb-1.5 block text-xs font-medium text-muted dark:text-muted-dark">Summary length</label>
                 <select
                   value={taskConfig.length || '3-5 sentences'} onChange={(e) => setTaskConfig({ ...taskConfig, length: e.target.value })}
-                  className="w-full rounded-lg border border-line bg-surface px-3 py-2 text-sm text-ink focus:border-primary focus:outline-none dark:border-line-dark dark:bg-white/5 dark:text-ink-dark"
+                  className="w-full rounded-lg border border-line bg-surface px-3 py-2 text-sm text-ink focus:border-2 focus:border-ink focus:outline-none dark:focus:border-ink-dark dark:border-line-dark dark:bg-white/5 dark:text-ink-dark"
                 >
                   <option value="1-2 sentences">Brief (1-2 sentences)</option>
                   <option value="3-5 sentences">Standard (3-5 sentences)</option>
@@ -235,7 +232,7 @@ export default function AiTasks() {
                     <input
                       type="number" min="1" value={taskConfig.target_groups || ''} placeholder="Auto"
                       onChange={(e) => setTaskConfig({ ...taskConfig, target_groups: e.target.value ? Number(e.target.value) : undefined })}
-                      className="w-full rounded-lg border border-line bg-surface px-3 py-2 text-sm text-ink placeholder:text-muted focus:border-primary focus:outline-none dark:border-line-dark dark:bg-white/5 dark:text-ink-dark"
+                      className="w-full rounded-lg border border-line bg-surface px-3 py-2 text-sm text-ink placeholder:text-muted focus:border-2 focus:border-ink focus:outline-none dark:focus:border-ink-dark dark:border-line-dark dark:bg-white/5 dark:text-ink-dark"
                     />
                   </div>
                 )}
@@ -249,7 +246,7 @@ export default function AiTasks() {
                   <input
                     type="text" value={taskConfig.title || ''} onChange={(e) => setTaskConfig({ ...taskConfig, title: e.target.value })}
                     placeholder="Generated Report"
-                    className="w-full rounded-lg border border-line bg-surface px-3 py-2 text-sm text-ink placeholder:text-muted focus:border-primary focus:outline-none dark:border-line-dark dark:bg-white/5 dark:text-ink-dark"
+                    className="w-full rounded-lg border border-line bg-surface px-3 py-2 text-sm text-ink placeholder:text-muted focus:border-2 focus:border-ink focus:outline-none dark:focus:border-ink-dark dark:border-line-dark dark:bg-white/5 dark:text-ink-dark"
                   />
                 </div>
                 <div>
@@ -257,7 +254,7 @@ export default function AiTasks() {
                   <input
                     type="text" value={taskConfig.focus || ''} onChange={(e) => setTaskConfig({ ...taskConfig, focus: e.target.value })}
                     placeholder="e.g. sales trends"
-                    className="w-full rounded-lg border border-line bg-surface px-3 py-2 text-sm text-ink placeholder:text-muted focus:border-primary focus:outline-none dark:border-line-dark dark:bg-white/5 dark:text-ink-dark"
+                    className="w-full rounded-lg border border-line bg-surface px-3 py-2 text-sm text-ink placeholder:text-muted focus:border-2 focus:border-ink focus:outline-none dark:focus:border-ink-dark dark:border-line-dark dark:bg-white/5 dark:text-ink-dark"
                   />
                 </div>
               </div>

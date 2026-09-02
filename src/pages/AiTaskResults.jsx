@@ -1,8 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
-import {
-  AlertTriangle, Check, Download, OctagonX, Plus, Sparkles, Square, Trash2, X, XCircle,
-} from 'lucide-react';
+import { WarningIcon as AlertTriangle, CheckIcon as Check, DownloadSimpleIcon as Download, ProhibitIcon as OctagonX, PlusIcon as Plus, SparkleIcon as Sparkles, SquareIcon as Square, TrashIcon as Trash2, XIcon as X, XCircleIcon as XCircle } from '@phosphor-icons/react';
 import PageSkeleton from '../components/PageSkeleton';
 import EmptyState from '../components/EmptyState';
 import Spinner from '../components/Spinner';
@@ -193,7 +191,7 @@ export default function AiTaskResults() {
               <span>{progressPercent}%</span>
             </div>
             <div className="h-2 w-full overflow-hidden rounded-full bg-line dark:bg-line-dark">
-              <div className="h-full rounded-full bg-gradient-to-r from-primary to-accent transition-all duration-700 ease-out" style={{ width: `${progressPercent}%` }}></div>
+              <div className="h-full rounded-full bg-primary transition-all duration-700 ease-out" style={{ width: `${progressPercent}%` }}></div>
             </div>
           </div>
         )}

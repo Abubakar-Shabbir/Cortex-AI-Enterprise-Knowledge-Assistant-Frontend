@@ -1,8 +1,5 @@
 import { Link, useParams } from 'react-router-dom';
-import {
-  ArrowDownLeft, ArrowLeft, ArrowUpRight, ExternalLink, FilePlus, FileText, GitCompareArrows, History,
-  Link as LinkIcon, Quote, ShieldQuestion, Sparkles, Users,
-} from 'lucide-react';
+import { ArrowDownLeftIcon as ArrowDownLeft, ArrowLeftIcon as ArrowLeft, ArrowUpRightIcon as ArrowUpRight, ArrowSquareOutIcon as ExternalLink, FilePlusIcon as FilePlus, FileTextIcon as FileText, GitDiffIcon as GitCompareArrows, ClockCounterClockwiseIcon as History, LinkIcon, QuotesIcon as Quote, ShieldIcon as ShieldQuestion, SparkleIcon as Sparkles, UsersIcon as Users } from '@phosphor-icons/react';
 import { getApiBaseUrl } from '../../api/client';
 import PageSkeleton from '../../components/PageSkeleton';
 import EmptyState from '../../components/EmptyState';

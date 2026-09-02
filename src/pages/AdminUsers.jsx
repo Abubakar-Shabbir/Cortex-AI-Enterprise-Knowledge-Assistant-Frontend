@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Check, IdCard, MoreHorizontal, Shield, Trash2, UserCheck, UserX, X } from 'lucide-react';
+import { CheckIcon as Check, IdentificationCardIcon as IdCard, DotsThreeIcon as MoreHorizontal, ShieldIcon as Shield, TrashIcon as Trash2, UserCheckIcon as UserCheck, UserMinusIcon as UserX, XIcon as X } from '@phosphor-icons/react';
 import EmptyState from '../components/EmptyState';
 import PageSkeleton from '../components/PageSkeleton';
 import Spinner from '../components/Spinner';

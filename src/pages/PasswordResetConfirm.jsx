@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link, Navigate, useParams } from 'react-router-dom';
-import { AlertCircle, Eye, EyeOff, Link2Off, Lock } from 'lucide-react';
+import { WarningCircleIcon as AlertCircle, EyeIcon as Eye, EyeSlashIcon as EyeOff, LinkBreakIcon as Link2Off, LockIcon as Lock } from '@phosphor-icons/react';
 import AuthLayout from '../layout/AuthLayout';
 import Spinner from '../components/Spinner';
 import { usePasswordResetConfirm, usePasswordResetValidate } from '../api/hooks';
@@ -77,7 +77,7 @@ export default function PasswordResetConfirm() {
                 <input
                   type={showPassword ? 'text' : 'password'} id="id_new_password1" value={password1} onChange={(e) => setPassword1(e.target.value)}
                   placeholder="Create a new password" required autoComplete="new-password"
-                  className={`w-full rounded-lg border ${fieldErrors.new_password1 ? 'border-danger' : 'border-line dark:border-line-dark'} bg-surface py-2.5 pl-10 pr-9 text-sm text-ink placeholder:text-muted transition-all duration-150 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/15 dark:bg-white/5 dark:text-ink-dark dark:placeholder:text-muted-dark`}
+                  className={`w-full rounded-lg border ${fieldErrors.new_password1 ? 'border-danger' : 'border-line dark:border-line-dark'} bg-surface py-2.5 pl-10 pr-9 text-sm text-ink placeholder:text-muted transition-all duration-150 focus:border-2 focus:border-ink focus:outline-none dark:focus:border-ink-dark dark:bg-white/5 dark:text-ink-dark dark:placeholder:text-muted-dark`}
                 />
                 <button type="button" onClick={() => setShowPassword((v) => !v)} className="absolute right-3 top-1/2 -translate-y-1/2 text-muted transition-colors hover:text-ink dark:text-muted-dark dark:hover:text-ink-dark" aria-label={showPassword ? 'Hide password' : 'Show password'}>
                   {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
@@ -93,7 +93,7 @@ export default function PasswordResetConfirm() {
                 <input
                   type={showConfirm ? 'text' : 'password'} id="id_new_password2" value={password2} onChange={(e) => setPassword2(e.target.value)}
                   placeholder="Re-enter new password" required autoComplete="new-password"
-                  className={`w-full rounded-lg border ${fieldErrors.new_password2 ? 'border-danger' : 'border-line dark:border-line-dark'} bg-surface py-2.5 pl-10 pr-9 text-sm text-ink placeholder:text-muted transition-all duration-150 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/15 dark:bg-white/5 dark:text-ink-dark dark:placeholder:text-muted-dark`}
+                  className={`w-full rounded-lg border ${fieldErrors.new_password2 ? 'border-danger' : 'border-line dark:border-line-dark'} bg-surface py-2.5 pl-10 pr-9 text-sm text-ink placeholder:text-muted transition-all duration-150 focus:border-2 focus:border-ink focus:outline-none dark:focus:border-ink-dark dark:bg-white/5 dark:text-ink-dark dark:placeholder:text-muted-dark`}
                 />
                 <button type="button" onClick={() => setShowConfirm((v) => !v)} className="absolute right-3 top-1/2 -translate-y-1/2 text-muted transition-colors hover:text-ink dark:text-muted-dark dark:hover:text-ink-dark" aria-label={showConfirm ? 'Hide password' : 'Show password'}>
                   {showConfirm ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}

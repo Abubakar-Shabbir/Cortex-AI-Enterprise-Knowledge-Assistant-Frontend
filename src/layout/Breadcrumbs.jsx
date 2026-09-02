@@ -1,4 +1,4 @@
-import { ChevronRight, Home } from 'lucide-react';
+import { CaretRightIcon as ChevronRight, HouseIcon as Home } from '@phosphor-icons/react';
 import { Link, useLocation } from 'react-router-dom';
 
 // Port of templates/partials/_breadcrumbs.html / context_processors.breadcrumbs's

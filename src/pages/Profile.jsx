@@ -1,10 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
-import {
-  AlertCircle, Bell, Camera, Globe, Monitor,
-  MonitorSmartphone, Moon, Shield, Smartphone, Sun, Tablet, X,
-} from 'lucide-react';
+import { WarningCircleIcon as AlertCircle, BellIcon as Bell, CameraIcon as Camera, GlobeIcon as Globe, MonitorIcon as Monitor, DeviceMobileIcon as MonitorSmartphone, MoonIcon as Moon, ShieldIcon as Shield, DeviceMobileIcon as Smartphone, SunIcon as Sun, DeviceTabletIcon as Tablet, XIcon as X } from '@phosphor-icons/react';
 
-// lucide-react 1.x dropped brand/logo icons (Github, Linkedin, ...) -
+// Phosphor doesn't carry brand/logo icons (Github, Linkedin, ...) -
 // minimal inline marks instead of pulling in a separate icon package.
 function LinkedinIcon(props) {
   return (
@@ -82,7 +79,7 @@ function TagInput({ items, onChange, placeholder, tone = 'primary' }) {
           type="text" value={value} onChange={(e) => setValue(e.target.value)}
           onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); add(); } }}
           placeholder={placeholder}
-          className="w-full rounded-lg border border-line bg-surface px-3 py-1.5 text-sm text-ink focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/15 dark:border-line-dark dark:bg-white/5 dark:text-ink-dark"
+          className="w-full rounded-lg border border-line bg-surface px-3 py-1.5 text-sm text-ink focus:border-2 focus:border-ink focus:outline-none dark:focus:border-ink-dark dark:border-line-dark dark:bg-white/5 dark:text-ink-dark"
         />
         <button type="button" onClick={add} className="shrink-0 rounded-lg border border-line px-3 text-sm font-medium text-ink hover:bg-surface dark:border-line-dark dark:text-ink-dark dark:hover:bg-white/5">Add</button>
       </div>
@@ -193,7 +190,7 @@ export default function Profile() {
 
       {/* Compact header */}
       <div className="mb-4 overflow-hidden rounded-2xl border border-line bg-card shadow-soft dark:border-line-dark dark:bg-card-dark">
-        <div className="h-14 bg-gradient-to-r from-primary-light to-primary-dark"></div>
+        <div className="h-14 bg-primary"></div>
         <div className="px-5 pb-4">
           <div className="flex flex-col gap-3 sm:flex-row sm:items-end">
             <div className="group relative -mt-9 shrink-0">
@@ -201,7 +198,7 @@ export default function Profile() {
                 {profile.avatar_url ? (
                   <img src={profile.avatar_url} alt="" className="h-[72px] w-[72px] rounded-full object-cover ring-4 ring-card dark:ring-card-dark" />
                 ) : (
-                  <div className="flex h-[72px] w-[72px] items-center justify-center rounded-full bg-gradient-to-br from-primary-light to-primary-dark text-xl font-semibold text-white ring-4 ring-card dark:ring-card-dark">
+                  <div className="flex h-[72px] w-[72px] items-center justify-center rounded-full bg-primary text-xl font-semibold text-white ring-4 ring-card dark:ring-card-dark">
                     {initials}
                   </div>
                 )}
@@ -274,17 +271,17 @@ export default function Profile() {
                 <div>
                   <label className="mb-1 block text-xs font-medium text-muted dark:text-muted-dark">First Name</label>
                   <input type="text" value={personal.first_name} onChange={(e) => setPersonal({ ...personal, first_name: e.target.value })}
-                    className="w-full rounded-lg border border-line bg-surface px-3 py-2 text-sm text-ink focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/15 dark:border-line-dark dark:bg-white/5 dark:text-ink-dark" />
+                    className="w-full rounded-lg border border-line bg-surface px-3 py-2 text-sm text-ink focus:border-2 focus:border-ink focus:outline-none dark:focus:border-ink-dark dark:border-line-dark dark:bg-white/5 dark:text-ink-dark" />
                 </div>
                 <div>
                   <label className="mb-1 block text-xs font-medium text-muted dark:text-muted-dark">Last Name</label>
                   <input type="text" value={personal.last_name} onChange={(e) => setPersonal({ ...personal, last_name: e.target.value })}
-                    className="w-full rounded-lg border border-line bg-surface px-3 py-2 text-sm text-ink focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/15 dark:border-line-dark dark:bg-white/5 dark:text-ink-dark" />
+                    className="w-full rounded-lg border border-line bg-surface px-3 py-2 text-sm text-ink focus:border-2 focus:border-ink focus:outline-none dark:focus:border-ink-dark dark:border-line-dark dark:bg-white/5 dark:text-ink-dark" />
                 </div>
                 <div>
                   <label className="mb-1 block text-xs font-medium text-muted dark:text-muted-dark">Email</label>
                   <input type="email" value={personal.email} onChange={(e) => setPersonal({ ...personal, email: e.target.value })}
-                    className="w-full rounded-lg border border-line bg-surface px-3 py-2 text-sm text-ink focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/15 dark:border-line-dark dark:bg-white/5 dark:text-ink-dark" />
+                    className="w-full rounded-lg border border-line bg-surface px-3 py-2 text-sm text-ink focus:border-2 focus:border-ink focus:outline-none dark:focus:border-ink-dark dark:border-line-dark dark:bg-white/5 dark:text-ink-dark" />
                 </div>
               </div>
 
@@ -319,24 +316,24 @@ export default function Profile() {
                 <label className="mb-1 block text-xs font-medium text-muted dark:text-muted-dark">Professional Headline</label>
                 <input type="text" maxLength={150} value={extended.headline} onChange={(e) => setExtended({ ...extended, headline: e.target.value })}
                   placeholder="AI Engineer | RAG Systems | Knowledge Intelligence"
-                  className="w-full rounded-lg border border-line bg-surface px-3 py-2 text-sm text-ink focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/15 dark:border-line-dark dark:bg-white/5 dark:text-ink-dark" />
+                  className="w-full rounded-lg border border-line bg-surface px-3 py-2 text-sm text-ink focus:border-2 focus:border-ink focus:outline-none dark:focus:border-ink-dark dark:border-line-dark dark:bg-white/5 dark:text-ink-dark" />
               </div>
 
               <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
                 <div>
                   <label className="mb-1 block text-xs font-medium text-muted dark:text-muted-dark">Job Title</label>
                   <input type="text" value={extended.job_title} onChange={(e) => setExtended({ ...extended, job_title: e.target.value })}
-                    className="w-full rounded-lg border border-line bg-surface px-3 py-2 text-sm text-ink focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/15 dark:border-line-dark dark:bg-white/5 dark:text-ink-dark" />
+                    className="w-full rounded-lg border border-line bg-surface px-3 py-2 text-sm text-ink focus:border-2 focus:border-ink focus:outline-none dark:focus:border-ink-dark dark:border-line-dark dark:bg-white/5 dark:text-ink-dark" />
                 </div>
                 <div>
                   <label className="mb-1 block text-xs font-medium text-muted dark:text-muted-dark">Department</label>
                   <input type="text" value={extended.department} onChange={(e) => setExtended({ ...extended, department: e.target.value })}
-                    className="w-full rounded-lg border border-line bg-surface px-3 py-2 text-sm text-ink focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/15 dark:border-line-dark dark:bg-white/5 dark:text-ink-dark" />
+                    className="w-full rounded-lg border border-line bg-surface px-3 py-2 text-sm text-ink focus:border-2 focus:border-ink focus:outline-none dark:focus:border-ink-dark dark:border-line-dark dark:bg-white/5 dark:text-ink-dark" />
                 </div>
                 <div>
                   <label className="mb-1 block text-xs font-medium text-muted dark:text-muted-dark">Team</label>
                   <input type="text" value={extended.team} onChange={(e) => setExtended({ ...extended, team: e.target.value })}
-                    className="w-full rounded-lg border border-line bg-surface px-3 py-2 text-sm text-ink focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/15 dark:border-line-dark dark:bg-white/5 dark:text-ink-dark" />
+                    className="w-full rounded-lg border border-line bg-surface px-3 py-2 text-sm text-ink focus:border-2 focus:border-ink focus:outline-none dark:focus:border-ink-dark dark:border-line-dark dark:bg-white/5 dark:text-ink-dark" />
                 </div>
               </div>
 
@@ -344,7 +341,7 @@ export default function Profile() {
                 <div>
                   <label className="mb-1 block text-xs font-medium text-muted dark:text-muted-dark">Manager</label>
                   <select value={extended.manager_id} onChange={(e) => setExtended({ ...extended, manager_id: e.target.value })}
-                    className="w-full rounded-lg border border-line bg-surface px-3 py-2 text-sm text-ink focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/15 dark:border-line-dark dark:bg-white/5 dark:text-ink-dark">
+                    className="w-full rounded-lg border border-line bg-surface px-3 py-2 text-sm text-ink focus:border-2 focus:border-ink focus:outline-none dark:focus:border-ink-dark dark:border-line-dark dark:bg-white/5 dark:text-ink-dark">
                     <option value="">— None —</option>
                     {managerOptions.map((m) => <option key={m.id} value={m.id}>{m.name}</option>)}
                   </select>
@@ -352,19 +349,19 @@ export default function Profile() {
                 <div>
                   <label className="mb-1 block text-xs font-medium text-muted dark:text-muted-dark">Phone</label>
                   <input type="text" value={extended.phone} onChange={(e) => setExtended({ ...extended, phone: e.target.value })}
-                    className="w-full rounded-lg border border-line bg-surface px-3 py-2 text-sm text-ink focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/15 dark:border-line-dark dark:bg-white/5 dark:text-ink-dark" />
+                    className="w-full rounded-lg border border-line bg-surface px-3 py-2 text-sm text-ink focus:border-2 focus:border-ink focus:outline-none dark:focus:border-ink-dark dark:border-line-dark dark:bg-white/5 dark:text-ink-dark" />
                 </div>
                 <div>
                   <label className="mb-1 block text-xs font-medium text-muted dark:text-muted-dark">Employee ID</label>
                   <input type="text" value={extended.employee_id} onChange={(e) => setExtended({ ...extended, employee_id: e.target.value })}
-                    className="w-full rounded-lg border border-line bg-surface px-3 py-2 text-sm text-ink focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/15 dark:border-line-dark dark:bg-white/5 dark:text-ink-dark" />
+                    className="w-full rounded-lg border border-line bg-surface px-3 py-2 text-sm text-ink focus:border-2 focus:border-ink focus:outline-none dark:focus:border-ink-dark dark:border-line-dark dark:bg-white/5 dark:text-ink-dark" />
                 </div>
               </div>
 
               <div>
                 <label className="mb-1 block text-xs font-medium text-muted dark:text-muted-dark">Location</label>
                 <input type="text" value={extended.location} onChange={(e) => setExtended({ ...extended, location: e.target.value })} placeholder="City, Country"
-                  className="w-full rounded-lg border border-line bg-surface px-3 py-2 text-sm text-ink focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/15 dark:border-line-dark dark:bg-white/5 dark:text-ink-dark" />
+                  className="w-full rounded-lg border border-line bg-surface px-3 py-2 text-sm text-ink focus:border-2 focus:border-ink focus:outline-none dark:focus:border-ink-dark dark:border-line-dark dark:bg-white/5 dark:text-ink-dark" />
               </div>
 
               <p className="border-t border-line pt-3 text-[11px] font-semibold uppercase tracking-wide text-muted dark:border-line-dark dark:text-muted-dark">Skills & Certifications</p>
@@ -376,17 +373,17 @@ export default function Profile() {
                 <div>
                   <label className="mb-1 flex items-center gap-1 text-xs font-medium text-muted dark:text-muted-dark"><LinkedinIcon className="h-3 w-3" /> LinkedIn</label>
                   <input type="url" value={extended.linkedin_url} onChange={(e) => setExtended({ ...extended, linkedin_url: e.target.value })} placeholder="linkedin.com/in/..."
-                    className="w-full rounded-lg border border-line bg-surface px-3 py-2 text-sm text-ink focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/15 dark:border-line-dark dark:bg-white/5 dark:text-ink-dark" />
+                    className="w-full rounded-lg border border-line bg-surface px-3 py-2 text-sm text-ink focus:border-2 focus:border-ink focus:outline-none dark:focus:border-ink-dark dark:border-line-dark dark:bg-white/5 dark:text-ink-dark" />
                 </div>
                 <div>
                   <label className="mb-1 flex items-center gap-1 text-xs font-medium text-muted dark:text-muted-dark"><GithubIcon className="h-3 w-3" /> GitHub</label>
                   <input type="url" value={extended.github_url} onChange={(e) => setExtended({ ...extended, github_url: e.target.value })} placeholder="github.com/..."
-                    className="w-full rounded-lg border border-line bg-surface px-3 py-2 text-sm text-ink focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/15 dark:border-line-dark dark:bg-white/5 dark:text-ink-dark" />
+                    className="w-full rounded-lg border border-line bg-surface px-3 py-2 text-sm text-ink focus:border-2 focus:border-ink focus:outline-none dark:focus:border-ink-dark dark:border-line-dark dark:bg-white/5 dark:text-ink-dark" />
                 </div>
                 <div>
                   <label className="mb-1 flex items-center gap-1 text-xs font-medium text-muted dark:text-muted-dark"><Globe className="h-3 w-3" /> Portfolio</label>
                   <input type="url" value={extended.portfolio_url} onChange={(e) => setExtended({ ...extended, portfolio_url: e.target.value })} placeholder="yourdomain.com"
-                    className="w-full rounded-lg border border-line bg-surface px-3 py-2 text-sm text-ink focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/15 dark:border-line-dark dark:bg-white/5 dark:text-ink-dark" />
+                    className="w-full rounded-lg border border-line bg-surface px-3 py-2 text-sm text-ink focus:border-2 focus:border-ink focus:outline-none dark:focus:border-ink-dark dark:border-line-dark dark:bg-white/5 dark:text-ink-dark" />
                 </div>
               </div>
 
@@ -395,7 +392,7 @@ export default function Profile() {
                 <div>
                   <label className="mb-1 block text-xs font-medium text-muted dark:text-muted-dark">Time Zone</label>
                   <select value={extended.timezone} onChange={(e) => setExtended({ ...extended, timezone: e.target.value })}
-                    className="w-full rounded-lg border border-line bg-surface px-3 py-2 text-sm text-ink focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/15 dark:border-line-dark dark:bg-white/5 dark:text-ink-dark">
+                    className="w-full rounded-lg border border-line bg-surface px-3 py-2 text-sm text-ink focus:border-2 focus:border-ink focus:outline-none dark:focus:border-ink-dark dark:border-line-dark dark:bg-white/5 dark:text-ink-dark">
                     <option value="">— Not set —</option>
                     {timezoneChoices.map((tz) => <option key={tz} value={tz}>{tz}</option>)}
                   </select>
@@ -403,14 +400,14 @@ export default function Profile() {
                 <div>
                   <label className="mb-1 block text-xs font-medium text-muted dark:text-muted-dark">Language</label>
                   <select value={extended.language} onChange={(e) => setExtended({ ...extended, language: e.target.value })}
-                    className="w-full rounded-lg border border-line bg-surface px-3 py-2 text-sm text-ink focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/15 dark:border-line-dark dark:bg-white/5 dark:text-ink-dark">
+                    className="w-full rounded-lg border border-line bg-surface px-3 py-2 text-sm text-ink focus:border-2 focus:border-ink focus:outline-none dark:focus:border-ink-dark dark:border-line-dark dark:bg-white/5 dark:text-ink-dark">
                     {languageChoices.map((l) => <option key={l.code} value={l.code}>{l.label}</option>)}
                   </select>
                 </div>
                 <div>
                   <label className="mb-1 block text-xs font-medium text-muted dark:text-muted-dark">Profile Visibility</label>
                   <select value={extended.profile_visibility} onChange={(e) => setExtended({ ...extended, profile_visibility: e.target.value })}
-                    className="w-full rounded-lg border border-line bg-surface px-3 py-2 text-sm text-ink focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/15 dark:border-line-dark dark:bg-white/5 dark:text-ink-dark">
+                    className="w-full rounded-lg border border-line bg-surface px-3 py-2 text-sm text-ink focus:border-2 focus:border-ink focus:outline-none dark:focus:border-ink-dark dark:border-line-dark dark:bg-white/5 dark:text-ink-dark">
                     {visibilityChoices.map((v) => <option key={v.value} value={v.value}>{v.label}</option>)}
                   </select>
                 </div>
@@ -445,19 +442,19 @@ export default function Profile() {
                 <div>
                   <label className="mb-1 block text-xs font-medium text-muted dark:text-muted-dark">Current Password</label>
                   <input type="password" value={passwordFields.old_password} onChange={(e) => setPasswordFields({ ...passwordFields, old_password: e.target.value })}
-                    className={`w-full rounded-lg border ${passwordErrors.old_password ? 'border-danger' : 'border-line dark:border-line-dark'} bg-surface px-3 py-2 text-sm text-ink focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/15 dark:bg-white/5 dark:text-ink-dark`} />
+                    className={`w-full rounded-lg border ${passwordErrors.old_password ? 'border-danger' : 'border-line dark:border-line-dark'} bg-surface px-3 py-2 text-sm text-ink focus:border-2 focus:border-ink focus:outline-none dark:focus:border-ink-dark dark:bg-white/5 dark:text-ink-dark`} />
                   {passwordErrors.old_password && <p className="mt-1 text-xs text-danger dark:text-danger-dark">{passwordErrors.old_password[0]}</p>}
                 </div>
                 <div>
                   <label className="mb-1 block text-xs font-medium text-muted dark:text-muted-dark">New Password</label>
                   <input type="password" value={passwordFields.new_password1} onChange={(e) => setPasswordFields({ ...passwordFields, new_password1: e.target.value })}
-                    className={`w-full rounded-lg border ${passwordErrors.new_password1 ? 'border-danger' : 'border-line dark:border-line-dark'} bg-surface px-3 py-2 text-sm text-ink focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/15 dark:bg-white/5 dark:text-ink-dark`} />
+                    className={`w-full rounded-lg border ${passwordErrors.new_password1 ? 'border-danger' : 'border-line dark:border-line-dark'} bg-surface px-3 py-2 text-sm text-ink focus:border-2 focus:border-ink focus:outline-none dark:focus:border-ink-dark dark:bg-white/5 dark:text-ink-dark`} />
                   {passwordErrors.new_password1 && <p className="mt-1 text-xs text-danger dark:text-danger-dark">{passwordErrors.new_password1[0]}</p>}
                 </div>
                 <div>
                   <label className="mb-1 block text-xs font-medium text-muted dark:text-muted-dark">Confirm New Password</label>
                   <input type="password" value={passwordFields.new_password2} onChange={(e) => setPasswordFields({ ...passwordFields, new_password2: e.target.value })}
-                    className={`w-full rounded-lg border ${passwordErrors.new_password2 ? 'border-danger' : 'border-line dark:border-line-dark'} bg-surface px-3 py-2 text-sm text-ink focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/15 dark:bg-white/5 dark:text-ink-dark`} />
+                    className={`w-full rounded-lg border ${passwordErrors.new_password2 ? 'border-danger' : 'border-line dark:border-line-dark'} bg-surface px-3 py-2 text-sm text-ink focus:border-2 focus:border-ink focus:outline-none dark:focus:border-ink-dark dark:bg-white/5 dark:text-ink-dark`} />
                   {passwordErrors.new_password2 && <p className="mt-1 text-xs text-danger dark:text-danger-dark">{passwordErrors.new_password2[0]}</p>}
                 </div>
               </div>

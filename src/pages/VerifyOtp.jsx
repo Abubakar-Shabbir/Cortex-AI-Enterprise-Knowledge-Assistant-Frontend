@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { Navigate, useNavigate } from 'react-router-dom';
-import { AlertCircle, MailCheck, RefreshCw, ShieldCheck } from 'lucide-react';
+import { WarningCircleIcon as AlertCircle, EnvelopeSimpleIcon as MailCheck, ArrowsClockwiseIcon as RefreshCw, ShieldCheckIcon as ShieldCheck } from '@phosphor-icons/react';
 import AuthLayout from '../layout/AuthLayout';
 import Spinner from '../components/Spinner';
 import { useSession } from '../auth/SessionContext';
@@ -140,7 +140,7 @@ export default function VerifyOtp() {
                 value={d}
                 onChange={(e) => handleInput(i, e.target.value)}
                 onKeyDown={(e) => handleKeydown(i, e)}
-                className={`h-14 w-full min-w-0 rounded-xl border bg-surface text-center text-2xl font-bold text-ink transition-all duration-150 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/15 dark:bg-white/5 dark:text-ink-dark ${d ? 'border-primary text-primary dark:text-primary-soft' : 'border-line dark:border-line-dark'}`}
+                className={`h-14 w-full min-w-0 rounded-xl border bg-surface text-center text-2xl font-bold text-ink transition-all duration-150 focus:border-2 focus:border-ink focus:outline-none dark:focus:border-ink-dark dark:bg-white/5 dark:text-ink-dark ${d ? 'border-primary text-primary dark:text-primary-soft' : 'border-line dark:border-line-dark'}`}
               />
             ))}
           </div>

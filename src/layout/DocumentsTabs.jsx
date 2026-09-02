@@ -1,4 +1,4 @@
-import { FileText, Folder, Library, Share2, Star } from 'lucide-react';
+import { FileTextIcon as FileText, FolderNotchIcon as Folder, BooksIcon as Library, ShareNetworkIcon as Share2, StarIcon as Star } from '@phosphor-icons/react';
 import { Link, useLocation } from 'react-router-dom';
 
 const TABS = [

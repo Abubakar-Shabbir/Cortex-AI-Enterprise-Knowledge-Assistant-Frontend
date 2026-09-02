@@ -1,5 +1,5 @@
 import { useParams, useSearchParams } from 'react-router-dom';
-import { FolderMinus, FolderOpen } from 'lucide-react';
+import { FolderNotchMinusIcon as FolderMinus, FolderNotchOpenIcon as FolderOpen } from '@phosphor-icons/react';
 import PageHeader from '../components/PageHeader';
 import EmptyState from '../components/EmptyState';
 import PageSkeleton from '../components/PageSkeleton';

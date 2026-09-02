@@ -1,5 +1,5 @@
 import { Link, useSearchParams } from 'react-router-dom';
-import { ArrowRight, GitBranch } from 'lucide-react';
+import { ArrowRightIcon as ArrowRight, GitBranchIcon as GitBranch } from '@phosphor-icons/react';
 import PageHeader from '../../components/PageHeader';
 import EmptyState from '../../components/EmptyState';
 import PageSkeleton from '../../components/PageSkeleton';
@@ -31,7 +31,7 @@ export default function Relationships() {
           <select
             value={selectedType}
             onChange={(e) => setSearchParams(e.target.value ? { type: e.target.value } : {})}
-            className="rounded-lg border border-line bg-surface px-3 py-2 text-sm text-ink focus:border-primary focus:outline-none dark:border-line-dark dark:bg-white/5 dark:text-ink-dark"
+            className="rounded-lg border border-line bg-surface px-3 py-2 text-sm text-ink focus:border-2 focus:border-ink focus:outline-none dark:focus:border-ink-dark dark:border-line-dark dark:bg-white/5 dark:text-ink-dark"
           >
             <option value="">All relationship types</option>
             {relationTypes.map((rtype) => <option key={rtype} value={rtype}>{rtype.toLowerCase()}</option>)}

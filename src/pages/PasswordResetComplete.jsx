@@ -1,4 +1,4 @@
-import { CheckCircle } from 'lucide-react';
+import { CheckCircleIcon as CheckCircle } from '@phosphor-icons/react';
 import { Link } from 'react-router-dom';
 import AuthLayout from '../layout/AuthLayout';
 

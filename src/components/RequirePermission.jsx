@@ -1,4 +1,4 @@
-import { ShieldAlert } from 'lucide-react';
+import { ShieldWarningIcon as ShieldAlert } from '@phosphor-icons/react';
 import { Outlet } from 'react-router-dom';
 import { useSession } from '../auth/SessionContext';
 import EmptyState from './EmptyState';

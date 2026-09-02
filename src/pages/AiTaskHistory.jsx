@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
-import { Eye, Sparkles, Trash2 } from 'lucide-react';
+import { EyeIcon as Eye, SparkleIcon as Sparkles, TrashIcon as Trash2 } from '@phosphor-icons/react';
 import PageHeader from '../components/PageHeader';
 import EmptyState from '../components/EmptyState';
 import PageSkeleton from '../components/PageSkeleton';

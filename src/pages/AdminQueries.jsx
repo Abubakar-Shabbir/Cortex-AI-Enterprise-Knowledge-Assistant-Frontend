@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { CheckCircle2, Download, Eye, Filter, Flag, Gauge, GitBranch, Lock, Search, Timer, X } from 'lucide-react';
+import { CheckCircleIcon as CheckCircle2, DownloadSimpleIcon as Download, EyeIcon as Eye, FunnelIcon as Filter, FlagIcon as Flag, GaugeIcon as Gauge, GitBranchIcon as GitBranch, LockIcon as Lock, MagnifyingGlassIcon as Search, TimerIcon as Timer, XIcon as X } from '@phosphor-icons/react';
 import PageHeader from '../components/PageHeader';
 import StatCard from '../components/StatCard';
 import EmptyState from '../components/EmptyState';
@@ -116,16 +116,16 @@ export default function AdminQueries() {
           {data.can_view_content && (
             <div className="lg:col-span-2">
               <label className="mb-1 block text-xs font-medium text-muted dark:text-muted-dark">Search content</label>
-              <input type="text" name="q" defaultValue={filters.q} placeholder="Question or answer text…" className="w-full rounded-lg border border-line bg-transparent px-3 py-2 text-sm text-ink placeholder:text-muted focus:border-primary focus:outline-none dark:border-line-dark dark:text-ink-dark" />
+              <input type="text" name="q" defaultValue={filters.q} placeholder="Question or answer text…" className="w-full rounded-lg border border-line bg-transparent px-3 py-2 text-sm text-ink placeholder:text-muted focus:border-2 focus:border-ink focus:outline-none dark:focus:border-ink-dark dark:border-line-dark dark:text-ink-dark" />
             </div>
           )}
           <div>
             <label className="mb-1 block text-xs font-medium text-muted dark:text-muted-dark">Owner</label>
-            <input type="text" name="owner" defaultValue={filters.owner} placeholder="Username…" className="w-full rounded-lg border border-line bg-transparent px-3 py-2 text-sm text-ink placeholder:text-muted focus:border-primary focus:outline-none dark:border-line-dark dark:text-ink-dark" />
+            <input type="text" name="owner" defaultValue={filters.owner} placeholder="Username…" className="w-full rounded-lg border border-line bg-transparent px-3 py-2 text-sm text-ink placeholder:text-muted focus:border-2 focus:border-ink focus:outline-none dark:focus:border-ink-dark dark:border-line-dark dark:text-ink-dark" />
           </div>
           <div>
             <label className="mb-1 block text-xs font-medium text-muted dark:text-muted-dark">Scope</label>
-            <select name="scope" defaultValue={filters.scope || ''} className="w-full rounded-lg border border-line bg-transparent px-3 py-2 text-sm text-ink focus:border-primary focus:outline-none dark:border-line-dark dark:text-ink-dark">
+            <select name="scope" defaultValue={filters.scope || ''} className="w-full rounded-lg border border-line bg-transparent px-3 py-2 text-sm text-ink focus:border-2 focus:border-ink focus:outline-none dark:focus:border-ink-dark dark:border-line-dark dark:text-ink-dark">
               <option value="">Everyone</option>
               <option value="mine">My own queries</option>
               <option value="others">Other members' queries</option>
@@ -133,7 +133,7 @@ export default function AdminQueries() {
           </div>
           <div>
             <label className="mb-1 block text-xs font-medium text-muted dark:text-muted-dark">Status</label>
-            <select name="status" defaultValue={filters.status || ''} className="w-full rounded-lg border border-line bg-transparent px-3 py-2 text-sm text-ink focus:border-primary focus:outline-none dark:border-line-dark dark:text-ink-dark">
+            <select name="status" defaultValue={filters.status || ''} className="w-full rounded-lg border border-line bg-transparent px-3 py-2 text-sm text-ink focus:border-2 focus:border-ink focus:outline-none dark:focus:border-ink-dark dark:border-line-dark dark:text-ink-dark">
               <option value="">Any</option>
               <option value="answered">Answered</option>
               <option value="not_found">No Answer Found</option>
@@ -141,14 +141,14 @@ export default function AdminQueries() {
           </div>
           <div>
             <label className="mb-1 block text-xs font-medium text-muted dark:text-muted-dark">Method</label>
-            <select name="method" defaultValue={filters.method || ''} className="w-full rounded-lg border border-line bg-transparent px-3 py-2 text-sm text-ink focus:border-primary focus:outline-none dark:border-line-dark dark:text-ink-dark">
+            <select name="method" defaultValue={filters.method || ''} className="w-full rounded-lg border border-line bg-transparent px-3 py-2 text-sm text-ink focus:border-2 focus:border-ink focus:outline-none dark:focus:border-ink-dark dark:border-line-dark dark:text-ink-dark">
               <option value="">Any</option>
               {data.search_methods.map((m) => <option key={m} value={m}>{m}</option>)}
             </select>
           </div>
           <div>
             <label className="mb-1 block text-xs font-medium text-muted dark:text-muted-dark">Min. confidence</label>
-            <select name="min_confidence" defaultValue={filters.min_confidence || ''} className="w-full rounded-lg border border-line bg-transparent px-3 py-2 text-sm text-ink focus:border-primary focus:outline-none dark:border-line-dark dark:text-ink-dark">
+            <select name="min_confidence" defaultValue={filters.min_confidence || ''} className="w-full rounded-lg border border-line bg-transparent px-3 py-2 text-sm text-ink focus:border-2 focus:border-ink focus:outline-none dark:focus:border-ink-dark dark:border-line-dark dark:text-ink-dark">
               <option value="">Any</option>
               <option value="25">25%+</option>
               <option value="50">50%+</option>
@@ -158,7 +158,7 @@ export default function AdminQueries() {
           </div>
           <div>
             <label className="mb-1 block text-xs font-medium text-muted dark:text-muted-dark">Sort</label>
-            <select name="sort" defaultValue={filters.sort || 'newest'} className="w-full rounded-lg border border-line bg-transparent px-3 py-2 text-sm text-ink focus:border-primary focus:outline-none dark:border-line-dark dark:text-ink-dark">
+            <select name="sort" defaultValue={filters.sort || 'newest'} className="w-full rounded-lg border border-line bg-transparent px-3 py-2 text-sm text-ink focus:border-2 focus:border-ink focus:outline-none dark:focus:border-ink-dark dark:border-line-dark dark:text-ink-dark">
               <option value="newest">Newest first</option>
               <option value="oldest">Oldest first</option>
               <option value="confidence_high">Confidence: high → low</option>
@@ -169,11 +169,11 @@ export default function AdminQueries() {
           </div>
           <div>
             <label className="mb-1 block text-xs font-medium text-muted dark:text-muted-dark">From</label>
-            <input type="date" name="date_from" defaultValue={filters.date_from} className="w-full rounded-lg border border-line bg-transparent px-3 py-2 text-sm text-ink focus:border-primary focus:outline-none dark:border-line-dark dark:text-ink-dark" />
+            <input type="date" name="date_from" defaultValue={filters.date_from} className="w-full rounded-lg border border-line bg-transparent px-3 py-2 text-sm text-ink focus:border-2 focus:border-ink focus:outline-none dark:focus:border-ink-dark dark:border-line-dark dark:text-ink-dark" />
           </div>
           <div>
             <label className="mb-1 block text-xs font-medium text-muted dark:text-muted-dark">To</label>
-            <input type="date" name="date_to" defaultValue={filters.date_to} className="w-full rounded-lg border border-line bg-transparent px-3 py-2 text-sm text-ink focus:border-primary focus:outline-none dark:border-line-dark dark:text-ink-dark" />
+            <input type="date" name="date_to" defaultValue={filters.date_to} className="w-full rounded-lg border border-line bg-transparent px-3 py-2 text-sm text-ink focus:border-2 focus:border-ink focus:outline-none dark:focus:border-ink-dark dark:border-line-dark dark:text-ink-dark" />
           </div>
           <label className="flex items-center gap-2 self-end pb-2 text-sm text-ink dark:text-ink-dark">
             <input type="checkbox" name="flagged" value="1" defaultChecked={filters.flagged === '1'} className="h-4 w-4 rounded border-line text-primary focus:ring-primary dark:border-line-dark" />

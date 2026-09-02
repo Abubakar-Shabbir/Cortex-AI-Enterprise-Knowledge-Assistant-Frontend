@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
-import { Compass, DatabaseZap, FileText, GitBranch, Search, Sparkles, Tag } from 'lucide-react';
+import { CompassIcon as Compass, DatabaseIcon as DatabaseZap, FileTextIcon as FileText, GitBranchIcon as GitBranch, MagnifyingGlassIcon as Search, SparkleIcon as Sparkles, TagIcon as Tag } from '@phosphor-icons/react';
 import PageHeader from '../../components/PageHeader';
 import StatCard from '../../components/StatCard';
 import EmptyState from '../../components/EmptyState';
@@ -76,7 +76,7 @@ export default function KnowledgeBrowse() {
             <input
               type="text" value={searchInput} onChange={(e) => setSearchInput(e.target.value)}
               placeholder='Search topics — e.g. "ISO 27001", "Employee Onboarding"…'
-              className="w-full rounded-lg border border-line bg-surface py-2 pl-9 pr-3 text-sm text-ink placeholder:text-muted focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/15 dark:border-line-dark dark:bg-white/5 dark:text-ink-dark dark:placeholder:text-muted-dark"
+              className="w-full rounded-lg border border-line bg-surface py-2 pl-9 pr-3 text-sm text-ink placeholder:text-muted focus:border-2 focus:border-ink focus:outline-none dark:focus:border-ink-dark dark:border-line-dark dark:bg-white/5 dark:text-ink-dark dark:placeholder:text-muted-dark"
             />
           </div>
           <button type="submit" className="inline-flex items-center gap-1.5 rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-primary-dark">

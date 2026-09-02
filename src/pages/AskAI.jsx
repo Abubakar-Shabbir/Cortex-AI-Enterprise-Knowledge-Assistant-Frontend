@@ -1,17 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import DOMPurify from 'dompurify';
 import { marked } from 'marked';
-import {
-  AlertTriangle,
-  ChevronDown,
-  RotateCcw,
-  Send,
-  SlidersHorizontal,
-  Sparkles,
-  Square,
-  WandSparkles,
-  X,
-} from 'lucide-react';
+import { WarningIcon as AlertTriangle, CaretDownIcon as ChevronDown, ArrowCounterClockwiseIcon as RotateCcw, PaperPlaneTiltIcon as Send, FadersHorizontalIcon as SlidersHorizontal, SparkleIcon as Sparkles, SquareIcon as Square, MagicWandIcon as WandSparkles, XIcon as X } from '@phosphor-icons/react';
 import { api } from '../api/client';
 import { streamAsk, useAskContext, useAskLog } from '../api/hooks';
 import AskResult from '../components/AskResult';
@@ -202,7 +192,7 @@ export default function AskAI() {
   return (
     <div className="fade-in-up">
       <div className="mb-6 flex items-center gap-3">
-        <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-primary to-primary-light text-white shadow-soft">
+        <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-primary text-white shadow-soft">
           <Sparkles className="h-5 w-5" />
         </div>
         <div>
@@ -244,7 +234,7 @@ export default function AskAI() {
                 required
                 disabled={isBusy}
                 placeholder="e.g. What are the key findings in the Q3 report?"
-                className="w-full resize-none rounded-lg border border-line bg-surface p-3.5 text-sm text-ink placeholder:text-muted focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/15 disabled:cursor-not-allowed disabled:opacity-60 dark:border-line-dark dark:bg-white/5 dark:text-ink-dark dark:placeholder:text-muted-dark"
+                className="w-full resize-none rounded-lg border border-line bg-surface p-3.5 text-sm text-ink placeholder:text-muted focus:border-2 focus:border-ink focus:outline-none dark:focus:border-ink-dark disabled:cursor-not-allowed disabled:opacity-60 dark:border-line-dark dark:bg-white/5 dark:text-ink-dark dark:placeholder:text-muted-dark"
                 onKeyDown={(e) => {
                   if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
                     e.preventDefault();
@@ -355,7 +345,7 @@ export default function AskAI() {
                       type="date"
                       value={uploadedAfter}
                       onChange={(e) => setUploadedAfter(e.target.value)}
-                      className="w-full rounded-lg border border-line bg-card px-3 py-2 text-sm text-ink focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/15 dark:border-line-dark dark:bg-white/5 dark:text-ink-dark"
+                      className="w-full rounded-lg border border-line bg-card px-3 py-2 text-sm text-ink focus:border-2 focus:border-ink focus:outline-none dark:focus:border-ink-dark dark:border-line-dark dark:bg-white/5 dark:text-ink-dark"
                     />
                   </div>
                   <div>
@@ -364,7 +354,7 @@ export default function AskAI() {
                       type="date"
                       value={uploadedBefore}
                       onChange={(e) => setUploadedBefore(e.target.value)}
-                      className="w-full rounded-lg border border-line bg-card px-3 py-2 text-sm text-ink focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/15 dark:border-line-dark dark:bg-white/5 dark:text-ink-dark"
+                      className="w-full rounded-lg border border-line bg-card px-3 py-2 text-sm text-ink focus:border-2 focus:border-ink focus:outline-none dark:focus:border-ink-dark dark:border-line-dark dark:bg-white/5 dark:text-ink-dark"
                     />
                   </div>
                   <div>
@@ -373,7 +363,7 @@ export default function AskAI() {
                       value={collectionId}
                       onChange={(e) => setCollectionId(e.target.value)}
                       disabled={!context?.collections?.length}
-                      className="w-full rounded-lg border border-line bg-card px-3 py-2 text-sm text-ink focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/15 disabled:opacity-50 dark:border-line-dark dark:bg-white/5 dark:text-ink-dark"
+                      className="w-full rounded-lg border border-line bg-card px-3 py-2 text-sm text-ink focus:border-2 focus:border-ink focus:outline-none dark:focus:border-ink-dark disabled:opacity-50 dark:border-line-dark dark:bg-white/5 dark:text-ink-dark"
                     >
                       <option value="">Any collection</option>
                       {context?.collections?.map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}
@@ -385,7 +375,7 @@ export default function AskAI() {
                       value={categoryId}
                       onChange={(e) => setCategoryId(e.target.value)}
                       disabled={!context?.categories?.length}
-                      className="w-full rounded-lg border border-line bg-card px-3 py-2 text-sm text-ink focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/15 disabled:opacity-50 dark:border-line-dark dark:bg-white/5 dark:text-ink-dark"
+                      className="w-full rounded-lg border border-line bg-card px-3 py-2 text-sm text-ink focus:border-2 focus:border-ink focus:outline-none dark:focus:border-ink-dark disabled:opacity-50 dark:border-line-dark dark:bg-white/5 dark:text-ink-dark"
                     >
                       <option value="">Any category</option>
                       {context?.categories?.map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}
@@ -397,7 +387,7 @@ export default function AskAI() {
                       value={tagId}
                       onChange={(e) => setTagId(e.target.value)}
                       disabled={!context?.tags?.length}
-                      className="w-full rounded-lg border border-line bg-card px-3 py-2 text-sm text-ink focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/15 disabled:opacity-50 dark:border-line-dark dark:bg-white/5 dark:text-ink-dark"
+                      className="w-full rounded-lg border border-line bg-card px-3 py-2 text-sm text-ink focus:border-2 focus:border-ink focus:outline-none dark:focus:border-ink-dark disabled:opacity-50 dark:border-line-dark dark:bg-white/5 dark:text-ink-dark"
                     >
                       <option value="">Any tag</option>
                       {context?.tags?.map((t) => <option key={t.id} value={t.id}>{t.name}</option>)}

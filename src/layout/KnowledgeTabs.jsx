@@ -1,4 +1,4 @@
-import { Compass, GitBranch, Lightbulb, Quote, Share2 } from 'lucide-react';
+import { CompassIcon as Compass, GitBranchIcon as GitBranch, LightbulbIcon as Lightbulb, QuotesIcon as Quote, ShareNetworkIcon as Share2 } from '@phosphor-icons/react';
 import { Link, useLocation } from 'react-router-dom';
 
 const TABS = [

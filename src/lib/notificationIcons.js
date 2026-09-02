@@ -1,23 +1,25 @@
 import {
-  AlertTriangle, BadgeCheck, Bell, CheckCircle, FileUp, KeyRound, Megaphone,
-  Share2, Shield, ShieldAlert, ShieldOff, Sparkles, UserCheck, UserX, XCircle,
-} from 'lucide-react';
+  WarningIcon as AlertTriangle, CertificateIcon as BadgeCheck, BellIcon as Bell, CheckCircleIcon as CheckCircle,
+  FileArrowUpIcon as FileUp, KeyIcon as KeyRound, MegaphoneIcon as Megaphone, ShareNetworkIcon as Share2,
+  ShieldIcon as Shield, ShieldWarningIcon as ShieldAlert, ShieldSlashIcon as ShieldOff, SparkleIcon as Sparkles,
+  UserCheckIcon as UserCheck, UserMinusIcon as UserX, XCircleIcon as XCircle,
+} from '@phosphor-icons/react';
 
-// Maps the kebab-case lucide icon names RAG.notification_views._NOTIFICATION_ICONS
-// sends (e.g. "share-2") to the matching lucide-react component.
+// Maps the kebab-case Phosphor icon names RAG.notification_views._NOTIFICATION_ICONS
+// sends (e.g. "share-network") to the matching Phosphor icon component.
 export const NOTIFICATION_ICONS = {
-  'share-2': Share2,
-  'shield-off': ShieldOff,
-  'file-up': FileUp,
+  'share-network': Share2,
+  'shield-slash': ShieldOff,
+  'file-arrow-up': FileUp,
   'check-circle': CheckCircle,
   'x-circle': XCircle,
-  sparkles: Sparkles,
-  'alert-triangle': AlertTriangle,
-  'badge-check': BadgeCheck,
-  'key-round': KeyRound,
+  sparkle: Sparkles,
+  warning: AlertTriangle,
+  certificate: BadgeCheck,
+  key: KeyRound,
   shield: Shield,
-  'shield-alert': ShieldAlert,
-  'user-x': UserX,
+  'shield-warning': ShieldAlert,
+  'user-minus': UserX,
   'user-check': UserCheck,
   megaphone: Megaphone,
   bell: Bell,

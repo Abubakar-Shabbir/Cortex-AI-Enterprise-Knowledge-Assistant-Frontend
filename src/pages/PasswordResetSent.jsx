@@ -1,4 +1,4 @@
-import { ArrowLeft, MailCheck } from 'lucide-react';
+import { ArrowLeftIcon as ArrowLeft, EnvelopeSimpleIcon as MailCheck } from '@phosphor-icons/react';
 import { Link } from 'react-router-dom';
 import AuthLayout from '../layout/AuthLayout';
 

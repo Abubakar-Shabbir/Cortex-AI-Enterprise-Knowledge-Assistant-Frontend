@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Bot, CircleAlert, Cpu, Database, Eye, Lock, Save, Scissors, SlidersHorizontal, Zap } from 'lucide-react';
+import { RobotIcon as Bot, WarningCircleIcon as CircleAlert, CpuIcon as Cpu, DatabaseIcon as Database, EyeIcon as Eye, LockIcon as Lock, FloppyDiskIcon as Save, ScissorsIcon as Scissors, FadersHorizontalIcon as SlidersHorizontal, LightningIcon as Zap } from '@phosphor-icons/react';
 import PageSkeleton from '../components/PageSkeleton';
 import Spinner from '../components/Spinner';
 import ToggleSwitch from '../components/ToggleSwitch';
@@ -97,7 +97,7 @@ export default function AdminSettings() {
                   <select
                     value={form.llm_provider}
                     onChange={(e) => set('llm_provider', e.target.value)}
-                    className="w-full rounded-lg border border-line bg-surface px-3 py-2 text-sm text-ink focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/15 dark:border-line-dark dark:bg-white/5 dark:text-ink-dark"
+                    className="w-full rounded-lg border border-line bg-surface px-3 py-2 text-sm text-ink focus:border-2 focus:border-ink focus:outline-none dark:focus:border-ink-dark dark:border-line-dark dark:bg-white/5 dark:text-ink-dark"
                   >
                     {providerOptions.map((opt) => <option key={opt.key} value={opt.key}>{opt.label}</option>)}
                   </select>
@@ -109,7 +109,7 @@ export default function AdminSettings() {
                     <select
                       value={form[opt.field_name]}
                       onChange={(e) => set(opt.field_name, e.target.value)}
-                      className="w-full rounded-lg border border-line bg-surface px-3 py-2 text-sm text-ink focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/15 dark:border-line-dark dark:bg-white/5 dark:text-ink-dark"
+                      className="w-full rounded-lg border border-line bg-surface px-3 py-2 text-sm text-ink focus:border-2 focus:border-ink focus:outline-none dark:focus:border-ink-dark dark:border-line-dark dark:bg-white/5 dark:text-ink-dark"
                     >
                       {opt.model_choices.map((m) => <option key={m} value={m}>{m}</option>)}
                     </select>
@@ -204,17 +204,17 @@ export default function AdminSettings() {
               <div className="grid grid-cols-2 gap-2.5">
                 <div>
                   <label className="mb-1 block text-xs font-medium text-muted dark:text-muted-dark">Chunk size</label>
-                  <input type="number" min="100" value={form.chunk_size} onChange={(e) => set('chunk_size', parseInt(e.target.value, 10) || 0)} className="w-full rounded-lg border border-line bg-surface px-3 py-2 text-sm text-ink focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/15 dark:border-line-dark dark:bg-white/5 dark:text-ink-dark" />
+                  <input type="number" min="100" value={form.chunk_size} onChange={(e) => set('chunk_size', parseInt(e.target.value, 10) || 0)} className="w-full rounded-lg border border-line bg-surface px-3 py-2 text-sm text-ink focus:border-2 focus:border-ink focus:outline-none dark:focus:border-ink-dark dark:border-line-dark dark:bg-white/5 dark:text-ink-dark" />
                 </div>
                 <div>
                   <label className="mb-1 block text-xs font-medium text-muted dark:text-muted-dark">Chunk overlap</label>
-                  <input type="number" min="0" value={form.chunk_overlap} onChange={(e) => set('chunk_overlap', parseInt(e.target.value, 10) || 0)} className="w-full rounded-lg border border-line bg-surface px-3 py-2 text-sm text-ink focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/15 dark:border-line-dark dark:bg-white/5 dark:text-ink-dark" />
+                  <input type="number" min="0" value={form.chunk_overlap} onChange={(e) => set('chunk_overlap', parseInt(e.target.value, 10) || 0)} className="w-full rounded-lg border border-line bg-surface px-3 py-2 text-sm text-ink focus:border-2 focus:border-ink focus:outline-none dark:focus:border-ink-dark dark:border-line-dark dark:bg-white/5 dark:text-ink-dark" />
                 </div>
               </div>
               <p className="mb-2.5 mt-1 text-xs text-muted dark:text-muted-dark">Applies to newly-uploaded documents only — existing chunks aren't retroactively resized.</p>
 
               <label className="mb-1 block text-xs font-medium text-muted dark:text-muted-dark">Retrieval top-K</label>
-              <input type="number" min="1" max="20" value={form.top_k} onChange={(e) => set('top_k', parseInt(e.target.value, 10) || 0)} className="w-full rounded-lg border border-line bg-surface px-3 py-2 text-sm text-ink focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/15 dark:border-line-dark dark:bg-white/5 dark:text-ink-dark" />
+              <input type="number" min="1" max="20" value={form.top_k} onChange={(e) => set('top_k', parseInt(e.target.value, 10) || 0)} className="w-full rounded-lg border border-line bg-surface px-3 py-2 text-sm text-ink focus:border-2 focus:border-ink focus:outline-none dark:focus:border-ink-dark dark:border-line-dark dark:bg-white/5 dark:text-ink-dark" />
             </div>
           )}
 
@@ -263,28 +263,28 @@ export default function AdminSettings() {
                   checked={form.enable_multi_query} onChange={(v) => set('enable_multi_query', v)}
                   title="Multi-Query (RAG-Fusion)" description="Fuses results across rephrased variants." warning="+1 LLM call, adds latency."
                 />
-                <input type="number" min="1" max="10" value={form.multi_query_variants} onChange={(e) => set('multi_query_variants', parseInt(e.target.value, 10) || 0)} title="Number of variants" className="mt-2 w-24 rounded-lg border border-line bg-surface px-2 py-1 text-xs text-ink focus:border-primary focus:outline-none dark:border-line-dark dark:bg-white/5 dark:text-ink-dark" />
+                <input type="number" min="1" max="10" value={form.multi_query_variants} onChange={(e) => set('multi_query_variants', parseInt(e.target.value, 10) || 0)} title="Number of variants" className="mt-2 w-24 rounded-lg border border-line bg-surface px-2 py-1 text-xs text-ink focus:border-2 focus:border-ink focus:outline-none dark:focus:border-ink-dark dark:border-line-dark dark:bg-white/5 dark:text-ink-dark" />
               </div>
               <div>
                 <ToggleSwitch
                   checked={form.enable_dynamic_top_k} onChange={(v) => set('enable_dynamic_top_k', v)}
                   title="Dynamic Top-K" description="Widens retrieval depth for complex questions."
                 />
-                <input type="number" min="1" max="50" value={form.dynamic_top_k_max} onChange={(e) => set('dynamic_top_k_max', parseInt(e.target.value, 10) || 0)} title="Max top-K" className="mt-2 w-24 rounded-lg border border-line bg-surface px-2 py-1 text-xs text-ink focus:border-primary focus:outline-none dark:border-line-dark dark:bg-white/5 dark:text-ink-dark" />
+                <input type="number" min="1" max="50" value={form.dynamic_top_k_max} onChange={(e) => set('dynamic_top_k_max', parseInt(e.target.value, 10) || 0)} title="Max top-K" className="mt-2 w-24 rounded-lg border border-line bg-surface px-2 py-1 text-xs text-ink focus:border-2 focus:border-ink focus:outline-none dark:focus:border-ink-dark dark:border-line-dark dark:bg-white/5 dark:text-ink-dark" />
               </div>
               <div>
                 <ToggleSwitch
                   checked={form.enable_reranker} onChange={(v) => set('enable_reranker', v)}
                   title="Cross-Encoder Reranker" description="Re-scores candidates with BAAI/bge-reranker-base."
                 />
-                <input type="number" min="1" max="10" value={form.reranker_candidate_multiplier} onChange={(e) => set('reranker_candidate_multiplier', parseInt(e.target.value, 10) || 0)} title="Candidate multiplier" className="mt-2 w-24 rounded-lg border border-line bg-surface px-2 py-1 text-xs text-ink focus:border-primary focus:outline-none dark:border-line-dark dark:bg-white/5 dark:text-ink-dark" />
+                <input type="number" min="1" max="10" value={form.reranker_candidate_multiplier} onChange={(e) => set('reranker_candidate_multiplier', parseInt(e.target.value, 10) || 0)} title="Candidate multiplier" className="mt-2 w-24 rounded-lg border border-line bg-surface px-2 py-1 text-xs text-ink focus:border-2 focus:border-ink focus:outline-none dark:focus:border-ink-dark dark:border-line-dark dark:bg-white/5 dark:text-ink-dark" />
               </div>
               <div>
                 <ToggleSwitch
                   checked={form.enable_context_compression} onChange={(v) => set('enable_context_compression', v)}
                   title="Context Compression" description="Drops redundant chunks before the LLM sees them."
                 />
-                <input type="number" step="0.01" min="0" max="1" value={form.context_compression_threshold} onChange={(e) => set('context_compression_threshold', parseFloat(e.target.value) || 0)} title="Similarity threshold" className="mt-2 w-24 rounded-lg border border-line bg-surface px-2 py-1 text-xs text-ink focus:border-primary focus:outline-none dark:border-line-dark dark:bg-white/5 dark:text-ink-dark" />
+                <input type="number" step="0.01" min="0" max="1" value={form.context_compression_threshold} onChange={(e) => set('context_compression_threshold', parseFloat(e.target.value) || 0)} title="Similarity threshold" className="mt-2 w-24 rounded-lg border border-line bg-surface px-2 py-1 text-xs text-ink focus:border-2 focus:border-ink focus:outline-none dark:focus:border-ink-dark dark:border-line-dark dark:bg-white/5 dark:text-ink-dark" />
               </div>
             </div>
           </div>

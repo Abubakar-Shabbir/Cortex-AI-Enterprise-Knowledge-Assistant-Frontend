@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { Compass, Quote } from 'lucide-react';
+import { CompassIcon as Compass, QuotesIcon as Quote } from '@phosphor-icons/react';
 import PageHeader from '../../components/PageHeader';
 import EmptyState from '../../components/EmptyState';
 import PageSkeleton from '../../components/PageSkeleton';

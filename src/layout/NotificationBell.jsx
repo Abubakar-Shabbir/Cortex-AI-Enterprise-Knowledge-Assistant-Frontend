@@ -1,8 +1,8 @@
 import { useEffect, useRef, useState } from 'react';
-import { Bell } from 'lucide-react';
+import { BellIcon as Bell, ChecksIcon as CheckCheck } from '@phosphor-icons/react';
 import { Link } from 'react-router-dom';
 import { notificationIcon } from '../lib/notificationIcons';
-import { useMarkNotificationRead, useNotificationList, useNotificationUnreadCount } from '../api/hooks';
+import { useMarkAllNotificationsRead, useMarkNotificationRead, useNotificationList, useNotificationUnreadCount } from '../api/hooks';
 import { SkeletonRows } from '../components/PageSkeleton';
 
 // Port of templates/dashboard/_topbar.html's notificationBell() Alpine
@@ -14,6 +14,7 @@ export default function NotificationBell() {
   const unread = useNotificationUnreadCount();
   const list = useNotificationList(10);
   const markRead = useMarkNotificationRead();
+  const markAllRead = useMarkAllNotificationsRead();
 
   useEffect(() => {
     const onClickOutside = (e) => {
@@ -38,11 +39,12 @@ export default function NotificationBell() {
 
   return (
     <div ref={rootRef} className="relative">
-      <button onClick={toggleOpen} className="relative rounded-lg p-2 text-muted hover:bg-surface dark:text-muted-dark dark:hover:bg-white/5" aria-label="Notifications">
+      <button onClick={toggleOpen} data-tooltip={open ? undefined : 'Notifications'} className="relative rounded-lg p-2 text-muted transition-colors hover:bg-surface dark:text-muted-dark dark:hover:bg-white/5" aria-label="Notifications">
         <Bell className="h-4 w-4" />
         {unreadCount > 0 && (
           <span className="absolute -right-0.5 -top-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-primary px-0.5 text-[9px] font-semibold text-white">
-            {unreadCount > 9 ? '9+' : unreadCount}
+            <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-primary opacity-60" />
+            <span className="relative">{unreadCount > 9 ? '9+' : unreadCount}</span>
           </span>
         )}
       </button>
@@ -51,7 +53,20 @@ export default function NotificationBell() {
         <div className="fade-in-up absolute right-0 z-30 mt-2 w-80 rounded-xl border border-line bg-card p-2 shadow-soft dark:border-line-dark dark:bg-card-dark">
           <div className="flex items-center justify-between px-2 py-1.5">
             <span className="text-xs font-semibold uppercase tracking-wide text-muted dark:text-muted-dark">Notifications</span>
-            <Link to="/notifications" onClick={() => setOpen(false)} className="text-xs font-medium text-primary hover:underline dark:text-primary-soft">View all</Link>
+            <div className="flex items-center gap-2.5">
+              {unreadCount > 0 && (
+                <button
+                  type="button"
+                  onClick={() => markAllRead.mutate()}
+                  disabled={markAllRead.isPending}
+                  className="inline-flex items-center gap-1 text-xs font-medium text-muted transition-colors hover:text-primary disabled:opacity-60 dark:text-muted-dark dark:hover:text-primary-soft"
+                  title="Mark all as read"
+                >
+                  <CheckCheck className="h-3.5 w-3.5" /> Mark all read
+                </button>
+              )}
+              <Link to="/notifications" onClick={() => setOpen(false)} className="text-xs font-medium text-primary hover:underline dark:text-primary-soft">View all</Link>
+            </div>
           </div>
 
           {list.isFetching && !list.data && (

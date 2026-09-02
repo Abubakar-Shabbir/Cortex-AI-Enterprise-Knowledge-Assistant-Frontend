@@ -1,5 +1,5 @@
 import { useParams, Link } from 'react-router-dom';
-import { ArrowLeft, Shield } from 'lucide-react';
+import { ArrowLeftIcon as ArrowLeft, ShieldIcon as Shield } from '@phosphor-icons/react';
 import PageSkeleton from '../components/PageSkeleton';
 import { timeAgo, timeUntil } from '../lib/timeAgo';
 import { useAdminUserProfile } from '../api/hooks';
@@ -32,14 +32,14 @@ export default function AdminUserProfile() {
       </Link>
 
       <div className="mb-4 overflow-hidden rounded-2xl border border-line bg-card shadow-soft dark:border-line-dark dark:bg-card-dark">
-        <div className="h-14 bg-gradient-to-r from-primary-light to-primary-dark"></div>
+        <div className="h-14 bg-primary"></div>
         <div className="px-5 pb-4">
           <div className="flex flex-col gap-3 sm:flex-row sm:items-end">
             <div className="relative -mt-9 shrink-0">
               {profile.avatar_url ? (
                 <img src={profile.avatar_url} alt="" className="h-[72px] w-[72px] rounded-full object-cover ring-4 ring-card dark:ring-card-dark" />
               ) : (
-                <div className="flex h-[72px] w-[72px] items-center justify-center rounded-full bg-gradient-to-br from-primary-light to-primary-dark text-xl font-semibold text-white ring-4 ring-card dark:ring-card-dark">{initials}</div>
+                <div className="flex h-[72px] w-[72px] items-center justify-center rounded-full bg-primary text-xl font-semibold text-white ring-4 ring-card dark:ring-card-dark">{initials}</div>
               )}
               <span className={`absolute bottom-0.5 right-0.5 h-3 w-3 rounded-full ring-2 ring-card dark:ring-card-dark ${isOnline ? 'bg-success' : 'bg-muted'}`}></span>
             </div>

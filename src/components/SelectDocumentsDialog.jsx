@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { FileCheck2, Square, SquareCheck, X } from 'lucide-react';
+import { FileTextIcon as FileCheck2, SquareIcon as Square, CheckSquareIcon as SquareCheck, XIcon as X } from '@phosphor-icons/react';
 import { api } from '../api/client';
 import { SkeletonRows } from './PageSkeleton';
 
@@ -86,7 +86,7 @@ export default function SelectDocumentsDialog({ selected, onChange, triggerLabel
             <div className="border-b border-line px-5 py-3 dark:border-line-dark">
               <input
                 type="text" value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Search by title…"
-                className="w-full rounded-lg border border-line bg-transparent px-3 py-2 text-sm text-ink placeholder:text-muted focus:border-primary focus:outline-none dark:border-line-dark dark:text-ink-dark"
+                className="w-full rounded-lg border border-line bg-transparent px-3 py-2 text-sm text-ink placeholder:text-muted focus:border-2 focus:border-ink focus:outline-none dark:focus:border-ink-dark dark:border-line-dark dark:text-ink-dark"
               />
               <div className="mt-2 flex flex-wrap gap-1.5">
                 {FILE_TYPES.map((opt) => (

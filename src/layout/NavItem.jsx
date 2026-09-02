@@ -11,7 +11,7 @@ export default function NavItem({ to, href, icon: Icon, label, activeMatch }) {
 
   const className = `flex items-center gap-3 rounded-lg px-3 py-2.5 font-medium transition-all duration-150 ease-out ${
     isActive
-      ? 'bg-white/[0.08] text-white shadow-[inset_2.5px_0_0_0_#E7C8CC]'
+      ? 'bg-white/[0.08] text-white shadow-[inset_2.5px_0_0_0_#FF6B85]'
       : 'text-muted-dark hover:bg-white/[0.05] hover:text-white'
   }`;
   const iconClassName = `h-4 w-4 shrink-0 ${isActive ? 'text-primary-soft' : ''}`;

@@ -1,4 +1,4 @@
-import { Minus, TrendingDown, TrendingUp } from 'lucide-react';
+import { MinusIcon as Minus, TrendDownIcon as TrendingDown, TrendUpIcon as TrendingUp } from '@phosphor-icons/react';
 
 // Port of templates/partials/_trend_badge.html.
 export default function TrendBadge({ trend, label = 'vs last 7 days' }) {
