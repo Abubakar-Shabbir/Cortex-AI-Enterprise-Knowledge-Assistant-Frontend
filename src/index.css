@@ -219,6 +219,24 @@ html {
 }
 
 /* ============================================================
+   Shared Modal (components/Modal.jsx) - every dialog across the app
+   (billing's "Add Credits"/"New Plan" popups included) mounts through
+   this one component instead of hand-rolling `fixed inset-0` markup,
+   so they all get the same quiet backdrop-fade + pop-in entrance
+   instead of popping onto the screen instantly. Reuses the same
+   `pop-in` keyframe the auth flow already defined above, matching
+   this system's "one restrained flourish, not a showy one" convention
+   (see the flat-button-fill comment further down this file).
+   ============================================================ */
+.modal-backdrop-in { animation: modal-backdrop-in 0.18s ease both; }
+@keyframes modal-backdrop-in { from { opacity: 0; } to { opacity: 1; } }
+.modal-pop-in { animation: pop-in 0.22s cubic-bezier(0.16, 1, 0.3, 1) both; }
+
+@media (prefers-reduced-motion: reduce) {
+  .modal-backdrop-in, .modal-pop-in { animation: none !important; }
+}
+
+/* ============================================================
    Primary buttons - flat fill (Airbnb-style system): a solid
    `bg-primary` fill IS the button, no gradient, no lift, no colored
    glow - those read as "SaaS trying hard" rather than the confident,

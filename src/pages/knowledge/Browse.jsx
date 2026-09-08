@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
-import { CompassIcon as Compass, DatabaseIcon as DatabaseZap, FileTextIcon as FileText, GitBranchIcon as GitBranch, MagnifyingGlassIcon as Search, SparkleIcon as Sparkles, TagIcon as Tag } from '@phosphor-icons/react';
+import { CompassIcon as Compass, DatabaseIcon as DatabaseZap, FileTextIcon as FileText, GitBranchIcon as GitBranch, LockKeyIcon as LockKey, MagnifyingGlassIcon as Search, SparkleIcon as Sparkles, TagIcon as Tag } from '@phosphor-icons/react';
 import PageHeader from '../../components/PageHeader';
 import StatCard from '../../components/StatCard';
 import EmptyState from '../../components/EmptyState';
@@ -17,7 +17,7 @@ export default function KnowledgeBrowse() {
   const page = searchParams.get('page') || '1';
 
   const [searchInput, setSearchInput] = useState(query);
-  const { data, isLoading } = useKnowledgeBrowse({ q: query, type: selectedType, page });
+  const { data, isLoading, isError, error } = useKnowledgeBrowse({ q: query, type: selectedType, page });
 
   const submitSearch = (e) => {
     e.preventDefault();
@@ -26,6 +26,9 @@ export default function KnowledgeBrowse() {
 
   const selectType = (type) => setSearchParams({ ...(query ? { q: query } : {}), ...(type ? { type } : {}) });
 
+  if (isError && error?.status === 403) {
+    return <EmptyState icon={LockKey} title="Knowledge Base isn't available" message={error.message} />;
+  }
   if (isLoading || !data) return <PageSkeleton variant="list" />;
 
   const { overview, recently_updated: recentlyUpdated, topics, pagination } = data;

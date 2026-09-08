@@ -11,6 +11,7 @@ import StatCard from '../components/StatCard';
 import ShareModal from '../components/ShareModal';
 import Skeleton from '../components/Skeleton';
 import Spinner from '../components/Spinner';
+import StatsSyncBadge from '../components/StatsSyncBadge';
 import VersionsModal from '../components/VersionsModal';
 import DocumentsTabs from '../layout/DocumentsTabs';
 
@@ -44,7 +45,7 @@ export default function Documents() {
     page: searchParams.get('page') || '1',
   };
 
-  const { data, isLoading } = useDocuments(filters);
+  const { data, isLoading, isFetching } = useDocuments(filters);
   const { data: meta } = useDocumentsMeta();
   const uploadMutation = useUploadDocument();
   const deleteMutation = useDeleteDocument();
@@ -114,6 +115,7 @@ export default function Documents() {
       <PageHeader title="Documents" subtitle="Upload once, reuse everywhere — the single source of truth for what your assistant can answer from." />
       <DocumentsTabs />
 
+      <StatsSyncBadge show={isFetching && !isLoading} />
       <div className="mb-6 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-5">
         <StatCard icon={FileText} label="Total Documents" value={stats?.total_documents ?? 0} numeric />
         <StatCard icon={CheckCircle2} label="Fully Ready" value={stats?.embedded_count ?? 0} numeric />
@@ -123,7 +125,7 @@ export default function Documents() {
       </div>
 
       <div className="mb-6 rounded-xl border border-line bg-card shadow-soft dark:border-line-dark dark:bg-card-dark">
-        <button onClick={() => setUploadOpen((v) => !v)} className="flex w-full items-center justify-between px-5 py-4">
+        <button onClick={() => setUploadOpen((v) => !v)} data-testid="toggle-upload-form" className="flex w-full items-center justify-between px-5 py-4">
           <span className="flex items-center gap-2.5 text-sm font-semibold text-ink dark:text-ink-dark">
             <UploadCloud className="h-4 w-4 text-primary dark:text-primary-soft" /> Upload Document
           </span>
@@ -141,7 +143,7 @@ export default function Documents() {
               <div>
                 <label className="mb-1.5 block text-xs font-medium text-muted dark:text-muted-dark">File (PDF, DOCX, TXT — max 20 MB)</label>
                 <input
-                  type="file" name="document" accept=".pdf,.docx,.txt" required
+                  type="file" name="document" accept=".pdf,.docx,.txt" required data-testid="upload-file-input"
                   className="w-full rounded-lg border border-line bg-surface px-3.5 py-2 text-sm text-ink file:mr-3 file:rounded-md file:border-0 file:bg-primary file:px-3 file:py-1.5 file:text-xs file:font-semibold file:text-white dark:border-line-dark dark:bg-white/5 dark:text-ink-dark"
                 />
                 <p className="mt-1.5 text-xs text-muted dark:text-muted-dark">The document's title is taken from the file name — upload just saves the file; click <strong>Embed</strong> on its row below when you're ready to process it.</p>
@@ -168,7 +170,7 @@ export default function Documents() {
               </div>
 
               <div>
-                <button type="submit" disabled={uploadMutation.isPending} className="inline-flex items-center gap-2 rounded-lg bg-primary px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-primary-dark disabled:opacity-60">
+                <button type="submit" disabled={uploadMutation.isPending} data-testid="upload-submit" className="inline-flex items-center gap-2 rounded-lg bg-primary px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-primary-dark disabled:opacity-60">
                   {uploadMutation.isPending ? <Spinner size={16} /> : <UploadCloud className="h-4 w-4" />} {uploadMutation.isPending ? 'Uploading…' : 'Upload'}
                 </button>
               </div>

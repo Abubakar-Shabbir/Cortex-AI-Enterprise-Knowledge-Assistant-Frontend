@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { Navigate, useNavigate } from 'react-router-dom';
+import { Navigate, useLocation, useNavigate } from 'react-router-dom';
 import { WarningCircleIcon as AlertCircle, EnvelopeSimpleIcon as MailCheck, ArrowsClockwiseIcon as RefreshCw, ShieldCheckIcon as ShieldCheck } from '@phosphor-icons/react';
 import AuthLayout from '../layout/AuthLayout';
 import Spinner from '../components/Spinner';
@@ -13,6 +13,7 @@ const RESEND_COOLDOWN_DEFAULT = 60;
 // resend-cooldown progress bar.
 export default function VerifyOtp() {
   const navigate = useNavigate();
+  const location = useLocation();
   const { refresh } = useSession();
   const status = useVerifyOtpStatus();
   const verify = useVerifyOtp();
@@ -88,8 +89,19 @@ export default function VerifyOtp() {
     setError('');
     try {
       await verify.mutateAsync(code);
-      await refresh();
-      navigate('/', { replace: true });
+      const session = await refresh();
+      // A fresh Personal Workspace signup (no invitation/company `from`
+      // target to honor) gets one interstitial stop - "pick a plan
+      // first" - before landing on the Dashboard, mirroring the
+      // signup-time plan step common to most SaaS onboarding flows.
+      // Company signups and invitation-flow signups skip straight to
+      // their normal destination; Personal has no equivalent org
+      // context to gate this behind (see SelectPlan.jsx).
+      if (!location.state?.from && session?.account_type === 'personal') {
+        navigate('/select-plan', { replace: true });
+      } else {
+        navigate(location.state?.from || '/', { replace: true });
+      }
     } catch (err) {
       setDigits(['', '', '', '', '', '']);
       focusDigit(0);

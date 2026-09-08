@@ -6,6 +6,7 @@ import { IconContext } from '@phosphor-icons/react'
 import './index.css'
 import App from './App.jsx'
 import { SessionProvider } from './auth/SessionContext.jsx'
+import { OrganizationProvider } from './organizations/OrganizationContext.jsx'
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -29,7 +30,9 @@ createRoot(document.getElementById('root')).render(
       <BrowserRouter basename="/">
         <QueryClientProvider client={queryClient}>
           <SessionProvider>
-            <App />
+            <OrganizationProvider>
+              <App />
+            </OrganizationProvider>
           </SessionProvider>
         </QueryClientProvider>
       </BrowserRouter>

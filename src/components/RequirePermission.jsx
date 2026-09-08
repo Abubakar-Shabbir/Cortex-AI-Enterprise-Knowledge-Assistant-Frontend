@@ -10,10 +10,17 @@ import EmptyState from './EmptyState';
 // (e.g. AI Tasks) would otherwise render its full static UI before the
 // first request ever 403s. Reads the same useSession().hasPermission()
 // source of truth the sidebar does, so the two can't disagree.
-export default function RequirePermission({ codename }) {
+export default function RequirePermission({ codename, anyOf }) {
   const { hasPermission } = useSession();
 
-  if (!hasPermission(codename)) {
+  // Most routes need exactly one codename; a few (e.g. System Logs,
+  // gated on either system.view_ai_logs or activity.view_all_logs -
+  // same OR the sidebar itself uses) need "holds at least one of
+  // these" instead - `anyOf` covers that without forcing every caller
+  // through an array for the common single-codename case.
+  const allowed = anyOf ? anyOf.some((code) => hasPermission(code)) : hasPermission(codename);
+
+  if (!allowed) {
     return (
       <EmptyState
         icon={ShieldAlert}

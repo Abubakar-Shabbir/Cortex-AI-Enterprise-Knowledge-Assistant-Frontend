@@ -28,6 +28,19 @@ export function getCsrfToken() {
   return csrfToken;
 }
 
+// Which organization workspace is currently active, mirrored here by
+// OrganizationContext whenever it changes so every request (not just
+// the ones a component remembers to annotate) carries it. Personal
+// Workspace (null) sends no header at all - see
+// org_permission_service.resolve_request_organization() on the
+// backend for why that's the deliberate "unchanged, pre-multi-tenancy
+// behavior" default rather than an empty-string sentinel.
+let activeOrganizationSlug = null;
+
+export function setActiveOrganizationSlug(slug) {
+  activeOrganizationSlug = slug || null;
+}
+
 function buildUrl(path) {
   if (!path.startsWith("/")) {
     path = `/${path}`;
@@ -70,6 +83,10 @@ async function request(
 
   if (csrfToken && !["GET", "HEAD", "OPTIONS"].includes(verb)) {
     headers["X-CSRFToken"] = csrfToken;
+  }
+
+  if (activeOrganizationSlug) {
+    headers["X-Organization-Slug"] = activeOrganizationSlug;
   }
 
   const url = buildUrl(path);

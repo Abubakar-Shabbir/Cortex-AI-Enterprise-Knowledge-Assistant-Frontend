@@ -1,4 +1,5 @@
-import { CompassIcon as Compass, DownloadSimpleIcon as Download, FileTextIcon as FileText, MinusIcon as Minus, ChatCircleIcon as MessageSquare, SparkleIcon as Sparkles, TrendDownIcon as TrendingDown, TrendUpIcon as TrendingUp } from '@phosphor-icons/react';
+import { CompassIcon as Compass, DownloadSimpleIcon as Download, FileTextIcon as FileText, LockKeyIcon as LockKey, MinusIcon as Minus, ChatCircleIcon as MessageSquare, SparkleIcon as Sparkles, TrendDownIcon as TrendingDown, TrendUpIcon as TrendingUp } from '@phosphor-icons/react';
+import EmptyState from '../components/EmptyState';
 import PageHeader from '../components/PageHeader';
 import TrendBadge from '../components/TrendBadge';
 import PageSkeleton from '../components/PageSkeleton';
@@ -15,8 +16,11 @@ const DIRECTION_BAR_CLASS = { up: 'bg-success', down: 'bg-danger' };
 
 // Port of templates/reports.html.
 export default function Reports() {
-  const { data, isLoading } = useReports();
+  const { data, isLoading, isError, error } = useReports();
 
+  if (isError && error?.status === 403) {
+    return <EmptyState icon={LockKey} title="Reports isn't available" message={error.message} />;
+  }
   if (isLoading || !data) return <PageSkeleton variant="detail" />;
 
   const {

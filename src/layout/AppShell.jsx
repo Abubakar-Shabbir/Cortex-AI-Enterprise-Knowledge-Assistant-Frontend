@@ -5,9 +5,11 @@ import Topbar from './Topbar';
 import Breadcrumbs from './Breadcrumbs';
 import PageSkeleton from '../components/PageSkeleton';
 import usePageTitle from '../hooks/usePageTitle';
+import { SidebarCollapseProvider, useSidebarCollapse } from './SidebarCollapseContext';
 
-export default function AppShell() {
+function AppShellInner() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const { collapsed } = useSidebarCollapse();
   const location = useLocation();
   usePageTitle();
 
@@ -15,7 +17,7 @@ export default function AppShell() {
     <div className="min-h-screen flex">
       <Sidebar open={sidebarOpen} onClose={() => setSidebarOpen(false)} />
 
-      <div className="flex-1 min-w-0 flex flex-col lg:pl-64">
+      <div className={`flex-1 min-w-0 flex flex-col transition-[padding] duration-200 ${collapsed ? 'lg:pl-[76px]' : 'lg:pl-64'}`}>
         <Topbar onOpenSidebar={() => setSidebarOpen(true)} />
 
         <main className="relative flex-1 px-4 sm:px-6 lg:px-8 py-6 lg:py-8 w-full max-w-[1600px] mx-auto">
@@ -34,5 +36,13 @@ export default function AppShell() {
         </main>
       </div>
     </div>
+  );
+}
+
+export default function AppShell() {
+  return (
+    <SidebarCollapseProvider>
+      <AppShellInner />
+    </SidebarCollapseProvider>
   );
 }

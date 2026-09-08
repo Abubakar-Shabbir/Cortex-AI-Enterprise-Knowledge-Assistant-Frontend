@@ -247,57 +247,69 @@ export default function AskResult({ result, appliedFilterLabels = [], onAskAgain
         </div>
       )}
 
-      {result.sources?.length > 0 && (
-        <div className="border-t border-line px-5 py-5 dark:border-line-dark">
-          <h3 className="mb-3 text-xs font-semibold uppercase tracking-wide text-muted dark:text-muted-dark">
-            Sources
-          </h3>
-          <div className="space-y-3">
-            {result.sources.map((source, i) => {
-              const n = i + 1;
-              return (
-                <div
-                  key={n}
-                  data-source-number={n}
-                  className={`rounded-xl border p-3.5 transition ${
-                    highlighted === String(n)
-                      ? 'border-primary/50 bg-primary/5 ring-2 ring-primary/40 dark:border-primary-soft/50 dark:bg-primary/10'
-                      : 'border-line bg-surface/80 hover:border-primary/25 dark:border-line-dark dark:bg-white/[0.04] dark:hover:border-primary-soft/30'
-                  }`}
-                >
-                  <div className="mb-1.5 flex items-center justify-between gap-2">
-                    <span className="flex min-w-0 items-center gap-1.5 truncate text-sm font-medium text-ink dark:text-ink-dark">
-                      <FileText className="h-3.5 w-3.5 shrink-0 text-primary dark:text-primary-soft" />
-                      <span className="truncate">{source.document}</span>
-                      <span className="shrink-0 text-muted dark:text-muted-dark">· chunk {source.chunk_number}</span>
-                    </span>
-                    <span className="flex shrink-0 items-center gap-1.5">
-                      {source.citation_number && (
-                        <span className="rounded-full bg-primary/10 px-2 py-0.5 text-[11px] font-semibold text-primary dark:bg-primary-soft/10 dark:text-primary-soft">
-                          Cited [{source.citation_number}]
-                        </span>
-                      )}
-                      <span className="rounded-full border border-line px-2 py-0.5 text-[11px] font-medium capitalize text-muted dark:border-line-dark dark:text-muted-dark">
-                        {source.search_type}
-                      </span>
-                    </span>
-                  </div>
-                  <p className={`text-xs leading-relaxed text-muted dark:text-muted-dark ${!expandedSources[n] ? 'line-clamp-2' : ''}`}>
-                    {source.content}
-                  </p>
-                  <button
-                    type="button"
-                    onClick={() => setExpandedSources((s) => ({ ...s, [n]: !s[n] }))}
-                    className="mt-1.5 text-[11px] font-semibold text-primary hover:underline dark:text-primary-soft"
+      {(() => {
+        // Only sources the answer actually cited are worth showing here -
+        // retrieval can pull in chunks the model ended up not using (or,
+        // since the grounding rules changed, an answer can lean partly or
+        // fully on general knowledge), and listing every retrieved chunk
+        // regardless made it look like content the answer never touched
+        // was still "used". `n` must stay the source's real
+        // citation_number (its position in the original retrieval order),
+        // not its index in this filtered list, since that's the number
+        // the [n] markers in the answer and the scroll-to-source click
+        // handler above both reference.
+        const citedSources = (result.sources || []).filter((source) => source.citation_number);
+        if (citedSources.length === 0) return null;
+        return (
+          <div className="border-t border-line px-5 py-5 dark:border-line-dark">
+            <h3 className="mb-3 text-xs font-semibold uppercase tracking-wide text-muted dark:text-muted-dark">
+              Sources
+            </h3>
+            <div className="space-y-3">
+              {citedSources.map((source) => {
+                const n = source.citation_number;
+                return (
+                  <div
+                    key={n}
+                    data-source-number={n}
+                    className={`rounded-xl border p-3.5 transition ${
+                      highlighted === String(n)
+                        ? 'border-primary/50 bg-primary/5 ring-2 ring-primary/40 dark:border-primary-soft/50 dark:bg-primary/10'
+                        : 'border-line bg-surface/80 hover:border-primary/25 dark:border-line-dark dark:bg-white/[0.04] dark:hover:border-primary-soft/30'
+                    }`}
                   >
-                    {expandedSources[n] ? 'Show less' : 'Show more'}
-                  </button>
-                </div>
-              );
-            })}
+                    <div className="mb-1.5 flex items-center justify-between gap-2">
+                      <span className="flex min-w-0 items-center gap-1.5 truncate text-sm font-medium text-ink dark:text-ink-dark">
+                        <FileText className="h-3.5 w-3.5 shrink-0 text-primary dark:text-primary-soft" />
+                        <span className="truncate">{source.document}</span>
+                        <span className="shrink-0 text-muted dark:text-muted-dark">· chunk {source.chunk_number}</span>
+                      </span>
+                      <span className="flex shrink-0 items-center gap-1.5">
+                        <span className="rounded-full bg-primary/10 px-2 py-0.5 text-[11px] font-semibold text-primary dark:bg-primary-soft/10 dark:text-primary-soft">
+                          Cited [{n}]
+                        </span>
+                        <span className="rounded-full border border-line px-2 py-0.5 text-[11px] font-medium capitalize text-muted dark:border-line-dark dark:text-muted-dark">
+                          {source.search_type}
+                        </span>
+                      </span>
+                    </div>
+                    <p className={`text-xs leading-relaxed text-muted dark:text-muted-dark ${!expandedSources[n] ? 'line-clamp-2' : ''}`}>
+                      {source.content}
+                    </p>
+                    <button
+                      type="button"
+                      onClick={() => setExpandedSources((s) => ({ ...s, [n]: !s[n] }))}
+                      className="mt-1.5 text-[11px] font-semibold text-primary hover:underline dark:text-primary-soft"
+                    >
+                      {expandedSources[n] ? 'Show less' : 'Show more'}
+                    </button>
+                  </div>
+                );
+              })}
+            </div>
           </div>
-        </div>
-      )}
+        );
+      })()}
     </div>
   );
 }

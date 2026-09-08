@@ -1,4 +1,4 @@
-import { ArrowUpRightIcon as ArrowUpRight, ChartBarIcon as BarChart3, CompassIcon as Compass, ChatCircleIcon as MessageSquare, GearSixIcon as Settings, SparkleIcon as Sparkles, UploadSimpleIcon as Upload, UsersIcon as Users } from '@phosphor-icons/react';
+import { ArrowUpRightIcon as ArrowUpRight, ChartBarIcon as BarChart3, CompassIcon as Compass, FileArrowDownIcon as FileDown, ChatCircleIcon as MessageSquare, GearSixIcon as Settings, SparkleIcon as Sparkles, UploadSimpleIcon as Upload, UsersIcon as Users } from '@phosphor-icons/react';
 import { Link } from 'react-router-dom';
 import { useSession } from '../auth/SessionContext';
 
@@ -60,6 +60,9 @@ export default function QuickActions() {
         )}
         {has('pages.analytics') && (
           <QuickAction to="/analytics" icon={BarChart3} color="success" title="View Analytics" desc="Explore insights" />
+        )}
+        {has('pages.reports') && (
+          <QuickAction to="/reports" icon={FileDown} color="info" title="Download Reports" desc="Export usage & document data" />
         )}
         {canViewAdminArea && has('settings.manage_llm') && (
           <QuickAction to="/admin/settings" icon={Settings} color="accent" title="System Settings" desc="Configure system" />

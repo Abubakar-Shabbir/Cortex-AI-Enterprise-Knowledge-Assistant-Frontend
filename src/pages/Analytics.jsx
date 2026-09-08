@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { ActivityIcon as Activity, CheckCircleIcon as CheckCircle2, CompassIcon as Compass, DatabaseIcon as Database, FileArrowUpIcon as FileUp, GaugeIcon as Gauge, GitBranchIcon as GitBranch, HardDriveIcon as HardDrive, ChatCircleIcon as MessageSquare, ChartPieIcon as PieChart, SparkleIcon as Sparkles, TimerIcon as Timer } from '@phosphor-icons/react';
+import { ActivityIcon as Activity, CheckCircleIcon as CheckCircle2, CompassIcon as Compass, DatabaseIcon as Database, FileArrowUpIcon as FileUp, GaugeIcon as Gauge, GitBranchIcon as GitBranch, HardDriveIcon as HardDrive, LockKeyIcon as LockKey, ChatCircleIcon as MessageSquare, ChartPieIcon as PieChart, SparkleIcon as Sparkles, TimerIcon as Timer } from '@phosphor-icons/react';
 import PageHeader from '../components/PageHeader';
 import StatCard from '../components/StatCard';
 import EmptyState from '../components/EmptyState';
@@ -24,8 +24,11 @@ const AI_TASK_STATUS_COLOR_MAP = { Completed: SUCCESS, Failed: PRIMARY, Running:
 // 1:1 (same types, colors, scales), now driven by React state /
 // ChartCanvas instead of CDN Chart.js + json_script-read globals.
 export default function Analytics() {
-  const { data: payload, isLoading } = useAnalytics();
+  const { data: payload, isLoading, isError, error } = useAnalytics();
 
+  if (isError && error?.status === 403) {
+    return <EmptyState icon={LockKey} title="Analytics isn't available" message={error.message} />;
+  }
   if (isLoading || !payload) return <PageSkeleton variant="grid" />;
 
   const { data, ai_performance: aiPerformance, document_types: documentTypes, can_view_ai_tasks: canViewAiTasks, can_view_knowledge_base: canViewKnowledgeBase } = payload;
