@@ -9,10 +9,7 @@ import { expect, test } from '@playwright/test';
 // back) to confirm the UI actually reflects that boundary, not just
 // the API.
 //
-// Uses the seeded e2e_company_user (see fixtures.js) throughout - a
-// Personal account never has a second workspace to isolate against
-// (see account-type.spec.js for that account's own, different
-// guarantee: no organization access at all).
+// Uses the seeded e2e_company_user (see fixtures.js) throughout.
 //
 // "Company A" is deliberately never a hardcoded org - it's whichever
 // company is active when the test starts, read straight out of

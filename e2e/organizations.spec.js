@@ -58,7 +58,7 @@ test.describe('Organizations', () => {
     await expect(page.getByText('Owner', { exact: true })).toBeVisible();
   });
 
-  test('switching between two companies via the switcher works (never a Personal option)', async ({ page }) => {
+  test('switching between two companies via the switcher works', async ({ page }) => {
     const orgName = uniqueOrgName();
 
     await page.goto('/organizations');
@@ -72,9 +72,7 @@ test.describe('Organizations', () => {
     // OrganizationsList.jsx's CreateOrganizationModal onSuccess).
     await expect(page.getByTestId('workspace-switcher-trigger')).toContainText(orgName);
 
-    // Switch back to the account's original company - never a
-    // "Personal Workspace" option (see WorkspaceSwitcher's docstring:
-    // this account has none, by construction).
+    // Switch back to the account's original company.
     await switchWorkspace(page, COMPANY_SLUG);
     await expect(page.getByTestId('workspace-switcher-trigger')).toContainText('E2E Test Company');
 

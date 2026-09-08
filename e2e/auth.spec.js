@@ -11,10 +11,7 @@ test.describe('Authentication (starting logged out)', () => {
   test('logs in with valid credentials and reaches the dashboard', async ({ page }) => {
     await login(page);
     await expect(page).toHaveURL('/');
-    // Not workspace-switcher-trigger - the default login() uses the
-    // Personal account (see fixtures.js), which never shows one (see
-    // account-type.spec.js for that guarantee); this just confirms a
-    // real page of the authenticated app rendered.
+    // Just confirms a real page of the authenticated app rendered.
     await expect(page.getByRole('link', { name: 'Documents' })).toBeVisible();
   });
 

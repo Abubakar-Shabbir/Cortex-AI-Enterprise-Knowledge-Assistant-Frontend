@@ -8,7 +8,6 @@ import RequireOrgPermission from './components/RequireOrgPermission';
 import Login from './pages/Login';
 import Signup from './pages/Signup';
 import VerifyOtp from './pages/VerifyOtp';
-import SelectPlan from './pages/SelectPlan';
 import ForgotPassword from './pages/ForgotPassword';
 import PasswordResetSent from './pages/PasswordResetSent';
 import PasswordResetConfirm from './pages/PasswordResetConfirm';
@@ -55,7 +54,6 @@ const OrganizationMembers = lazy(() => import('./pages/organizations/Organizatio
 const OrganizationSettings = lazy(() => import('./pages/organizations/OrganizationSettings'));
 const OrganizationAuditLog = lazy(() => import('./pages/organizations/OrganizationAuditLog'));
 const OrganizationBilling = lazy(() => import('./pages/organizations/OrganizationBilling'));
-const PersonalBilling = lazy(() => import('./pages/PersonalBilling'));
 
 function ProtectedLayout() {
   const { loading, authenticated, mustChangePassword } = useSession();
@@ -88,7 +86,6 @@ export default function App() {
       <Route path="/login" element={<Login />} />
       <Route path="/signup" element={<Signup />} />
       <Route path="/verify-otp" element={<VerifyOtp />} />
-      <Route path="/select-plan" element={<SelectPlan />} />
       <Route path="/password-reset" element={<ForgotPassword />} />
       <Route path="/password-reset/sent" element={<PasswordResetSent />} />
       <Route path="/reset/done" element={<PasswordResetComplete />} />
@@ -160,7 +157,6 @@ export default function App() {
         <Route element={<RequireOrgPermission codename="billing.view" />}>
           <Route path="/organizations/:orgSlug/billing" element={<OrganizationBilling />} />
         </Route>
-        <Route path="/billing" element={<PersonalBilling />} />
         <Route element={<RequirePermission codename="billing.manage_plans" />}>
           <Route path="/admin/billing-plans" element={<AdminBillingPlans />} />
         </Route>

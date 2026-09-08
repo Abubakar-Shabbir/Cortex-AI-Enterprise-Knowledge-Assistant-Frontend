@@ -89,19 +89,8 @@ export default function VerifyOtp() {
     setError('');
     try {
       await verify.mutateAsync(code);
-      const session = await refresh();
-      // A fresh Personal Workspace signup (no invitation/company `from`
-      // target to honor) gets one interstitial stop - "pick a plan
-      // first" - before landing on the Dashboard, mirroring the
-      // signup-time plan step common to most SaaS onboarding flows.
-      // Company signups and invitation-flow signups skip straight to
-      // their normal destination; Personal has no equivalent org
-      // context to gate this behind (see SelectPlan.jsx).
-      if (!location.state?.from && session?.account_type === 'personal') {
-        navigate('/select-plan', { replace: true });
-      } else {
-        navigate(location.state?.from || '/', { replace: true });
-      }
+      await refresh();
+      navigate(location.state?.from || '/', { replace: true });
     } catch (err) {
       setDigits(['', '', '', '', '', '']);
       focusDigit(0);

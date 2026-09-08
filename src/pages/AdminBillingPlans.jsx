@@ -18,7 +18,6 @@ const LIMIT_FIELDS = [
 
 const TABS = [
   { key: 'company', label: 'Company Plans' },
-  { key: 'personal', label: 'Personal Plans' },
   { key: 'requests', label: 'Plan Requests' },
 ];
 
@@ -80,7 +79,7 @@ function CreatePlanModal({ planType, featureCatalog, onClose }) {
 
   return (
     <Modal
-      title={`New ${planType === 'company' ? 'Company' : 'Personal'} Plan`} icon={Plus}
+      title="New Company Plan" icon={Plus}
       onClose={onClose} bodyClassName="max-h-[70vh] space-y-4 overflow-y-auto px-6 py-5"
       footer={
         <>
@@ -235,7 +234,7 @@ function PlansPanel({ planType, plans, featureCatalog, onEditFeatures }) {
   return (
     <div className="mb-6 rounded-2xl border border-line bg-card shadow-soft dark:border-line-dark dark:bg-card-dark">
       <div className="flex items-center justify-between border-b border-line px-5 py-3.5 dark:border-line-dark">
-        <h2 className="text-sm font-semibold text-ink dark:text-ink-dark">{planType === 'company' ? 'Company' : 'Personal'} Plans</h2>
+        <h2 className="text-sm font-semibold text-ink dark:text-ink-dark">Company Plans</h2>
         <button onClick={() => setCreateOpen(true)} data-testid="open-create-plan-modal" className="inline-flex items-center gap-1.5 rounded-lg bg-primary px-3 py-1.5 text-sm font-semibold text-white transition-colors hover:bg-primary-dark">
           <Plus className="h-3.5 w-3.5" /> New Plan
         </button>
@@ -284,7 +283,7 @@ function PlanRequestRow({ pr }) {
   const action = usePlanRequestAction();
   const [note, setNote] = useState('');
   const [showReject, setShowReject] = useState(false);
-  const who = pr.organization ? pr.organization.name : pr.user?.username;
+  const who = pr.organization?.name;
 
   return (
     <div className="flex flex-wrap items-center justify-between gap-3 px-5 py-3.5">
@@ -293,7 +292,7 @@ function PlanRequestRow({ pr }) {
           {who} <span className="font-normal text-muted dark:text-muted-dark">→ {pr.requested_plan.name}</span>
         </p>
         <p className="text-xs text-muted dark:text-muted-dark">
-          {pr.organization ? 'Company' : 'Personal'} · requested by {pr.requested_by} · {new Date(pr.created_at).toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' })}
+          Requested by {pr.requested_by} · {new Date(pr.created_at).toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' })}
         </p>
       </div>
 

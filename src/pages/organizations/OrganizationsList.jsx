@@ -7,7 +7,6 @@ import Spinner from '../../components/Spinner';
 import { useCreateOrganization, useMyOrganizations, useOrganizationTypes } from '../../api/hooks';
 import { useOrganization } from '../../organizations/OrganizationContext';
 import RoleBadge from '../../organizations/RoleBadge';
-import { useSession } from '../../auth/SessionContext';
 
 function CreateOrganizationModal({ orgTypes, onClose }) {
   const navigate = useNavigate();
@@ -149,14 +148,9 @@ function OrganizationCard({ org }) {
   );
 }
 
-// The companies a Company account belongs to (see SessionContext's
-// accountType / OrganizationContext's docstring) - a Personal account
-// never has any and can't create one here; that decision is made once,
-// at signup, not through this page (RAG.api.organizations_views.
-// organizations_view rejects a POST from a Personal account too, this
-// is just the matching frontend affordance).
+// The companies a Company account belongs to - every account is a
+// Company account (Personal Workspace was removed).
 export default function OrganizationsList() {
-  const { accountType } = useSession();
   const { data, isLoading } = useMyOrganizations();
   const { data: typesData } = useOrganizationTypes();
   const [modalOpen, setModalOpen] = useState(false);
@@ -165,7 +159,6 @@ export default function OrganizationsList() {
 
   const organizations = data.organizations || [];
   const orgTypes = typesData?.organization_types || [];
-  const canCreate = accountType === 'company';
 
   return (
     <>
@@ -174,14 +167,12 @@ export default function OrganizationsList() {
           <h1 className="text-xl font-semibold tracking-tight text-ink dark:text-ink-dark">Organizations</h1>
           <p className="mt-1 text-sm text-muted dark:text-muted-dark">Companies you belong to.</p>
         </div>
-        {canCreate && (
-          <button
-            onClick={() => setModalOpen(true)} data-testid="open-create-organization-modal"
-            className="inline-flex items-center gap-2 rounded-lg bg-primary px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-primary-dark"
-          >
-            <Plus className="h-4 w-4" /> Register Another Company
-          </button>
-        )}
+        <button
+          onClick={() => setModalOpen(true)} data-testid="open-create-organization-modal"
+          className="inline-flex items-center gap-2 rounded-lg bg-primary px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-primary-dark"
+        >
+          <Plus className="h-4 w-4" /> Register Another Company
+        </button>
       </div>
 
       {organizations.length > 0 ? (

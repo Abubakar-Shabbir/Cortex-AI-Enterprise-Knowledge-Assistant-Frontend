@@ -11,23 +11,18 @@ const OrganizationContext = createContext(null);
 // in" have different lifetimes: session survives a workspace switch,
 // this doesn't survive a logout.
 //
-// Personal vs Company is a one-time signup decision (see
-// SessionContext's accountType, sourced from UserProfile.account_type)
-// - this context is NOT a Personal<->Company switcher. A "personal"
-// account never has organizations and activeOrganization is always
-// null for it; a "company" account always has activeOrganization set
-// to one of ITS OWN organizations (never null, never Personal) - the
-// only thing this context lets a company account choose is WHICH of
-// its own companies is active, for the (rare, multi-company) case of
-// belonging to more than one. The persisted choice only picks among
-// that account's real organizations, never toggles account type.
+// Every account is a Company account (Personal Workspace was
+// removed), so activeOrganization is always set to one of the
+// account's OWN organizations once loaded (never null once
+// organizations exist) - the only thing this context lets an account
+// choose is WHICH of its own companies is active, for the (rare,
+// multi-company) case of belonging to more than one.
 const STORAGE_KEY = 'cortex-active-company';
 
 export function OrganizationProvider({ children }) {
   const queryClient = useQueryClient();
-  const { authenticated, loading: sessionLoading, accountType } = useSession();
-  const isCompanyAccount = authenticated && accountType === 'company';
-  const { data, isLoading, refetch } = useMyOrganizations(isCompanyAccount);
+  const { authenticated, loading: sessionLoading } = useSession();
+  const { data, isLoading, refetch } = useMyOrganizations(authenticated);
   const [activeSlug, setActiveSlug] = useState(() => {
     try {
       return localStorage.getItem(STORAGE_KEY) || null;
@@ -36,17 +31,17 @@ export function OrganizationProvider({ children }) {
     }
   });
 
-  const organizations = isCompanyAccount ? data?.organizations || [] : [];
+  const organizations = authenticated ? data?.organizations || [] : [];
 
-  // A Company account's active org is never null: if the persisted
-  // choice doesn't match any of this account's real organizations
-  // (left over from a previous account, or that org was left/deleted),
-  // fall back to the first one (alphabetical - same ordering the
-  // backend's own default, org_permission_service.
+  // The active org is never null once organizations exist: if the
+  // persisted choice doesn't match any of this account's real
+  // organizations (left over from a previous account, or that org was
+  // left/deleted), fall back to the first one (alphabetical - same
+  // ordering the backend's own default, org_permission_service.
   // resolve_request_organization(), uses when a request carries no
   // header at all) rather than ever landing on "no active company".
   useEffect(() => {
-    if (!isCompanyAccount || isLoading || organizations.length === 0) return;
+    if (!authenticated || isLoading || organizations.length === 0) return;
 
     if (!activeSlug || !organizations.some((o) => o.slug === activeSlug)) {
       const fallback = organizations[0].slug;
@@ -57,7 +52,7 @@ export function OrganizationProvider({ children }) {
         // ignore
       }
     }
-  }, [isCompanyAccount, isLoading, organizations, activeSlug]);
+  }, [authenticated, isLoading, organizations, activeSlug]);
 
   useEffect(() => {
     if (!authenticated && !sessionLoading) {
@@ -65,9 +60,9 @@ export function OrganizationProvider({ children }) {
     }
   }, [authenticated, sessionLoading]);
 
-  // Switches which of the account's OWN companies is active - never a
-  // Personal Workspace option. Only meaningful for a Company account
-  // that belongs to more than one organization.
+  // Switches which of the account's OWN companies is active. Only
+  // meaningful for an account that belongs to more than one
+  // organization.
   const switchWorkspace = useCallback((orgSlug) => {
     if (!orgSlug) return;
     setActiveSlug(orgSlug);
@@ -79,8 +74,8 @@ export function OrganizationProvider({ children }) {
   }, []);
 
   const activeOrganization = useMemo(
-    () => (isCompanyAccount && activeSlug ? organizations.find((o) => o.slug === activeSlug) || null : null),
-    [isCompanyAccount, activeSlug, organizations],
+    () => (authenticated && activeSlug ? organizations.find((o) => o.slug === activeSlug) || null : null),
+    [authenticated, activeSlug, organizations],
   );
 
   // Mirrored into api/client.js, not read from it - every fetch() call
@@ -116,11 +111,10 @@ export function OrganizationProvider({ children }) {
   const value = useMemo(() => ({
     organizations,
     activeOrganization,
-    isCompanyAccount,
-    loading: isCompanyAccount ? isLoading : false,
+    loading: authenticated ? isLoading : false,
     refresh: refetch,
     switchWorkspace,
-  }), [organizations, activeOrganization, isCompanyAccount, isLoading, refetch, switchWorkspace]);
+  }), [organizations, activeOrganization, authenticated, isLoading, refetch, switchWorkspace]);
 
   return <OrganizationContext.Provider value={value}>{children}</OrganizationContext.Provider>;
 }

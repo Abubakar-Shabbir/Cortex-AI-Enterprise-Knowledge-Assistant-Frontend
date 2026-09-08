@@ -46,7 +46,7 @@ function SystemAiUsageCard({ aiPerformance }) {
     <div className="rounded-2xl border border-line bg-card shadow-soft dark:border-line-dark dark:bg-card-dark">
       <div className="border-b border-line px-5 py-4 dark:border-line-dark">
         <h3 className="text-sm font-semibold text-ink dark:text-ink-dark">Platform AI Usage</h3>
-        <p className="mt-0.5 text-xs text-muted dark:text-muted-dark">Every organization and every Personal Workspace, combined</p>
+        <p className="mt-0.5 text-xs text-muted dark:text-muted-dark">Every organization on the platform, combined</p>
       </div>
       {aiPerformance?.has_data ? (
         <>
@@ -102,7 +102,7 @@ export default function AdminSystemOverview() {
     <>
       <div className="mb-6 flex flex-col gap-1">
         <h1 className="text-2xl font-bold tracking-tight text-ink dark:text-ink-dark">System Overview</h1>
-        <p className="text-sm text-muted dark:text-muted-dark">Whole-platform KPIs, per-company usage, and combined AI usage — every organization and every Personal Workspace at once.</p>
+        <p className="text-sm text-muted dark:text-muted-dark">Whole-platform KPIs, per-company usage, and combined AI usage — every organization at once.</p>
       </div>
 
       <div className="mb-4 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">

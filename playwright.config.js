@@ -28,10 +28,8 @@ export default defineConfig({
   // every spec calling login() itself - auth_views.py rate-limits
   // login attempts per username, and every test starting pre-
   // authenticated is also just faster. Defaults to the Company account
-  // session since most specs (organizations, multi-tenancy isolation)
-  // need it; auth.spec.js and account-type.spec.js override
-  // storageState per-test for the cases that need to start logged out
-  // or need the Personal account instead.
+  // session since every spec needs it; auth.spec.js overrides
+  // storageState per-test for the cases that need to start logged out.
   globalSetup: './e2e/global-setup.js',
   use: {
     baseURL: 'http://localhost:5173',

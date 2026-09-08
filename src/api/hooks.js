@@ -926,38 +926,4 @@ export function usePlanRequestAction() {
   });
 }
 
-// ============================================================
-// Personal Workspace billing - completely separate credit pool/Plan
-// from any Company organization (see billing_service.py's module
-// docstring). No org_slug anywhere here - scoped to the logged-in
-// user directly, mirroring the Company hooks above one-for-one.
-// ============================================================
-
-export function usePersonalBilling() {
-  return useQuery({ queryKey: ['personal', 'billing'], queryFn: () => api.get('/personal/billing/') });
-}
-
-export function useRequestPersonalPlan() {
-  const qc = useQueryClient();
-  return useMutation({
-    mutationFn: (planId) => api.post('/personal/billing/request-plan/', { plan_id: planId }),
-    onSuccess: () => { qc.invalidateQueries({ queryKey: ['personal', 'billing'] }); },
-  });
-}
-
-export function usePersonalAiCredits() {
-  return useQuery({ queryKey: ['personal', 'billing', 'ai-credits'], queryFn: () => api.get('/personal/billing/ai-credits/') });
-}
-
-export function useAddPersonalAiCredits() {
-  const qc = useQueryClient();
-  return useMutation({
-    mutationFn: (amount) => api.post('/personal/billing/ai-credits/', { amount }),
-    onSuccess: (data) => {
-      qc.setQueryData(['personal', 'billing', 'ai-credits'], data);
-      qc.invalidateQueries({ queryKey: ['personal', 'billing'] });
-    },
-  });
-}
-
 export { setCsrfToken };

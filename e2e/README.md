@@ -2,10 +2,9 @@
 
 Real-browser tests against the actual React SPA and Django backend -
 unlike `Backend/RAG/tests.py` (server-side only, no browser), these
-confirm the Personal-vs-Company account model (see Backend/RAG/models.py's
-UserProfile.account_type), company-to-company isolation, org creation,
-and auth flows actually work from a real user's perspective, clicking
-through the real UI.
+confirm company-to-company isolation, org creation, and auth flows
+actually work from a real user's perspective, clicking through the
+real UI.
 
 ## One-time setup
 
@@ -19,10 +18,9 @@ through the real UI.
    python manage.py seed_e2e_user
    ```
 
-   This creates two accounts (see
-   `RAG/management/commands/seed_e2e_user.py` for passwords) - never a
-   real person's account:
-   - `e2e_personal_user` - a Personal account, zero organizations.
+   This creates one account (see
+   `RAG/management/commands/seed_e2e_user.py` for the password) - never
+   a real person's account:
    - `e2e_company_user` - a Company account, Owner of "E2E Test Company".
 
    The command refuses to run unless `DEBUG=True`.
@@ -50,13 +48,9 @@ already configured).
 
 - `auth.spec.js` - login (valid/invalid credentials), logout, and the
   unauthenticated-redirect-to-login guard.
-- `account-type.spec.js` - the signup-time Personal-vs-Company choice
-  screen, and that a Personal account has no company workspace UI at
-  all (no switcher, no "Organizations" nav link, no create-org button).
 - `organizations.spec.js` - registering a company (creator becomes
   Owner), the Members page, and switching between two companies via
-  the sidebar switcher (a Company account only, never a Personal
-  option - see `OrganizationContext.jsx`'s docstring).
+  the sidebar switcher.
 - `multi-tenancy-isolation.spec.js` - the flagship test: a document
   uploaded in one company must be invisible while a *different*
   company workspace is active, and vice versa - the UI-level
@@ -71,8 +65,8 @@ already configured).
   across runs (each run uses a timestamp-suffixed name to avoid slug
   collisions) - harmless for a disposable test account, but worth
   knowing if you're inspecting that database directly.
-- `global-setup.js` logs in as *both* seeded accounts once per run and
-  saves `e2e/.auth/personal.json` / `company.json` - most specs default
-  to the Company session (`playwright.config.js`'s `use.storageState`);
-  specs needing the Personal account or a logged-out start override
-  `storageState` per-`describe`/`test` (see `account-type.spec.js`).
+- `global-setup.js` logs in as the seeded account once per run and
+  saves `e2e/.auth/company.json` - every spec defaults to this session
+  (`playwright.config.js`'s `use.storageState`); specs needing a
+  logged-out start override `storageState` per-`describe`/`test` (see
+  `auth.spec.js`).

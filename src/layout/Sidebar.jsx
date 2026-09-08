@@ -5,35 +5,33 @@ import { useSession } from '../auth/SessionContext';
 import { useTheme } from '../hooks/useTheme';
 import Logo from '../components/Logo';
 import NavItem from './NavItem';
-import PersonalNav from './PersonalNav';
 import CompanyNav from './CompanyNav';
 import SuperAdminNav from './SuperAdminNav';
 import { useSidebarCollapse } from './SidebarCollapseContext';
 
 // Portal -> nav-tree component. `portal` is backend-computed
 // (session.portal - see RAG/api/auth_views.py's _resolve_portal()) and
-// is the ONLY thing that decides which of the three trees renders -
-// never accountType/canViewAdminArea checked independently here, so
-// this can't drift out of sync with what the backend actually
-// authorizes. Falls back to PersonalNav for a not-yet-loaded/unknown
-// portal value rather than rendering nothing.
+// is the ONLY thing that decides which tree renders - never
+// accountType/canViewAdminArea checked independently here, so this
+// can't drift out of sync with what the backend actually authorizes.
+// Falls back to CompanyNav for a not-yet-loaded/unknown portal value
+// rather than rendering nothing - every account is a Company account
+// now (Personal Workspace was removed).
 const PORTAL_NAV = {
-  personal: PersonalNav,
   company: CompanyNav,
   platform_admin: SuperAdminNav,
 };
 
 const PORTAL_LABEL = {
-  personal: 'Personal',
   company: 'Company Portal',
   platform_admin: 'Platform Admin',
 };
 
 // The shared sidebar shell (frame, brand header, profile/logout menu,
 // dark-mode toggle) - every portal reuses this exact chrome; only the
-// nav tree in between (PersonalNav/CompanyNav/SuperAdminNav) differs.
-// Port of templates/dashboard/_sidebar.html, now split three ways -
-// see AppShell.jsx for where `portal` comes from.
+// nav tree in between (CompanyNav/SuperAdminNav) differs. Port of
+// templates/dashboard/_sidebar.html - see AppShell.jsx for where
+// `portal` comes from.
 export default function Sidebar({ open, onClose }) {
   const { permissions, user, role, logout, portal } = useSession();
   const { isDark, toggle } = useTheme();
@@ -41,7 +39,7 @@ export default function Sidebar({ open, onClose }) {
   const [menuOpen, setMenuOpen] = useState(false);
 
   const has = (code) => permissions.includes(code);
-  const NavTree = PORTAL_NAV[portal] || PersonalNav;
+  const NavTree = PORTAL_NAV[portal] || CompanyNav;
   const isPlatformAdmin = portal === 'platform_admin';
 
   const initials = `${(user?.first_name || user?.username || '?')[0] || ''}${(user?.last_name || '')[0] || ''}`.toUpperCase();
@@ -65,7 +63,7 @@ export default function Sidebar({ open, onClose }) {
           <div className={`relative min-w-0 leading-tight ${collapsed ? 'lg:hidden' : ''}`}>
             <div className="truncate text-[15px] font-bold tracking-tight text-white">Cortex</div>
             <span className={`mt-0.5 inline-flex items-center rounded-full px-1.5 py-[1px] text-[9.5px] font-semibold uppercase leading-[14px] tracking-wide ${isPlatformAdmin ? 'bg-accent/20 text-accent' : 'bg-primary/15 text-primary-soft'}`}>
-              {PORTAL_LABEL[portal] || 'Personal'}
+              {PORTAL_LABEL[portal] || 'Company Portal'}
             </span>
           </div>
         </Link>

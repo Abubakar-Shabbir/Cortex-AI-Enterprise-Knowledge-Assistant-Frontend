@@ -17,15 +17,19 @@ export function SessionProvider({ children }) {
         role: data.role,
         permissions: data.permissions || [],
         canViewAdminArea: data.can_view_admin_area,
-        // "personal" or "company" - decided once at signup, read-only
-        // here (see UserProfile.account_type's help_text on the
-        // backend). Drives whether the sidebar shows a Company
-        // workspace switcher at all - never a Personal<->Company one.
-        accountType: data.account_type || 'personal',
-        // Backend-computed: "personal" | "company" | "platform_admin" -
-        // the single source of truth for which portal layout renders
-        // (see AppShell.jsx) - never derived independently client-side.
-        portal: data.portal || 'personal',
+        // Always "company" for a real account - the only account type
+        // (Personal Workspace was removed). Can transiently read
+        // "personal" for the brief window between signing up via an
+        // invitation link and that invitation actually being accepted
+        // (org_invitation_service.accept_invitation() flips it) - no
+        // route renders any nav during that window (InvitationAccept
+        // is a top-level route outside ProtectedLayout), so no
+        // frontend code should branch on that value.
+        accountType: data.account_type || 'company',
+        // Backend-computed: "company" | "platform_admin" - the single
+        // source of truth for which portal layout renders (see
+        // AppShell.jsx) - never derived independently client-side.
+        portal: data.portal || 'company',
         // True only for a company-registered member's system-generated
         // password (org_member_registration_service.py) - App.jsx's
         // ProtectedLayout redirects to /change-password and refuses
@@ -74,8 +78,8 @@ export function SessionProvider({ children }) {
       role: data.role,
       permissions: data.permissions || [],
       canViewAdminArea: data.can_view_admin_area,
-      accountType: data.account_type || 'personal',
-      portal: data.portal || 'personal',
+      accountType: data.account_type || 'company',
+      portal: data.portal || 'company',
       mustChangePassword: !!data.must_change_password,
     });
     return { ok: true };

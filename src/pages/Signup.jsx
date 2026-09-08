@@ -15,56 +15,6 @@ const COMPANY_SIZES = [
   { value: '500+', label: '500+ employees' },
 ];
 
-// Step 1 of signup: "How will you use this platform?" - a one-time,
-// signup-only decision (see Backend/RAG/models.py's UserProfile.
-// account_type help_text), never a workspace switcher choice. Skipped
-// entirely for an invitation-flow signup (isInvitationFlow below) -
-// an invited employee's organization comes from the invitation itself,
-// not from asking them to pick one here.
-function AccountTypeChoice({ onChoose }) {
-  return (
-    <>
-      <div className="auth-pop-in mb-5 flex h-11 w-11 items-center justify-center rounded-xl bg-primary/10 text-primary dark:text-primary-soft">
-        <UserRound className="h-5 w-5" />
-      </div>
-      <h1 className="auth-pop-in text-xl font-bold tracking-tight text-ink dark:text-ink-dark">How will you use this platform?</h1>
-      <p className="mb-6 mt-1 text-sm text-muted dark:text-muted-dark">Choose one - this can't be changed later without contacting support.</p>
-
-      <div className="space-y-3">
-        <button
-          type="button" onClick={() => onChoose('personal')}
-          className="group flex w-full items-start gap-3.5 rounded-xl border border-line bg-surface p-4 text-left transition-all hover:-translate-y-0.5 hover:border-primary/40 hover:shadow-soft dark:border-line-dark dark:bg-white/5 dark:hover:border-primary-soft/40"
-        >
-          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary dark:bg-primary/15 dark:text-primary-soft">
-            <UserRound className="h-5 w-5" />
-          </div>
-          <div className="min-w-0">
-            <p className="text-sm font-semibold text-ink dark:text-ink-dark">Personal</p>
-            <p className="mt-0.5 text-xs leading-relaxed text-muted dark:text-muted-dark">I'm using this platform for myself.</p>
-          </div>
-        </button>
-
-        <button
-          type="button" onClick={() => onChoose('company')}
-          className="group flex w-full items-start gap-3.5 rounded-xl border border-line bg-surface p-4 text-left transition-all hover:-translate-y-0.5 hover:border-primary/40 hover:shadow-soft dark:border-line-dark dark:bg-white/5 dark:hover:border-primary-soft/40"
-        >
-          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary dark:bg-primary/15 dark:text-primary-soft">
-            <Buildings className="h-5 w-5" />
-          </div>
-          <div className="min-w-0">
-            <p className="text-sm font-semibold text-ink dark:text-ink-dark">Company</p>
-            <p className="mt-0.5 text-xs leading-relaxed text-muted dark:text-muted-dark">I'm signing up on behalf of a company/organization.</p>
-          </div>
-        </button>
-      </div>
-
-      <p className="mt-6 text-center text-sm text-muted dark:text-muted-dark">
-        Already have an account? <Link to="/login" className="font-semibold text-primary transition-colors hover:underline dark:text-primary-soft">Log in</Link>
-      </p>
-    </>
-  );
-}
-
 const inputClass = (hasError) =>
   `w-full rounded-lg border ${hasError ? 'border-danger' : 'border-line dark:border-line-dark'} bg-surface py-2.5 pl-10 pr-3.5 text-sm text-ink placeholder:text-muted transition-all duration-150 focus:border-2 focus:border-ink focus:outline-none dark:focus:border-ink-dark dark:bg-white/5 dark:text-ink-dark dark:placeholder:text-muted-dark`;
 
@@ -81,10 +31,15 @@ export default function Signup() {
 
   // An invitation redirected here (InvitationAccept.jsx's "Sign Up"
   // link sets state.from to the /invitations/accept?token=... URL) -
-  // that invitation, not a fresh choice, determines this signup's
-  // organization, so the Personal-vs-Company step is skipped entirely.
+  // that invitation, not this signup, determines the account's
+  // organization: the backend leaves a fresh invitation-flow account
+  // without one until org_invitation_service.accept_invitation() runs
+  // right after, so `accountType` stays null here and no `account_type`/
+  // company fields are sent at all (see onSubmit below). Every other
+  // signup always creates a Company - there is no other account type
+  // to choose anymore.
   const isInvitationFlow = !!location.state?.from?.startsWith('/invitations/accept');
-  const [accountType, setAccountType] = useState(null);
+  const accountType = isInvitationFlow ? null : 'company';
 
   const [fullName, setFullName] = useState('');
   const [email, setEmail] = useState(searchParams.get('invited_email') || '');
@@ -119,15 +74,6 @@ export default function Signup() {
     if (strengthScore === 2 || strengthScore === 3) return 'text-warning dark:text-warning-dark';
     return 'text-success dark:text-success-dark';
   }, [strengthScore]);
-
-  // Step 1: Personal-vs-Company choice, skipped for an invitation signup.
-  if (!isInvitationFlow && accountType === null) {
-    return (
-      <AuthLayout title="Sign up">
-        <AccountTypeChoice onChoose={setAccountType} />
-      </AuthLayout>
-    );
-  }
 
   const orgTypes = orgTypesData?.organization_types || [];
 
@@ -176,11 +122,6 @@ export default function Signup() {
       <p className="mb-6 mt-1 text-sm text-muted dark:text-muted-dark">
         {isInvitationFlow ? "You've been invited to join an organization — finish creating your account below." : 'Fill in your details below to get started.'}
       </p>
-      {!isInvitationFlow && (
-        <button type="button" onClick={() => setAccountType(null)} className="mb-4 -mt-3 text-xs font-medium text-primary hover:underline dark:text-primary-soft">
-          &larr; Change account type
-        </button>
-      )}
 
       <form onSubmit={onSubmit} className="space-y-4">
         {nonFieldError && (
