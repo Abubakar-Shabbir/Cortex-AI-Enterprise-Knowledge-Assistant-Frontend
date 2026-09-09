@@ -1,10 +1,13 @@
-import { CompassIcon as Compass, DownloadSimpleIcon as Download, FileTextIcon as FileText, LockKeyIcon as LockKey, MinusIcon as Minus, ChatCircleIcon as MessageSquare, SparkleIcon as Sparkles, TrendDownIcon as TrendingDown, TrendUpIcon as TrendingUp } from '@phosphor-icons/react';
+import { useState } from 'react';
+import { BuildingsIcon as Buildings, CompassIcon as Compass, DownloadSimpleIcon as Download, FileTextIcon as FileText, LockKeyIcon as LockKey, MinusIcon as Minus, ChatCircleIcon as MessageSquare, SparkleIcon as Sparkles, TrendDownIcon as TrendingDown, TrendUpIcon as TrendingUp } from '@phosphor-icons/react';
 import EmptyState from '../components/EmptyState';
 import PageHeader from '../components/PageHeader';
+import Select from '../components/Select';
 import TrendBadge from '../components/TrendBadge';
 import PageSkeleton from '../components/PageSkeleton';
+import { useSession } from '../auth/SessionContext';
 import { getApiBaseUrl } from '../api/client';
-import { useReports } from '../api/hooks';
+import { useReports, usePlatformOrganizations } from '../api/hooks';
 
 function pluralize(count, word) {
   return `${word}${count === 1 ? '' : 's'}`;
@@ -14,9 +17,21 @@ const DIRECTION_ICON = { up: TrendingUp, down: TrendingDown };
 const DIRECTION_CLASS = { up: 'text-success dark:text-success-dark', down: 'text-danger dark:text-danger-dark' };
 const DIRECTION_BAR_CLASS = { up: 'bg-success', down: 'bg-danger' };
 
-// Port of templates/reports.html.
+// Port of templates/reports.html. The company/Personal picker below is
+// admin-only (backend enforces this independently via
+// permission_service.is_admin() - see reports_views.
+// _resolve_report_organization()'s docstring - showing it here is
+// only ever a convenience, never the actual authorization boundary):
+// a platform Admin can pull ANY company's report, or their own
+// Personal Workspace's, without first switching their active
+// workspace to it. Leaving the picker on its default ("My Workspace")
+// changes nothing - every export still reflects the ordinary active
+// workspace exactly as before this existed.
 export default function Reports() {
-  const { data, isLoading, isError, error } = useReports();
+  const { canViewAdminArea } = useSession();
+  const [scope, setScope] = useState('');
+  const { data: orgsData } = usePlatformOrganizations();
+  const { data, isLoading, isError, error } = useReports(scope || undefined);
 
   if (isError && error?.status === 403) {
     return <EmptyState icon={LockKey} title="Reports isn't available" message={error.message} />;
@@ -30,10 +45,27 @@ export default function Reports() {
   } = data;
 
   const base = getApiBaseUrl();
+  const exportUrl = (path) => `${base}/api/reports/${path}${scope ? `?organization=${encodeURIComponent(scope)}` : ''}`;
+  const isCompanyScope = Boolean(scope) && scope !== 'personal';
+  const scopeOptions = [
+    { value: '', label: 'My Workspace' },
+    { value: 'personal', label: 'Personal Workspace' },
+    ...(orgsData?.organizations || []).map((o) => ({ value: o.slug, label: o.name })),
+  ];
 
   return (
     <>
       <PageHeader title="Reports" subtitle="Export your data as CSV for offline analysis, or compare this period against the last right here." />
+
+      {canViewAdminArea && (
+        <div className="mb-4 flex items-center gap-3 rounded-xl border border-line bg-card p-3.5 shadow-soft dark:border-line-dark dark:bg-card-dark">
+          <Buildings className="h-4 w-4 shrink-0 text-muted dark:text-muted-dark" />
+          <div className="min-w-0 flex-1 sm:max-w-xs">
+            <Select size="sm" value={scope} onChange={setScope} options={scopeOptions} />
+          </div>
+          <p className="text-xs text-muted dark:text-muted-dark">Pick a company (or Personal Workspace) to view and export its reports — admin oversight, metadata only for usage.</p>
+        </div>
+      )}
 
       <div className="flex flex-wrap gap-4">
         <div className="flex min-w-[280px] flex-1 flex-col rounded-xl border border-line bg-card p-5 shadow-soft dark:border-line-dark dark:bg-card-dark">
@@ -62,7 +94,7 @@ export default function Reports() {
 
           <div className="mt-auto flex items-center justify-between pt-4">
             <TrendBadge trend={kpiTrends.documents} />
-            <a href={`${base}/api/reports/documents.csv`} className="ml-auto inline-flex items-center gap-2 rounded-lg border border-line px-3.5 py-2 text-sm font-medium text-ink transition-colors hover:border-primary/30 hover:bg-primary/5 hover:text-primary dark:border-line-dark dark:text-ink-dark dark:hover:bg-primary/10">
+            <a href={exportUrl("documents.csv")} className="ml-auto inline-flex items-center gap-2 rounded-lg border border-line px-3.5 py-2 text-sm font-medium text-ink transition-colors hover:border-primary/30 hover:bg-primary/5 hover:text-primary dark:border-line-dark dark:text-ink-dark dark:hover:bg-primary/10">
               <Download className="h-4 w-4" /> Export CSV
             </a>
           </div>
@@ -79,11 +111,15 @@ export default function Reports() {
             </div>
           </div>
           <h2 className="mt-3 text-sm font-semibold text-ink dark:text-ink-dark">Usage &amp; AI Report</h2>
-          <p className="mt-1 text-xs text-muted dark:text-muted-dark">Every question you've asked — the answer, search method, confidence, and response time.</p>
+          <p className="mt-1 text-xs text-muted dark:text-muted-dark">
+            {isCompanyScope
+              ? "Every question logged across this company — owner, search method, confidence, and response time. Never the question or answer text."
+              : "Every question you've asked — the answer, search method, confidence, and response time."}
+          </p>
 
           <div className="mt-auto flex items-center justify-between pt-4">
             <TrendBadge trend={kpiTrends.queries} label="vs yesterday" />
-            <a href={`${base}/api/reports/usage.csv`} className="ml-auto inline-flex items-center gap-2 rounded-lg border border-line px-3.5 py-2 text-sm font-medium text-ink transition-colors hover:border-primary/30 hover:bg-primary/5 hover:text-primary dark:border-line-dark dark:text-ink-dark dark:hover:bg-primary/10">
+            <a href={exportUrl("usage.csv")} className="ml-auto inline-flex items-center gap-2 rounded-lg border border-line px-3.5 py-2 text-sm font-medium text-ink transition-colors hover:border-primary/30 hover:bg-primary/5 hover:text-primary dark:border-line-dark dark:text-ink-dark dark:hover:bg-primary/10">
               <Download className="h-4 w-4" /> Export CSV
             </a>
           </div>
@@ -105,7 +141,7 @@ export default function Reports() {
 
             <div className="mt-auto flex items-center justify-between pt-4">
               <TrendBadge trend={kpiTrends.ai_tasks} />
-              <a href={`${base}/api/reports/ai-task-runs.csv`} className="ml-auto inline-flex items-center gap-2 rounded-lg border border-line px-3.5 py-2 text-sm font-medium text-ink transition-colors hover:border-primary/30 hover:bg-primary/5 hover:text-primary dark:border-line-dark dark:text-ink-dark dark:hover:bg-primary/10">
+              <a href={exportUrl("ai-task-runs.csv")} className="ml-auto inline-flex items-center gap-2 rounded-lg border border-line px-3.5 py-2 text-sm font-medium text-ink transition-colors hover:border-primary/30 hover:bg-primary/5 hover:text-primary dark:border-line-dark dark:text-ink-dark dark:hover:bg-primary/10">
                 <Download className="h-4 w-4" /> Export CSV
               </a>
             </div>
@@ -127,7 +163,7 @@ export default function Reports() {
             <p className="mt-1 text-xs text-muted dark:text-muted-dark">Every topic across everything you can access — category, mentions, and connected documents.</p>
 
             <div className="mt-auto flex items-center justify-end pt-4">
-              <a href={`${base}/api/reports/knowledge-topics.csv`} className="inline-flex items-center gap-2 rounded-lg border border-line px-3.5 py-2 text-sm font-medium text-ink transition-colors hover:border-primary/30 hover:bg-primary/5 hover:text-primary dark:border-line-dark dark:text-ink-dark dark:hover:bg-primary/10">
+              <a href={exportUrl("knowledge-topics.csv")} className="inline-flex items-center gap-2 rounded-lg border border-line px-3.5 py-2 text-sm font-medium text-ink transition-colors hover:border-primary/30 hover:bg-primary/5 hover:text-primary dark:border-line-dark dark:text-ink-dark dark:hover:bg-primary/10">
                 <Download className="h-4 w-4" /> Export CSV
               </a>
             </div>
@@ -141,7 +177,7 @@ export default function Reports() {
             <h2 className="text-sm font-semibold text-ink dark:text-ink-dark">Comparative Report</h2>
             <p className="text-xs text-muted dark:text-muted-dark">{comparison.current_range} vs. {comparison.previous_range} (previous {comparison.days} days)</p>
           </div>
-          <a href={`${base}/api/reports/comparison.csv`} className="inline-flex items-center gap-2 rounded-lg border border-line px-3.5 py-2 text-sm font-medium text-ink transition-colors hover:border-primary/30 hover:bg-primary/5 hover:text-primary dark:border-line-dark dark:text-ink-dark dark:hover:bg-primary/10">
+          <a href={exportUrl("comparison.csv")} className="inline-flex items-center gap-2 rounded-lg border border-line px-3.5 py-2 text-sm font-medium text-ink transition-colors hover:border-primary/30 hover:bg-primary/5 hover:text-primary dark:border-line-dark dark:text-ink-dark dark:hover:bg-primary/10">
             <Download className="h-4 w-4" /> Export CSV
           </a>
         </div>

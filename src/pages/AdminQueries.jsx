@@ -1,89 +1,27 @@
-import { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { CheckCircleIcon as CheckCircle2, DownloadSimpleIcon as Download, EyeIcon as Eye, FunnelIcon as Filter, FlagIcon as Flag, GaugeIcon as Gauge, GitBranchIcon as GitBranch, LockIcon as Lock, MagnifyingGlassIcon as Search, TimerIcon as Timer, XIcon as X } from '@phosphor-icons/react';
+import { CheckCircleIcon as CheckCircle2, DownloadSimpleIcon as Download, FunnelIcon as Filter, FlagIcon as Flag, GaugeIcon as Gauge, GitBranchIcon as GitBranch, MagnifyingGlassIcon as Search, TimerIcon as Timer } from '@phosphor-icons/react';
 import PageHeader from '../components/PageHeader';
 import StatCard from '../components/StatCard';
 import EmptyState from '../components/EmptyState';
-import PageSkeleton, { SkeletonFields } from '../components/PageSkeleton';
+import PageSkeleton from '../components/PageSkeleton';
 import Spinner from '../components/Spinner';
 import { getApiBaseUrl } from '../api/client';
 import { timeAgo } from '../lib/timeAgo';
-import { fetchAdminQueryDetail, useAdminQueries, useToggleQueryFlag } from '../api/hooks';
+import { useAdminQueries, useToggleQueryFlag } from '../api/hooks';
 
-function DetailModal({ logId, onClose }) {
-  const [state, setState] = useState({ loading: true, data: null });
-
-  useEffect(() => {
-    fetchAdminQueryDetail(logId).then((data) => setState({ loading: false, data }));
-  }, [logId]);
-
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4" onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}>
-      <div className="max-h-[85vh] w-full max-w-2xl overflow-y-auto rounded-2xl border border-line bg-card p-6 shadow-2xl dark:border-line-dark dark:bg-card-dark">
-        {state.loading ? (
-          <SkeletonFields fields={4} />
-        ) : state.data ? (
-          <div className="space-y-4">
-            <div className="flex items-start justify-between gap-3">
-              <div>
-                <p className="text-xs font-medium uppercase tracking-wide text-muted dark:text-muted-dark">Query by {state.data.owner}</p>
-                <p className="text-xs text-muted dark:text-muted-dark">{state.data.created_at}</p>
-              </div>
-              <button type="button" onClick={onClose} className="flex h-8 w-8 items-center justify-center rounded-lg text-muted hover:bg-surface dark:text-muted-dark dark:hover:bg-white/5"><X className="h-4 w-4" /></button>
-            </div>
-
-            <div>
-              <p className="mb-1 text-xs font-semibold uppercase tracking-wide text-muted dark:text-muted-dark">Question</p>
-              <p className="rounded-lg bg-surface p-3 text-sm text-ink dark:bg-white/5 dark:text-ink-dark">{state.data.question}</p>
-            </div>
-
-            <div>
-              <p className="mb-1 text-xs font-semibold uppercase tracking-wide text-muted dark:text-muted-dark">Answer</p>
-              <p className="whitespace-pre-wrap rounded-lg bg-surface p-3 text-sm text-ink dark:bg-white/5 dark:text-ink-dark">{state.data.answer}</p>
-            </div>
-
-            <div className="grid grid-cols-3 gap-3 text-center text-xs">
-              <div className="rounded-lg border border-line p-2 dark:border-line-dark">
-                <div className="font-semibold text-ink dark:text-ink-dark">{state.data.confidence}%</div>
-                <div className="text-muted dark:text-muted-dark">Confidence</div>
-              </div>
-              <div className="rounded-lg border border-line p-2 dark:border-line-dark">
-                <div className="font-semibold text-ink dark:text-ink-dark">{state.data.response_time_ms} ms</div>
-                <div className="text-muted dark:text-muted-dark">Response Time</div>
-              </div>
-              <div className="rounded-lg border border-line p-2 dark:border-line-dark">
-                <div className="font-semibold text-ink dark:text-ink-dark">{state.data.sources?.length || 0}</div>
-                <div className="text-muted dark:text-muted-dark">Sources</div>
-              </div>
-            </div>
-
-            {state.data.sources?.length > 0 && (
-              <div>
-                <p className="mb-1 text-xs font-semibold uppercase tracking-wide text-muted dark:text-muted-dark">Source References</p>
-                <div className="space-y-2">
-                  {state.data.sources.map((src, idx) => (
-                    <div key={idx} className="rounded-lg border border-line p-2.5 text-xs dark:border-line-dark">
-                      <div className="mb-1 font-medium text-ink dark:text-ink-dark">{src.document || 'Document'} · chunk {src.chunk_number}</div>
-                      <div className="text-muted dark:text-muted-dark">{src.content}</div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-          </div>
-        ) : null}
-      </div>
-    </div>
-  );
-}
-
-// Port of templates/admin/queries.html.
+// Port of templates/admin/queries.html. Deliberately metadata-only -
+// there is no content-viewing capability anywhere on this page (no
+// "View" action, no question/answer column, no content-text search):
+// an admin sees THAT a query happened - owner, status, search method,
+// confidence, response time, source count, flagged state, timestamp -
+// never what was actually asked or answered. See
+// RAG.api.admin_queries_views' module docstring for the backend side
+// of this (there is no detail endpoint to call at all).
 export default function AdminQueries() {
   const [searchParams, setSearchParams] = useSearchParams();
   const filters = Object.fromEntries(searchParams.entries());
   const { data, isLoading } = useAdminQueries(filters);
   const toggleFlag = useToggleQueryFlag();
-  const [detailId, setDetailId] = useState(null);
 
   if (isLoading || !data) return <PageSkeleton variant="list" />;
 
@@ -100,7 +38,7 @@ export default function AdminQueries() {
 
   return (
     <>
-      <PageHeader title="Queries" subtitle="Every question asked across the workspace, with search, filters, and analytics. Question/answer content stays private unless you hold the auditing permission." />
+      <PageHeader title="Queries" subtitle="Every question logged across the workspace, with filters and analytics — metadata only. Question and answer content is never shown here." />
 
       <div className="mb-6 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
         <StatCard icon={Search} label="Total Queries" value={data.analytics.total} numeric />
@@ -113,12 +51,6 @@ export default function AdminQueries() {
 
       <div className="mb-4 rounded-2xl border border-line bg-card p-4 shadow-soft dark:border-line-dark dark:bg-card-dark">
         <form key={searchParams.toString()} onSubmit={onFilterSubmit} className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-6">
-          {data.can_view_content && (
-            <div className="lg:col-span-2">
-              <label className="mb-1 block text-xs font-medium text-muted dark:text-muted-dark">Search content</label>
-              <input type="text" name="q" defaultValue={filters.q} placeholder="Question or answer text…" className="w-full rounded-lg border border-line bg-transparent px-3 py-2 text-sm text-ink placeholder:text-muted focus:border-2 focus:border-ink focus:outline-none dark:focus:border-ink-dark dark:border-line-dark dark:text-ink-dark" />
-            </div>
-          )}
           <div>
             <label className="mb-1 block text-xs font-medium text-muted dark:text-muted-dark">Owner</label>
             <input type="text" name="owner" defaultValue={filters.owner} placeholder="Username…" className="w-full rounded-lg border border-line bg-transparent px-3 py-2 text-sm text-ink placeholder:text-muted focus:border-2 focus:border-ink focus:outline-none dark:focus:border-ink-dark dark:border-line-dark dark:text-ink-dark" />
@@ -193,11 +125,10 @@ export default function AdminQueries() {
         {data.results.length > 0 ? (
           <>
             <div className="overflow-auto">
-              <table className="w-full min-w-[920px] text-left text-sm">
+              <table className="w-full min-w-[780px] text-left text-sm">
                 <thead className="sticky top-0 z-10 bg-card dark:bg-card-dark">
                   <tr className="border-b border-line text-xs font-semibold uppercase tracking-wide text-muted dark:border-line-dark dark:text-muted-dark">
-                    <th className="px-5 py-3">Question</th>
-                    <th className="px-3 py-3">Owner</th>
+                    <th className="px-5 py-3">Owner</th>
                     <th className="px-3 py-3">Status</th>
                     <th className="px-3 py-3">Method</th>
                     <th className="px-3 py-3 text-right">Confidence</th>
@@ -210,14 +141,7 @@ export default function AdminQueries() {
                 <tbody className="divide-y divide-line dark:divide-line-dark">
                   {data.results.map((log) => (
                     <tr key={log.id} className="transition-colors hover:bg-surface dark:hover:bg-white/5">
-                      <td className="max-w-[280px] px-5 py-3 font-medium text-ink dark:text-ink-dark">
-                        {data.can_view_content ? (
-                          <span className="block truncate" title={log.question}>{log.question}</span>
-                        ) : (
-                          <span className="inline-flex items-center gap-1.5 text-muted dark:text-muted-dark"><Lock className="h-3.5 w-3.5" /> Protected</span>
-                        )}
-                      </td>
-                      <td className="px-3 py-3 text-muted dark:text-muted-dark">{log.owner}</td>
+                      <td className="px-5 py-3 font-medium text-ink dark:text-ink-dark">{log.owner}</td>
                       <td className="px-3 py-3">
                         <span className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-semibold ${log.status_answered ? 'bg-success/10 text-success dark:text-success-dark' : 'bg-danger/10 text-danger dark:text-danger-dark'}`}>{log.status_label}</span>
                       </td>
@@ -226,20 +150,13 @@ export default function AdminQueries() {
                       <td className="px-3 py-3 text-right text-muted dark:text-muted-dark">{log.response_time_ms} ms</td>
                       <td className="px-3 py-3 text-right text-muted dark:text-muted-dark">{log.source_count}</td>
                       <td className="px-3 py-3 text-muted dark:text-muted-dark">{timeAgo(log.created_at)} ago</td>
-                      <td className="px-5 py-3">
-                        <div className="flex items-center justify-end gap-1.5">
-                          <button
-                            type="button" onClick={() => toggleFlag.mutate(log.id)} disabled={toggleFlag.isPending && toggleFlag.variables === log.id} title={log.is_flagged ? 'Unpin' : 'Pin for follow-up'}
-                            className={`flex h-8 w-8 items-center justify-center rounded-lg transition-colors disabled:opacity-50 ${log.is_flagged ? 'text-warning hover:bg-warning/10' : 'text-muted hover:bg-surface dark:text-muted-dark dark:hover:bg-white/5'}`}
-                          >
-                            {toggleFlag.isPending && toggleFlag.variables === log.id ? <Spinner size={16} /> : <Flag className="h-4 w-4" />}
-                          </button>
-                          {data.can_view_content && (
-                            <button type="button" onClick={() => setDetailId(log.id)} className="inline-flex items-center gap-1.5 rounded-lg border border-line px-2.5 py-1.5 text-xs font-medium text-ink transition-colors hover:border-primary/30 hover:bg-primary/5 hover:text-primary dark:border-line-dark dark:text-ink-dark dark:hover:bg-primary/10">
-                              <Eye className="h-3.5 w-3.5" /> View
-                            </button>
-                          )}
-                        </div>
+                      <td className="px-5 py-3 text-right">
+                        <button
+                          type="button" onClick={() => toggleFlag.mutate(log.id)} disabled={toggleFlag.isPending && toggleFlag.variables === log.id} title={log.is_flagged ? 'Unpin' : 'Pin for follow-up'}
+                          className={`inline-flex h-8 w-8 items-center justify-center rounded-lg transition-colors disabled:opacity-50 ${log.is_flagged ? 'text-warning hover:bg-warning/10' : 'text-muted hover:bg-surface dark:text-muted-dark dark:hover:bg-white/5'}`}
+                        >
+                          {toggleFlag.isPending && toggleFlag.variables === log.id ? <Spinner size={16} /> : <Flag className="h-4 w-4" />}
+                        </button>
                       </td>
                     </tr>
                   ))}
@@ -261,8 +178,6 @@ export default function AdminQueries() {
           <EmptyState icon={Search} title="No queries match these filters" />
         )}
       </div>
-
-      {detailId && <DetailModal logId={detailId} onClose={() => setDetailId(null)} />}
     </>
   );
 }

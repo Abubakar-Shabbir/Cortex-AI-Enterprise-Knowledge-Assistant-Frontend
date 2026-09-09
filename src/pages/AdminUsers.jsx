@@ -1,8 +1,14 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { CheckIcon as Check, IdentificationCardIcon as IdCard, DotsThreeIcon as MoreHorizontal, ShieldIcon as Shield, TrashIcon as Trash2, UserCheckIcon as UserCheck, UserMinusIcon as UserX, XIcon as X } from '@phosphor-icons/react';
+import {
+  BuildingsIcon as Buildings, CheckIcon as Check, IdentificationCardIcon as IdCard,
+  MagnifyingGlassIcon as Search, DotsThreeIcon as MoreHorizontal, ShieldIcon as Shield,
+  TrashIcon as Trash2, UserCheckIcon as UserCheck, UserCircleIcon as UserCircle, UserMinusIcon as UserX, XIcon as X,
+} from '@phosphor-icons/react';
+import ActionMenu from '../components/ActionMenu';
 import EmptyState from '../components/EmptyState';
 import PageSkeleton from '../components/PageSkeleton';
+import Select from '../components/Select';
 import Spinner from '../components/Spinner';
 import { useAdminUserAction, useAdminUsers } from '../api/hooks';
 
@@ -11,8 +17,8 @@ function RoleModal({ member, roles, adminRoleId, assignableRoleIds, onClose, onS
   const showAdminNotice = member.role_id === adminRoleId && !assignableRoleIds.includes(adminRoleId);
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4" onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}>
-      <div className="flex w-full max-w-md flex-col overflow-hidden rounded-2xl border border-line bg-card shadow-soft dark:border-line-dark dark:bg-card-dark">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm dark:bg-black/75" onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}>
+      <div className="flex w-full max-w-md flex-col overflow-hidden rounded-2xl border border-line bg-card shadow-[0_25px_60px_-15px_rgba(0,0,0,0.35)] ring-1 ring-black/5 dark:border-line-dark dark:bg-card-dark dark:shadow-[0_25px_60px_-15px_rgba(0,0,0,0.8)] dark:ring-white/10">
         <div className="flex items-start justify-between gap-4 border-b border-line px-6 py-5 dark:border-line-dark">
           <div className="min-w-0">
             <h3 className="text-base font-semibold text-ink dark:text-ink-dark">Change Role</h3>
@@ -52,9 +58,9 @@ function RoleModal({ member, roles, adminRoleId, assignableRoleIds, onClose, onS
 }
 
 function UserRow({ member, data, action }) {
-  const [menuOpen, setMenuOpen] = useState(false);
   const [roleModalOpen, setRoleModalOpen] = useState(false);
   const initials = (member.full_name || member.username)[0]?.toUpperCase();
+  const organizations = member.organizations || [];
 
   return (
     <tr className="transition-colors hover:bg-surface dark:hover:bg-white/5">
@@ -80,6 +86,22 @@ function UserRow({ member, data, action }) {
         </span>
       </td>
       <td className="px-3 py-3">
+        {organizations.length > 0 ? (
+          <span
+            className="inline-flex items-center gap-1.5 rounded-full bg-primary/10 px-2 py-0.5 text-xs font-medium text-primary dark:text-primary-soft"
+            title={organizations.map((o) => o.name).join(', ')}
+          >
+            <Buildings className="h-3 w-3 shrink-0" />
+            <span className="max-w-[140px] truncate">{organizations[0].name}</span>
+            {organizations.length > 1 && <span className="shrink-0">+{organizations.length - 1}</span>}
+          </span>
+        ) : (
+          <span className="inline-flex items-center gap-1.5 text-xs text-muted dark:text-muted-dark">
+            <UserCircle className="h-3.5 w-3.5 shrink-0" /> Personal
+          </span>
+        )}
+      </td>
+      <td className="px-3 py-3">
         <span className={`inline-flex items-center gap-1.5 text-xs font-medium ${member.is_active ? 'text-success dark:text-success-dark' : 'text-danger dark:text-danger-dark'}`}>
           <span className={`h-1.5 w-1.5 rounded-full ${member.is_active ? 'bg-success dark:bg-success-dark' : 'bg-danger dark:bg-danger-dark'}`}></span>
           {member.is_active ? 'Active' : 'Suspended'}
@@ -87,48 +109,47 @@ function UserRow({ member, data, action }) {
       </td>
       <td className="px-3 py-3 text-muted dark:text-muted-dark">{new Date(member.date_joined).toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' })}</td>
       <td className="px-5 py-3 text-right">
-        <div className="relative inline-block text-left">
-          <button type="button" onClick={() => setMenuOpen((v) => !v)} aria-label="User actions" className="inline-flex h-8 w-8 items-center justify-center rounded-lg border border-line text-muted transition-colors hover:border-primary/30 hover:bg-primary/5 hover:text-primary dark:border-line-dark dark:text-muted-dark dark:hover:bg-primary/10 dark:hover:text-primary-soft">
-            <MoreHorizontal className="h-4 w-4" />
-          </button>
-
-          {menuOpen && (
+        <ActionMenu
+          trigger={({ ref, toggle }) => (
+            <button ref={ref} type="button" onClick={toggle} aria-label="User actions" className="inline-flex h-8 w-8 items-center justify-center rounded-lg border border-line text-muted transition-colors hover:border-primary/30 hover:bg-primary/5 hover:text-primary dark:border-line-dark dark:text-muted-dark dark:hover:bg-primary/10 dark:hover:text-primary-soft">
+              <MoreHorizontal className="h-4 w-4" />
+            </button>
+          )}
+        >
+          {(close) => (
             <>
-              <div className="fixed inset-0 z-10" onClick={() => setMenuOpen(false)}></div>
-              <div className="absolute right-0 z-20 mt-2 w-56 space-y-0.5 overflow-hidden rounded-xl border border-line bg-card p-1.5 shadow-soft dark:border-line-dark dark:bg-card-dark">
-                <Link to={`/admin/users/${member.id}/profile`} className="flex w-full items-center gap-2.5 rounded-lg px-3 py-2.5 text-left text-sm font-medium text-ink transition-colors hover:bg-surface dark:text-ink-dark dark:hover:bg-white/5">
-                  <IdCard className="h-4 w-4 shrink-0" /> View Profile
-                </Link>
-                {data.can_assign_role && (
-                  <button type="button" onClick={() => { setMenuOpen(false); setRoleModalOpen(true); }} className="flex w-full items-center gap-2.5 rounded-lg px-3 py-2.5 text-left text-sm font-medium text-ink transition-colors hover:bg-surface dark:text-ink-dark dark:hover:bg-white/5">
-                    <Shield className="h-4 w-4 shrink-0" /> Change Role
-                  </button>
-                )}
-                {data.can_suspend && (
-                  <button
-                    type="button" onClick={() => { setMenuOpen(false); action.mutate({ action: member.is_active ? 'suspend' : 'activate', user_id: member.id }); }}
-                    className={`flex w-full items-center gap-2.5 rounded-lg px-3 py-2.5 text-left text-sm font-medium transition-colors ${member.is_active ? 'text-warning hover:bg-warning/10 dark:text-warning-dark' : 'text-success hover:bg-success/10 dark:text-success-dark'}`}
-                  >
-                    {member.is_active ? <UserX className="h-4 w-4 shrink-0" /> : <UserCheck className="h-4 w-4 shrink-0" />}
-                    {member.is_active ? 'Suspend' : 'Reactivate'}
-                  </button>
-                )}
-                {data.can_delete && member.id !== data.current_user_id && (
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setMenuOpen(false);
-                      if (window.confirm('Delete this user permanently? This cannot be undone.')) action.mutate({ action: 'delete', user_id: member.id });
-                    }}
-                    className="flex w-full items-center gap-2.5 rounded-lg px-3 py-2.5 text-left text-sm font-medium text-danger transition-colors hover:bg-danger/10 dark:text-danger-dark"
-                  >
-                    <Trash2 className="h-4 w-4 shrink-0" /> Delete
-                  </button>
-                )}
-              </div>
+              <Link to={`/admin/users/${member.id}/profile`} onClick={close} className="flex w-full items-center gap-2.5 rounded-lg px-3 py-2.5 text-left text-sm font-medium text-ink transition-colors hover:bg-surface dark:text-ink-dark dark:hover:bg-white/5">
+                <IdCard className="h-4 w-4 shrink-0" /> View Profile
+              </Link>
+              {data.can_assign_role && (
+                <button type="button" onClick={() => { close(); setRoleModalOpen(true); }} className="flex w-full items-center gap-2.5 rounded-lg px-3 py-2.5 text-left text-sm font-medium text-ink transition-colors hover:bg-surface dark:text-ink-dark dark:hover:bg-white/5">
+                  <Shield className="h-4 w-4 shrink-0" /> Change Role
+                </button>
+              )}
+              {data.can_suspend && (
+                <button
+                  type="button" onClick={() => { close(); action.mutate({ action: member.is_active ? 'suspend' : 'activate', user_id: member.id }); }}
+                  className={`flex w-full items-center gap-2.5 rounded-lg px-3 py-2.5 text-left text-sm font-medium transition-colors ${member.is_active ? 'text-warning hover:bg-warning/10 dark:text-warning-dark' : 'text-success hover:bg-success/10 dark:text-success-dark'}`}
+                >
+                  {member.is_active ? <UserX className="h-4 w-4 shrink-0" /> : <UserCheck className="h-4 w-4 shrink-0" />}
+                  {member.is_active ? 'Suspend' : 'Reactivate'}
+                </button>
+              )}
+              {data.can_delete && member.id !== data.current_user_id && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    close();
+                    if (window.confirm('Delete this user permanently? This cannot be undone.')) action.mutate({ action: 'delete', user_id: member.id });
+                  }}
+                  className="flex w-full items-center gap-2.5 rounded-lg px-3 py-2.5 text-left text-sm font-medium text-danger transition-colors hover:bg-danger/10 dark:text-danger-dark"
+                >
+                  <Trash2 className="h-4 w-4 shrink-0" /> Delete
+                </button>
+              )}
             </>
           )}
-        </div>
+        </ActionMenu>
 
         {roleModalOpen && (
           <RoleModal
@@ -142,10 +163,34 @@ function UserRow({ member, data, action }) {
   );
 }
 
+const COMPANY_FILTER_OPTIONS_BASE = [
+  { value: '', label: 'All companies' },
+  { value: '__personal__', label: 'Personal (no company)' },
+];
+
 // Port of templates/admin/users.html.
 export default function AdminUsers() {
   const { data, isLoading } = useAdminUsers();
   const action = useAdminUserAction();
+  const [query, setQuery] = useState('');
+  const [companyFilter, setCompanyFilter] = useState('');
+
+  const users = data?.users || [];
+  const companyOptions = useMemo(() => [
+    ...COMPANY_FILTER_OPTIONS_BASE,
+    ...(data?.organizations || []).map((o) => ({ value: o.slug, label: o.name })),
+  ], [data]);
+
+  const filteredUsers = useMemo(() => {
+    const q = query.trim().toLowerCase();
+    return users.filter((u) => {
+      const orgs = u.organizations || [];
+      if (companyFilter === '__personal__' && orgs.length > 0) return false;
+      if (companyFilter && companyFilter !== '__personal__' && !orgs.some((o) => o.slug === companyFilter)) return false;
+      if (!q) return true;
+      return (u.full_name || '').toLowerCase().includes(q) || u.username.toLowerCase().includes(q) || (u.email || '').toLowerCase().includes(q);
+    });
+  }, [users, query, companyFilter]);
 
   if (isLoading || !data) return <PageSkeleton variant="list" />;
 
@@ -153,29 +198,47 @@ export default function AdminUsers() {
     <>
       <div className="mb-6 flex flex-col gap-1">
         <h1 className="text-2xl font-bold tracking-tight text-ink dark:text-ink-dark">Users</h1>
-        <p className="text-sm text-muted dark:text-muted-dark">Account status and role assignment. Metadata only — document content and Q&A answers stay private to their owner.</p>
+        <p className="text-sm text-muted dark:text-muted-dark">Account status and role assignment, viewable by company. Metadata only — document content and Q&A answers stay private to their owner.</p>
       </div>
 
-      <div className="rounded-2xl border border-line bg-card shadow-soft dark:border-line-dark dark:bg-card-dark">
-        {data.users.length > 0 ? (
+      {users.length > 5 && (
+        <div className="mb-3 flex flex-wrap items-center gap-2.5">
+          <div className="relative min-w-0 flex-1 sm:max-w-xs">
+            <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted dark:text-muted-dark" />
+            <input
+              value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Search users…"
+              className="w-full rounded-lg border border-line bg-surface py-2 pl-9 pr-3 text-sm text-ink placeholder:text-muted focus:border-2 focus:border-ink focus:outline-none dark:focus:border-ink-dark dark:border-line-dark dark:bg-white/5 dark:text-ink-dark dark:placeholder:text-muted-dark"
+            />
+          </div>
+          <div className="w-full sm:w-56">
+            <Select size="sm" value={companyFilter} onChange={setCompanyFilter} options={companyOptions} />
+          </div>
+        </div>
+      )}
+
+      <div className="overflow-hidden rounded-2xl border border-line bg-card shadow-soft dark:border-line-dark dark:bg-card-dark">
+        {filteredUsers.length > 0 ? (
           <div className="overflow-auto">
-            <table className="w-full min-w-[760px] text-left text-sm">
+            <table className="w-full min-w-[820px] text-left text-sm">
               <thead className="sticky top-0 z-10 bg-card dark:bg-card-dark">
                 <tr className="border-b border-line text-xs font-semibold uppercase tracking-wide text-muted dark:border-line-dark dark:text-muted-dark">
                   <th className="px-5 py-3">User</th>
                   <th className="px-3 py-3">Role</th>
+                  <th className="px-3 py-3">Company</th>
                   <th className="px-3 py-3">Status</th>
                   <th className="px-3 py-3">Joined</th>
                   <th className="px-5 py-3 text-right">Actions</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-line dark:divide-line-dark">
-                {data.users.map((member) => <UserRow key={member.id} member={member} data={data} action={action} />)}
+                {filteredUsers.map((member) => (
+                  <UserRow key={member.id} member={member} data={data} action={action} />
+                ))}
               </tbody>
             </table>
           </div>
         ) : (
-          <EmptyState title="No users yet" />
+          <EmptyState title="No users found" message={query || companyFilter ? 'Try a different search or company filter.' : undefined} />
         )}
       </div>
     </>

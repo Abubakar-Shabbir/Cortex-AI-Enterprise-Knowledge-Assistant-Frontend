@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { FolderNotchIcon as Folder, FolderNotchPlusIcon as FolderPlus, DotsThreeVerticalIcon as MoreVertical, PencilSimpleIcon as Pencil, TrashIcon as Trash2, XIcon as X } from '@phosphor-icons/react';
 import PageHeader from '../components/PageHeader';
+import ActionMenu from '../components/ActionMenu';
 import EmptyState from '../components/EmptyState';
 import PageSkeleton from '../components/PageSkeleton';
 import Spinner from '../components/Spinner';
@@ -9,7 +10,6 @@ import DocumentsTabs from '../layout/DocumentsTabs';
 import { useCollectionAction, useCollections } from '../api/hooks';
 
 function CollectionCard({ collection, onRename, onDelete }) {
-  const [menuOpen, setMenuOpen] = useState(false);
   const [renameOpen, setRenameOpen] = useState(false);
   const [name, setName] = useState(collection.name);
 
@@ -19,24 +19,28 @@ function CollectionCard({ collection, onRename, onDelete }) {
         <Link to={`/documents/collections/${collection.id}`} className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary-soft/50 text-primary dark:bg-primary/15 dark:text-primary-soft">
           <Folder className="h-5 w-5" />
         </Link>
-        <div className="relative">
-          <button onClick={() => setMenuOpen((v) => !v)} className="rounded-lg p-1.5 text-muted hover:bg-surface dark:text-muted-dark dark:hover:bg-white/5">
-            <MoreVertical className="h-4 w-4" />
-          </button>
-          {menuOpen && (
-            <div className="absolute right-0 z-10 mt-1 w-36 rounded-lg border border-line bg-card p-1 shadow-lg dark:border-line-dark dark:bg-card-dark">
-              <button onClick={() => { setRenameOpen(true); setMenuOpen(false); }} className="flex w-full items-center gap-2 rounded-md px-2.5 py-1.5 text-left text-xs font-medium text-ink hover:bg-surface dark:text-ink-dark dark:hover:bg-white/5">
+        <ActionMenu
+          panelClassName="w-36"
+          trigger={({ ref, toggle }) => (
+            <button ref={ref} onClick={toggle} className="rounded-lg p-1.5 text-muted hover:bg-surface dark:text-muted-dark dark:hover:bg-white/5">
+              <MoreVertical className="h-4 w-4" />
+            </button>
+          )}
+        >
+          {(close) => (
+            <>
+              <button onClick={() => { setRenameOpen(true); close(); }} className="flex w-full items-center gap-2 rounded-md px-2.5 py-1.5 text-left text-xs font-medium text-ink hover:bg-surface dark:text-ink-dark dark:hover:bg-white/5">
                 <Pencil className="h-3.5 w-3.5" /> Rename
               </button>
               <button
-                onClick={() => { setMenuOpen(false); if (window.confirm('Delete this collection? Documents inside are not deleted.')) onDelete(collection.id); }}
+                onClick={() => { close(); if (window.confirm('Delete this collection? Documents inside are not deleted.')) onDelete(collection.id); }}
                 className="flex w-full items-center gap-2 rounded-md px-2.5 py-1.5 text-left text-xs font-medium text-danger hover:bg-danger/10 dark:text-danger-dark"
               >
                 <Trash2 className="h-3.5 w-3.5" /> Delete
               </button>
-            </div>
+            </>
           )}
-        </div>
+        </ActionMenu>
       </div>
 
       <Link to={`/documents/collections/${collection.id}`}>
@@ -46,8 +50,8 @@ function CollectionCard({ collection, onRename, onDelete }) {
       </Link>
 
       {renameOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4" onClick={(e) => { if (e.target === e.currentTarget) setRenameOpen(false); }}>
-          <div className="w-full max-w-sm rounded-xl border border-line bg-card p-5 shadow-soft dark:border-line-dark dark:bg-card-dark">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm dark:bg-black/75" onClick={(e) => { if (e.target === e.currentTarget) setRenameOpen(false); }}>
+          <div className="w-full max-w-sm rounded-xl border border-line bg-card p-5 shadow-[0_25px_60px_-15px_rgba(0,0,0,0.35)] ring-1 ring-black/5 dark:border-line-dark dark:bg-card-dark dark:shadow-[0_25px_60px_-15px_rgba(0,0,0,0.8)] dark:ring-white/10">
             <h3 className="mb-3 text-sm font-semibold text-ink dark:text-ink-dark">Rename collection</h3>
             <form
               onSubmit={(e) => { e.preventDefault(); onRename(collection.id, name); setRenameOpen(false); }}
@@ -116,8 +120,8 @@ export default function Collections() {
       )}
 
       {createOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4" onClick={(e) => { if (e.target === e.currentTarget) setCreateOpen(false); }}>
-          <div className="w-full max-w-sm rounded-xl border border-line bg-card p-5 shadow-soft dark:border-line-dark dark:bg-card-dark">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm dark:bg-black/75" onClick={(e) => { if (e.target === e.currentTarget) setCreateOpen(false); }}>
+          <div className="w-full max-w-sm rounded-xl border border-line bg-card p-5 shadow-[0_25px_60px_-15px_rgba(0,0,0,0.35)] ring-1 ring-black/5 dark:border-line-dark dark:bg-card-dark dark:shadow-[0_25px_60px_-15px_rgba(0,0,0,0.8)] dark:ring-white/10">
             <div className="mb-3 flex items-center justify-between">
               <h3 className="text-sm font-semibold text-ink dark:text-ink-dark">New collection</h3>
               <button onClick={() => setCreateOpen(false)} className="flex h-7 w-7 items-center justify-center rounded-lg text-muted hover:bg-surface dark:text-muted-dark dark:hover:bg-white/5"><X className="h-4 w-4" /></button>

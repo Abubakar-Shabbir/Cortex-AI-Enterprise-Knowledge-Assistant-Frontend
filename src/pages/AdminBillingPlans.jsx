@@ -1,14 +1,38 @@
 import { useState } from 'react';
-import { CheckIcon as Check, ClockIcon as Clock, CreditCardIcon as CreditCard, PlusIcon as Plus, SlidersHorizontalIcon as Sliders } from '@phosphor-icons/react';
+import {
+  CheckIcon as Check, ClockIcon as Clock, CoinIcon as Coin, CreditCardIcon as CreditCard,
+  EyeIcon as Eye, GaugeIcon as Gauge, IdentificationCardIcon as IdCard, PlusIcon as Plus,
+  SlidersHorizontalIcon as Sliders, TagIcon as Tag, TrashIcon as Trash,
+} from '@phosphor-icons/react';
 import EmptyState from '../components/EmptyState';
 import Modal from '../components/Modal';
 import PageHeader from '../components/PageHeader';
 import PageSkeleton from '../components/PageSkeleton';
+import PlanCard from '../components/PlanCard';
+import Select from '../components/Select';
 import Spinner from '../components/Spinner';
 import {
-  useAssignPlan, useCreatePlan, usePlanRequestAction, usePlatformOrganizationsBilling, usePlatformPlanRequests,
-  usePlatformPlans, useUnassignPlan, useUpdatePlan,
+  useCreatePlan, useDeletePlan, usePlanRequestAction, usePlatformPlanRequests, usePlatformPlans, useUpdatePlan,
 } from '../api/hooks';
+
+const BILLING_INTERVAL_OPTIONS = [
+  { value: 'monthly', label: 'Monthly' },
+  { value: 'yearly', label: 'Yearly' },
+];
+
+function SectionHeader({ icon: Icon, title, description }) {
+  return (
+    <div className="mb-4 flex items-center gap-2.5">
+      <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary dark:text-primary-soft">
+        <Icon className="h-3.5 w-3.5" />
+      </span>
+      <div className="min-w-0">
+        <h4 className="text-sm font-semibold text-ink dark:text-ink-dark">{title}</h4>
+        {description && <p className="text-xs text-muted dark:text-muted-dark">{description}</p>}
+      </div>
+    </div>
+  );
+}
 
 const LIMIT_FIELDS = [
   { key: 'max_queries_per_month', label: 'Max AI queries / month' },
@@ -30,20 +54,28 @@ function FeatureChecklist({ featureCatalog, selected, onChange }) {
 
   return (
     <div>
-      <label className="mb-1.5 flex items-center gap-2 text-xs font-medium text-muted dark:text-muted-dark">
+      <label className="flex cursor-pointer items-center gap-2.5 rounded-lg border border-line bg-surface px-3.5 py-2.5 text-sm font-medium text-ink transition-colors hover:border-ink/20 dark:border-line-dark dark:bg-white/5 dark:text-ink-dark dark:hover:border-ink-dark/20">
         <input
           type="checkbox" checked={restricted}
           onChange={(e) => { setRestricted(e.target.checked); if (!e.target.checked) onChange([]); }}
+          className="h-4 w-4 shrink-0 rounded border-line text-primary focus:ring-primary/30 dark:border-line-dark"
         />
-        Restrict to specific features (unchecked = every feature included)
+        <span>
+          Restrict to specific features
+          <span className="block text-xs font-normal text-muted dark:text-muted-dark">Unchecked = every feature is included</span>
+        </span>
       </label>
       {restricted && (
-        <div className="mt-2 grid grid-cols-2 gap-2 rounded-lg border border-line bg-surface p-3 dark:border-line-dark dark:bg-white/5">
+        <div className="mt-2.5 grid grid-cols-1 gap-1.5 sm:grid-cols-2">
           {featureCatalog.map(({ code, label }) => (
-            <label key={code} className="flex items-center gap-2 text-sm text-ink dark:text-ink-dark">
+            <label
+              key={code}
+              className="flex cursor-pointer items-center gap-2.5 rounded-lg border border-line px-3.5 py-2.5 text-sm text-ink transition-colors hover:bg-surface has-[:checked]:border-primary has-[:checked]:bg-primary/5 dark:border-line-dark dark:text-ink-dark dark:hover:bg-white/5 dark:has-[:checked]:bg-primary/10"
+            >
               <input
                 type="checkbox" checked={selected.includes(code)}
                 onChange={(e) => onChange(e.target.checked ? [...selected, code] : selected.filter((c) => c !== code))}
+                className="h-4 w-4 shrink-0 rounded border-line text-primary focus:ring-primary/30 dark:border-line-dark"
               />
               {label}
             </label>
@@ -77,83 +109,140 @@ function CreatePlanModal({ planType, featureCatalog, onClose }) {
     create.mutate(payload, { onSuccess: onClose, onError: (err) => setError(err.message) });
   };
 
+  const previewPlan = {
+    name: name || 'Untitled Plan',
+    description: null,
+    price: price || null,
+    currency: 'USD',
+    billing_interval: billingInterval,
+    included_credits: parseInt(includedCredits, 10) || 0,
+    allow_credit_purchase: allowCreditPurchase,
+    max_queries_per_month: limits.max_queries_per_month ? parseInt(limits.max_queries_per_month, 10) : null,
+    max_ai_task_runs_per_month: limits.max_ai_task_runs_per_month ? parseInt(limits.max_ai_task_runs_per_month, 10) : null,
+    max_storage_bytes: limits.max_storage_bytes ? parseInt(limits.max_storage_bytes, 10) : null,
+    max_seats: planType === 'company' ? (limits.max_seats ? parseInt(limits.max_seats, 10) : null) : null,
+    plan_type: planType,
+    included_features: features,
+  };
+
+  const inputClass = 'w-full rounded-lg border border-line bg-surface px-3 py-2.5 text-sm text-ink placeholder:text-muted transition-colors focus:border-2 focus:border-ink focus:outline-none dark:focus:border-ink-dark dark:border-line-dark dark:bg-white/5 dark:text-ink-dark dark:placeholder:text-muted-dark';
+  const cardClass = 'rounded-xl border border-line/70 bg-surface/40 p-4 dark:border-line-dark/70 dark:bg-white/[0.02]';
+  const fieldLabelClass = 'mb-1.5 block text-xs font-medium text-muted dark:text-muted-dark';
+
   return (
     <Modal
-      title="New Company Plan" icon={Plus}
-      onClose={onClose} bodyClassName="max-h-[70vh] space-y-4 overflow-y-auto px-6 py-5"
+      title="New Company Plan" icon={Plus} maxWidth="max-w-4xl"
+      onClose={onClose} bodyClassName="grid max-h-[75vh] grid-cols-1 gap-6 overflow-y-auto px-6 py-6 lg:grid-cols-[1fr_300px]"
       footer={
         <>
           <button type="button" onClick={onClose} className="rounded-lg px-4 py-2 text-sm font-medium text-muted transition-colors hover:bg-surface dark:text-muted-dark dark:hover:bg-white/5">Cancel</button>
           <button
             type="submit" form="create-plan-form" disabled={create.isPending || !name} data-testid="submit-create-plan"
-            className="inline-flex items-center gap-1.5 rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-primary-dark disabled:opacity-60"
+            className="inline-flex items-center gap-1.5 rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-white shadow-soft transition-colors hover:bg-primary-dark disabled:opacity-60"
           >
-            {create.isPending ? <Spinner size={16} /> : <Plus className="h-4 w-4" />} {create.isPending ? 'Creating…' : 'Create'}
+            {create.isPending ? <Spinner size={16} /> : <Plus className="h-4 w-4" />} {create.isPending ? 'Creating…' : 'Create Plan'}
           </button>
         </>
       }
     >
       <form id="create-plan-form" onSubmit={onSubmit} className="space-y-4">
         {error && <p className="rounded-lg border border-danger/20 bg-danger/10 px-3.5 py-2.5 text-sm text-danger dark:text-danger-dark">{error}</p>}
-        <div>
-          <label className="mb-1.5 block text-xs font-medium text-muted dark:text-muted-dark">Name</label>
-          <input
-            required autoFocus value={name} onChange={(e) => setName(e.target.value)} placeholder="Starter"
-            data-testid="plan-name-input"
-            className="w-full rounded-lg border border-line bg-surface px-3 py-2.5 text-sm text-ink placeholder:text-muted focus:border-2 focus:border-ink focus:outline-none dark:focus:border-ink-dark dark:border-line-dark dark:bg-white/5 dark:text-ink-dark dark:placeholder:text-muted-dark"
-          />
-        </div>
-        <div className="grid grid-cols-2 gap-3">
+
+        <section className={cardClass}>
+          <SectionHeader icon={IdCard} title="Basic Info" />
           <div>
-            <label className="mb-1.5 block text-xs font-medium text-muted dark:text-muted-dark">Price (blank = free)</label>
-            <input
-              type="number" min="0" step="0.01" value={price} onChange={(e) => setPrice(e.target.value)}
-              className="w-full rounded-lg border border-line bg-surface px-3 py-2.5 text-sm text-ink focus:border-2 focus:border-ink focus:outline-none dark:focus:border-ink-dark dark:border-line-dark dark:bg-white/5 dark:text-ink-dark"
-            />
+            <label className={fieldLabelClass}>Plan name <span className="text-danger dark:text-danger-dark">*</span></label>
+            <div className="group relative">
+              <IdCard className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted transition-colors group-focus-within:text-ink dark:text-muted-dark dark:group-focus-within:text-ink-dark" />
+              <input
+                required autoFocus value={name} onChange={(e) => setName(e.target.value)} placeholder="Starter"
+                data-testid="plan-name-input"
+                className={`${inputClass} pl-9`}
+              />
+            </div>
           </div>
-          <div>
-            <label className="mb-1.5 block text-xs font-medium text-muted dark:text-muted-dark">Billing interval</label>
-            <select
-              value={billingInterval} onChange={(e) => setBillingInterval(e.target.value)}
-              className="w-full rounded-lg border border-line bg-surface px-3 py-2.5 text-sm text-ink focus:border-2 focus:border-ink focus:outline-none dark:focus:border-ink-dark dark:border-line-dark dark:bg-white/5 dark:text-ink-dark"
-            >
-              <option value="monthly">Monthly</option>
-              <option value="yearly">Yearly</option>
-            </select>
+        </section>
+
+        <section className={cardClass}>
+          <SectionHeader icon={Coin} title="Pricing & Credits" />
+          <div className="space-y-4">
+            <div className="grid grid-cols-2 gap-3">
+              <div>
+                <label className={fieldLabelClass}>Price (blank = free)</label>
+                <div className="group relative">
+                  <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-sm font-medium text-muted transition-colors group-focus-within:text-ink dark:text-muted-dark dark:group-focus-within:text-ink-dark">$</span>
+                  <input
+                    type="number" min="0" step="0.01" value={price} onChange={(e) => setPrice(e.target.value)}
+                    className={`${inputClass} pl-7`}
+                  />
+                </div>
+              </div>
+              <Select label="Billing interval" value={billingInterval} onChange={setBillingInterval} options={BILLING_INTERVAL_OPTIONS} />
+            </div>
+            <div>
+              <label className={fieldLabelClass}>AI credits included per period</label>
+              <div className="group relative">
+                <Coin className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted transition-colors group-focus-within:text-ink dark:text-muted-dark dark:group-focus-within:text-ink-dark" />
+                <input
+                  type="number" min="0" value={includedCredits} onChange={(e) => setIncludedCredits(e.target.value)}
+                  className={`${inputClass} pl-9`}
+                />
+              </div>
+              <p className="mt-1.5 text-xs text-muted dark:text-muted-dark">Refills to this exact amount every billing period.</p>
+            </div>
+            <label className="flex cursor-pointer items-center gap-2.5 rounded-lg border border-line bg-surface px-3.5 py-2.5 text-sm text-ink transition-colors hover:border-ink/20 dark:border-line-dark dark:bg-white/5 dark:text-ink-dark dark:hover:border-ink-dark/20">
+              <input
+                type="checkbox" checked={allowCreditPurchase} onChange={(e) => setAllowCreditPurchase(e.target.checked)}
+                className="h-4 w-4 shrink-0 rounded border-line text-primary focus:ring-primary/30 dark:border-line-dark"
+              />
+              Allow purchasing extra credits on this plan
+            </label>
           </div>
-        </div>
-        <div>
-          <label className="mb-1.5 block text-xs font-medium text-muted dark:text-muted-dark">AI credits included per period</label>
-          <input
-            type="number" min="0" value={includedCredits} onChange={(e) => setIncludedCredits(e.target.value)}
-            className="w-full rounded-lg border border-line bg-surface px-3 py-2.5 text-sm text-ink focus:border-2 focus:border-ink focus:outline-none dark:focus:border-ink-dark dark:border-line-dark dark:bg-white/5 dark:text-ink-dark"
-          />
-          <p className="mt-1 text-xs text-muted dark:text-muted-dark">Refills to this exact amount every billing period.</p>
-        </div>
-        <label className="flex items-center gap-2 text-sm text-ink dark:text-ink-dark">
-          <input type="checkbox" checked={allowCreditPurchase} onChange={(e) => setAllowCreditPurchase(e.target.checked)} />
-          Allow purchasing extra credits on this plan
-        </label>
-        {LIMIT_FIELDS.map(({ key, label }) => (
-          <div key={key}>
-            <label className="mb-1.5 block text-xs font-medium text-muted dark:text-muted-dark">{label} (blank = unlimited)</label>
-            <input
-              type="number" min="0" value={limits[key] || ''} onChange={(e) => setLimits((l) => ({ ...l, [key]: e.target.value }))}
-              className="w-full rounded-lg border border-line bg-surface px-3 py-2.5 text-sm text-ink placeholder:text-muted focus:border-2 focus:border-ink focus:outline-none dark:focus:border-ink-dark dark:border-line-dark dark:bg-white/5 dark:text-ink-dark"
-            />
+        </section>
+
+        <section className={cardClass}>
+          <SectionHeader icon={Gauge} title="Usage Limits" description="Leave a field blank for unlimited." />
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+            {LIMIT_FIELDS.map(({ key, label }) => (
+              <div key={key}>
+                <label className={fieldLabelClass}>{label}</label>
+                <input
+                  type="number" min="0" value={limits[key] || ''} onChange={(e) => setLimits((l) => ({ ...l, [key]: e.target.value }))}
+                  className={inputClass}
+                />
+              </div>
+            ))}
+            {planType === 'company' && (
+              <div>
+                <label className={fieldLabelClass}>Max seats</label>
+                <input
+                  type="number" min="0" value={limits.max_seats || ''} onChange={(e) => setLimits((l) => ({ ...l, max_seats: e.target.value }))}
+                  className={inputClass}
+                />
+              </div>
+            )}
           </div>
-        ))}
-        {planType === 'company' && (
-          <div>
-            <label className="mb-1.5 block text-xs font-medium text-muted dark:text-muted-dark">Max seats (blank = unlimited)</label>
-            <input
-              type="number" min="0" value={limits.max_seats || ''} onChange={(e) => setLimits((l) => ({ ...l, max_seats: e.target.value }))}
-              className="w-full rounded-lg border border-line bg-surface px-3 py-2.5 text-sm text-ink placeholder:text-muted focus:border-2 focus:border-ink focus:outline-none dark:focus:border-ink-dark dark:border-line-dark dark:bg-white/5 dark:text-ink-dark"
-            />
-          </div>
-        )}
-        <FeatureChecklist featureCatalog={featureCatalog} selected={features} onChange={setFeatures} />
+        </section>
+
+        <section className={cardClass}>
+          <SectionHeader icon={Tag} title="Features" />
+          <FeatureChecklist featureCatalog={featureCatalog} selected={features} onChange={setFeatures} />
+        </section>
       </form>
+
+      <div className="hidden lg:block">
+        <div className="sticky top-0 space-y-2.5">
+          <div className="inline-flex items-center gap-1.5 rounded-full bg-primary/10 px-2.5 py-1 text-xs font-semibold text-primary dark:text-primary-soft">
+            <Eye className="h-3.5 w-3.5" /> Live Preview
+          </div>
+          <div className="rounded-2xl border border-dashed border-line bg-surface/40 p-3 dark:border-line-dark dark:bg-white/[0.02]">
+            <div className="pointer-events-none">
+              <PlanCard plan={previewPlan} isCurrent={false} isPendingThis={false} hasOtherPending onRequest={() => {}} requesting={false} />
+            </div>
+          </div>
+          <p className="px-1 text-xs text-muted dark:text-muted-dark">This is exactly what companies will see when choosing a plan.</p>
+        </div>
+      </div>
     </Modal>
   );
 }
@@ -197,81 +286,101 @@ function EditFeaturesModal({ plan, featureCatalog, onClose }) {
   );
 }
 
-function OrganizationBillingRow({ org, plans }) {
-  const assign = useAssignPlan();
-  const unassign = useUnassignPlan();
-  const currentPlanId = org.usage.plan?.id || '';
+// Admin's management-oriented counterpart to the customer-facing
+// PlanCard - deliberately its own component rather than PlanCard with
+// extra props, since the two footers (Request This Plan vs. Edit/
+// Activate/Delete) are different audiences with different actions,
+// not a variant of the same one. Wraps PlanCard's exact card body
+// (name/price/credits badge/limits/features) so an admin's plan list
+// reads as the same visual product as what a company Owner is shown,
+// just with management controls where the CTA would be.
+function AdminPlanCard({ plan, onEditFeatures }) {
+  const updatePlan = useUpdatePlan();
+  const deletePlan = useDeletePlan();
+  const [confirmingDelete, setConfirmingDelete] = useState(false);
+  const [deleteError, setDeleteError] = useState('');
+
+  const handleDelete = () => {
+    setDeleteError('');
+    deletePlan.mutate(plan.id, {
+      onSuccess: () => setConfirmingDelete(false),
+      onError: (err) => setDeleteError(err.message),
+    });
+  };
 
   return (
-    <tr className="transition-colors hover:bg-surface dark:hover:bg-white/5">
-      <td className="px-5 py-3 font-medium text-ink dark:text-ink-dark">{org.name}</td>
-      <td className="px-3 py-3 text-muted dark:text-muted-dark">
-        {org.usage.unlimited ? 'No limits' : `${org.usage.queries_used} queries / ${org.usage.plan.max_queries_per_month ?? '∞'}`}
-      </td>
-      <td className="px-5 py-3 text-right">
-        <select
-          value={currentPlanId}
-          onChange={(e) => {
-            const planId = e.target.value;
-            if (planId) assign.mutate({ orgSlug: org.slug, planId });
-            else unassign.mutate(org.slug);
-          }}
-          className="rounded-lg border border-line bg-surface px-2.5 py-1.5 text-sm text-ink focus:border-2 focus:border-ink focus:outline-none dark:focus:border-ink-dark dark:border-line-dark dark:bg-white/5 dark:text-ink-dark"
-        >
-          <option value="">No plan (unlimited)</option>
-          {plans.map((p) => <option key={p.id} value={p.id}>{p.name}</option>)}
-        </select>
-      </td>
-    </tr>
+    <div className={`relative flex h-full flex-col overflow-hidden rounded-2xl border shadow-soft dark:bg-card-dark ${plan.is_active ? 'border-line bg-card dark:border-line-dark' : 'border-line bg-surface/60 opacity-70 dark:border-line-dark dark:bg-white/[0.02]'}`}>
+      {!plan.is_active && (
+        <span className="absolute right-3 top-3 z-10 rounded-full bg-muted/15 px-2 py-0.5 text-[11px] font-semibold text-muted dark:bg-white/10 dark:text-muted-dark">Inactive</span>
+      )}
+      <div className="pointer-events-none flex-1 p-1">
+        <PlanCard plan={plan} isCurrent={false} isPendingThis={false} hasOtherPending onRequest={() => {}} requesting={false} />
+      </div>
+
+      <div className="space-y-2 border-t border-line px-5 py-3.5 dark:border-line-dark">
+        {confirmingDelete ? (
+          <div className="flex items-center justify-between gap-2">
+            <span className="text-xs text-muted dark:text-muted-dark">Delete this plan?</span>
+            <div className="flex items-center gap-3">
+              <button
+                onClick={handleDelete} disabled={deletePlan.isPending}
+                className="text-xs font-semibold text-danger hover:underline disabled:opacity-60 dark:text-danger-dark"
+              >
+                {deletePlan.isPending ? 'Deleting…' : 'Confirm'}
+              </button>
+              <button onClick={() => { setConfirmingDelete(false); setDeleteError(''); }} className="text-xs font-medium text-muted hover:text-ink dark:text-muted-dark dark:hover:text-ink-dark">
+                Cancel
+              </button>
+            </div>
+          </div>
+        ) : (
+          <div className="flex items-center justify-between gap-2">
+            <button onClick={() => onEditFeatures(plan)} className="inline-flex items-center gap-1.5 rounded-lg px-2 py-1 text-xs font-medium text-muted transition-colors hover:bg-surface hover:text-ink dark:text-muted-dark dark:hover:bg-white/5 dark:hover:text-ink-dark">
+              <Sliders className="h-3.5 w-3.5" /> Features
+            </button>
+            <button
+              onClick={() => updatePlan.mutate({ planId: plan.id, is_active: !plan.is_active })}
+              disabled={updatePlan.isPending}
+              className={`inline-flex items-center gap-1.5 rounded-lg px-2 py-1 text-xs font-medium transition-colors disabled:opacity-60 ${plan.is_active ? 'text-muted hover:bg-danger/10 hover:text-danger dark:text-muted-dark' : 'text-success hover:bg-success/10 dark:text-success-dark'}`}
+            >
+              {updatePlan.isPending && <Spinner size={12} />}
+              {updatePlan.isPending ? (plan.is_active ? 'Deactivating…' : 'Reactivating…') : (plan.is_active ? 'Deactivate' : 'Reactivate')}
+            </button>
+            <button
+              onClick={() => setConfirmingDelete(true)} title="Delete plan"
+              className="rounded-lg p-1.5 text-muted transition-colors hover:bg-danger/10 hover:text-danger dark:text-muted-dark dark:hover:text-danger-dark"
+            >
+              <Trash className="h-3.5 w-3.5" />
+            </button>
+          </div>
+        )}
+        {deleteError && <p className="text-xs text-danger dark:text-danger-dark">{deleteError}</p>}
+      </div>
+    </div>
   );
 }
 
 function PlansPanel({ planType, plans, featureCatalog, onEditFeatures }) {
-  const updatePlan = useUpdatePlan();
   const [createOpen, setCreateOpen] = useState(false);
-  const featureLabel = (code) => featureCatalog.find((f) => f.code === code)?.label || code;
 
   return (
-    <div className="mb-6 rounded-2xl border border-line bg-card shadow-soft dark:border-line-dark dark:bg-card-dark">
-      <div className="flex items-center justify-between border-b border-line px-5 py-3.5 dark:border-line-dark">
+    <div className="mb-6">
+      <div className="mb-3 flex items-center justify-between">
         <h2 className="text-sm font-semibold text-ink dark:text-ink-dark">Company Plans</h2>
-        <button onClick={() => setCreateOpen(true)} data-testid="open-create-plan-modal" className="inline-flex items-center gap-1.5 rounded-lg bg-primary px-3 py-1.5 text-sm font-semibold text-white transition-colors hover:bg-primary-dark">
+        <button onClick={() => setCreateOpen(true)} data-testid="open-create-plan-modal" className="inline-flex items-center gap-1.5 rounded-lg bg-primary px-3 py-1.5 text-sm font-semibold text-white shadow-soft transition-colors hover:bg-primary-dark">
           <Plus className="h-3.5 w-3.5" /> New Plan
         </button>
       </div>
       {plans.length > 0 ? (
-        <div className="divide-y divide-line dark:divide-line-dark">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {plans.map((plan) => (
-            <div key={plan.id} className="flex items-center justify-between gap-3 px-5 py-3">
-              <div className="min-w-0">
-                <p className="truncate text-sm font-medium text-ink dark:text-ink-dark">
-                  {plan.name} <span className="font-normal text-muted dark:text-muted-dark">— {plan.price ? `${plan.currency} ${plan.price}/${plan.billing_interval === 'yearly' ? 'yr' : 'mo'}` : 'Free'}</span>
-                </p>
-                <p className="truncate text-xs text-muted dark:text-muted-dark">
-                  {plan.included_credits.toLocaleString()} credits/{plan.billing_interval === 'yearly' ? 'yr' : 'mo'}
-                  {' · '}{plan.max_queries_per_month ?? '∞'} queries/mo · {plan.max_ai_task_runs_per_month ?? '∞'} AI Task runs/mo
-                  {planType === 'company' ? ` · ${plan.max_seats ?? '∞'} seats` : ''}
-                </p>
-                <p className="truncate text-xs text-muted dark:text-muted-dark">
-                  {plan.included_features?.length ? plan.included_features.map(featureLabel).join(', ') : 'All features'}
-                </p>
-              </div>
-              <div className="flex shrink-0 items-center gap-3">
-                <button onClick={() => onEditFeatures(plan)} className="text-xs font-medium text-muted hover:text-ink dark:text-muted-dark dark:hover:text-ink-dark">
-                  Edit Features
-                </button>
-                <button
-                  onClick={() => updatePlan.mutate({ planId: plan.id, is_active: !plan.is_active })}
-                  className={`text-xs font-medium ${plan.is_active ? 'text-muted hover:text-danger dark:text-muted-dark' : 'text-success dark:text-success-dark'}`}
-                >
-                  {plan.is_active ? 'Deactivate' : 'Reactivate'}
-                </button>
-              </div>
-            </div>
+            <AdminPlanCard key={plan.id} plan={plan} onEditFeatures={onEditFeatures} />
           ))}
         </div>
       ) : (
-        <EmptyState icon={CreditCard} title="No plans yet" />
+        <div className="rounded-2xl border border-line bg-card shadow-soft dark:border-line-dark dark:bg-card-dark">
+          <EmptyState icon={CreditCard} title="No plans yet" />
+        </div>
       )}
 
       {createOpen && <CreatePlanModal planType={planType} featureCatalog={featureCatalog} onClose={() => setCreateOpen(false)} />}
@@ -372,7 +481,6 @@ function PlanRequestsPanel() {
 export default function AdminBillingPlans() {
   const [tab, setTab] = useState('company');
   const { data: plansData, isLoading: plansLoading } = usePlatformPlans(tab === 'requests' ? undefined : tab);
-  const { data: orgsData, isLoading: orgsLoading } = usePlatformOrganizationsBilling();
   const [editFeaturesPlan, setEditFeaturesPlan] = useState(null);
 
   const plans = plansData?.plans || [];
@@ -400,36 +508,7 @@ export default function AdminBillingPlans() {
       ) : plansLoading || !plansData ? (
         <PageSkeleton variant="list" />
       ) : (
-        <>
-          <PlansPanel planType={tab} plans={plans} featureCatalog={featureCatalog} onEditFeatures={setEditFeaturesPlan} />
-
-          {tab === 'company' && (
-            <div className="rounded-2xl border border-line bg-card shadow-soft dark:border-line-dark dark:bg-card-dark">
-              <div className="border-b border-line px-5 py-3.5 dark:border-line-dark">
-                <h2 className="text-sm font-semibold text-ink dark:text-ink-dark">Organizations</h2>
-                <p className="mt-0.5 text-xs text-muted dark:text-muted-dark">Direct, instant assignment — bypasses the request/approval queue above, for manual overrides.</p>
-              </div>
-              {orgsLoading || !orgsData ? (
-                <PageSkeleton variant="list" />
-              ) : (
-                <div className="overflow-auto">
-                  <table className="w-full min-w-[640px] text-left text-sm">
-                    <thead className="sticky top-0 z-10 bg-card dark:bg-card-dark">
-                      <tr className="border-b border-line text-xs font-semibold uppercase tracking-wide text-muted dark:border-line-dark dark:text-muted-dark">
-                        <th className="px-5 py-3">Company</th>
-                        <th className="px-3 py-3">Usage</th>
-                        <th className="px-5 py-3 text-right">Plan</th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-line dark:divide-line-dark">
-                      {(orgsData.organizations || []).map((org) => <OrganizationBillingRow key={org.slug} org={org} plans={plans} />)}
-                    </tbody>
-                  </table>
-                </div>
-              )}
-            </div>
-          )}
-        </>
+        <PlansPanel planType={tab} plans={plans} featureCatalog={featureCatalog} onEditFeatures={setEditFeaturesPlan} />
       )}
 
       {editFeaturesPlan && (

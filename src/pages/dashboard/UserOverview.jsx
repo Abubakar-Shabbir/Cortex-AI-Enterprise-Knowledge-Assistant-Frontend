@@ -225,7 +225,7 @@ export default function UserOverview() {
                           <MessageSquare className="h-4 w-4" />
                         </div>
                         <div className="min-w-0 flex-1">
-                          <p className="truncate text-sm font-medium leading-snug text-ink dark:text-ink-dark">{log.question}</p>
+                          <p className="truncate text-sm font-medium leading-snug text-ink dark:text-ink-dark">{log.question || 'Asked a question'}</p>
                           <p className="mt-0.5 text-xs leading-snug text-muted dark:text-muted-dark">
                             {log.confidence}% confidence · {timeAgo(log.created_at)} ago
                           </p>

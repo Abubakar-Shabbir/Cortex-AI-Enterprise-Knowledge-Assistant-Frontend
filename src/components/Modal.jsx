@@ -21,15 +21,35 @@ export default function Modal({
     return () => document.removeEventListener('keydown', onKeyDown);
   }, [onClose]);
 
+  // Lock the page behind every modal (New Plan, Add Credits, Edit
+  // Features, ...) so it can't be scrolled while this is open -
+  // scrolling the backdrop while a dialog floats on top of it reads as
+  // broken, not as a feature. Compensate for the scrollbar's own width
+  // disappearing (body padding-right) so removing it doesn't reflow/
+  // shift the page's content sideways for the instant the modal is up.
+  useEffect(() => {
+    const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
+    const { overflow: prevOverflow, paddingRight: prevPaddingRight } = document.body.style;
+    document.body.style.overflow = 'hidden';
+    if (scrollbarWidth > 0) {
+      const currentPaddingRight = parseFloat(window.getComputedStyle(document.body).paddingRight) || 0;
+      document.body.style.paddingRight = `${currentPaddingRight + scrollbarWidth}px`;
+    }
+    return () => {
+      document.body.style.overflow = prevOverflow;
+      document.body.style.paddingRight = prevPaddingRight;
+    };
+  }, []);
+
   return (
     <div
-      className="modal-backdrop-in fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 backdrop-blur-[2px]"
+      className="modal-backdrop-in fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm dark:bg-black/75"
       onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}
       role="presentation"
     >
       <div
         role="dialog" aria-modal="true" aria-label={title}
-        className={`modal-pop-in w-full ${maxWidth} overflow-hidden rounded-2xl border border-line bg-card shadow-soft dark:border-line-dark dark:bg-card-dark`}
+        className={`modal-pop-in w-full ${maxWidth} overflow-hidden rounded-2xl border border-line bg-card shadow-[0_25px_60px_-15px_rgba(0,0,0,0.35)] ring-1 ring-black/5 dark:border-line-dark dark:bg-card-dark dark:shadow-[0_25px_60px_-15px_rgba(0,0,0,0.8)] dark:ring-white/10`}
       >
         <div className="flex items-start justify-between gap-4 border-b border-line px-6 py-5 dark:border-line-dark">
           <div className="flex items-center gap-3">

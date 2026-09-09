@@ -398,13 +398,29 @@ export function useAiTaskHistory(params) {
 }
 
 // ── Analytics ────────────────────────────────────────────────────────
-export function useAnalytics() {
-  return useQuery({ queryKey: ['analytics'], queryFn: () => api.get('/analytics/') });
+// `organization` is a company slug, or "personal" - only ever honored
+// server-side for a platform Admin (see RAG.api.analytics_views'
+// module docstring, same mechanism Reports uses below); omitted
+// entirely for every other viewer, who gets their ordinary
+// active-workspace analytics exactly as before this existed.
+export function useAnalytics(organization) {
+  return useQuery({
+    queryKey: ['analytics', organization || null],
+    queryFn: () => api.get(`/analytics/${qs({ organization })}`),
+  });
 }
 
 // ── Reports ──────────────────────────────────────────────────────────
-export function useReports() {
-  return useQuery({ queryKey: ['reports'], queryFn: () => api.get('/reports/') });
+// `organization` is a company slug, or "personal" - only ever honored
+// server-side for a platform Admin (see RAG.api.reports_views.
+// _resolve_report_organization()'s docstring); omitted entirely for
+// every other viewer, who gets their ordinary active-workspace report
+// exactly as before this existed.
+export function useReports(organization) {
+  return useQuery({
+    queryKey: ['reports', organization || null],
+    queryFn: () => api.get(`/reports/${qs({ organization })}`),
+  });
 }
 
 // ── Search History ───────────────────────────────────────────────────
@@ -486,10 +502,6 @@ export function useAdminQueries(params) {
     queryFn: () => api.get(`/admin/queries/${qs(params)}`),
     placeholderData: (prev) => prev,
   });
-}
-
-export async function fetchAdminQueryDetail(logId) {
-  return api.get(`/admin/queries/${logId}/detail/`);
 }
 
 export function useToggleQueryFlag() {
@@ -884,23 +896,11 @@ export function useUpdatePlan() {
   });
 }
 
-export function usePlatformOrganizationsBilling() {
-  return useQuery({ queryKey: ['admin', 'billing', 'organizations'], queryFn: () => api.get('/admin/billing/organizations/') });
-}
-
-export function useAssignPlan() {
+export function useDeletePlan() {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: ({ orgSlug, planId }) => api.post(`/admin/billing/organizations/${orgSlug}/assign-plan/`, { plan_id: planId }),
-    onSuccess: () => { qc.invalidateQueries({ queryKey: ['admin', 'billing', 'organizations'] }); },
-  });
-}
-
-export function useUnassignPlan() {
-  const qc = useQueryClient();
-  return useMutation({
-    mutationFn: (orgSlug) => api.delete(`/admin/billing/organizations/${orgSlug}/assign-plan/`),
-    onSuccess: () => { qc.invalidateQueries({ queryKey: ['admin', 'billing', 'organizations'] }); },
+    mutationFn: (planId) => api.delete(`/admin/billing/plans/${planId}/`),
+    onSuccess: () => { qc.invalidateQueries({ queryKey: ['admin', 'billing', 'plans'] }); },
   });
 }
 

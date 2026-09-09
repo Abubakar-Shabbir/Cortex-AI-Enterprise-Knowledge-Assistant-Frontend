@@ -1,11 +1,14 @@
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { ActivityIcon as Activity, CheckCircleIcon as CheckCircle2, CompassIcon as Compass, DatabaseIcon as Database, FileArrowUpIcon as FileUp, GaugeIcon as Gauge, GitBranchIcon as GitBranch, HardDriveIcon as HardDrive, LockKeyIcon as LockKey, ChatCircleIcon as MessageSquare, ChartPieIcon as PieChart, SparkleIcon as Sparkles, TimerIcon as Timer } from '@phosphor-icons/react';
+import { ActivityIcon as Activity, BuildingsIcon as Buildings, CheckCircleIcon as CheckCircle2, CompassIcon as Compass, DatabaseIcon as Database, FileArrowUpIcon as FileUp, GaugeIcon as Gauge, GitBranchIcon as GitBranch, HardDriveIcon as HardDrive, LockKeyIcon as LockKey, ChatCircleIcon as MessageSquare, ChartPieIcon as PieChart, SparkleIcon as Sparkles, TimerIcon as Timer } from '@phosphor-icons/react';
 import PageHeader from '../components/PageHeader';
+import Select from '../components/Select';
 import StatCard from '../components/StatCard';
 import EmptyState from '../components/EmptyState';
 import ChartCanvas from '../components/ChartCanvas';
 import PageSkeleton from '../components/PageSkeleton';
-import { useAnalytics } from '../api/hooks';
+import { useSession } from '../auth/SessionContext';
+import { useAnalytics, usePlatformOrganizations } from '../api/hooks';
 
 const GRID_COLOR = 'rgba(106, 106, 106, 0.10)';
 const TICK_COLOR = '#6A6A6A';
@@ -24,7 +27,10 @@ const AI_TASK_STATUS_COLOR_MAP = { Completed: SUCCESS, Failed: PRIMARY, Running:
 // 1:1 (same types, colors, scales), now driven by React state /
 // ChartCanvas instead of CDN Chart.js + json_script-read globals.
 export default function Analytics() {
-  const { data: payload, isLoading, isError, error } = useAnalytics();
+  const { canViewAdminArea } = useSession();
+  const [scope, setScope] = useState('');
+  const { data: orgsData } = usePlatformOrganizations();
+  const { data: payload, isLoading, isError, error } = useAnalytics(scope || undefined);
 
   if (isError && error?.status === 403) {
     return <EmptyState icon={LockKey} title="Analytics isn't available" message={error.message} />;
@@ -35,10 +41,25 @@ export default function Analytics() {
 
   const chunkLabels = data.chunk_labels.length ? data.chunk_labels : ['No documents yet'];
   const chunkValues = data.chunk_values.length ? data.chunk_values : [0];
+  const scopeOptions = [
+    { value: '', label: 'My Workspace' },
+    { value: 'personal', label: 'Personal Workspace' },
+    ...(orgsData?.organizations || []).map((o) => ({ value: o.slug, label: o.name })),
+  ];
 
   return (
     <>
       <PageHeader title="Analytics" subtitle="Usage trends across your document library and question activity, last 14 days." />
+
+      {canViewAdminArea && (
+        <div className="mb-4 flex items-center gap-3 rounded-xl border border-line bg-card p-3.5 shadow-soft dark:border-line-dark dark:bg-card-dark">
+          <Buildings className="h-4 w-4 shrink-0 text-muted dark:text-muted-dark" />
+          <div className="min-w-0 flex-1 sm:max-w-xs">
+            <Select size="sm" value={scope} onChange={setScope} options={scopeOptions} />
+          </div>
+          <p className="text-xs text-muted dark:text-muted-dark">Pick a company (or Personal Workspace) to view its analytics — admin oversight.</p>
+        </div>
+      )}
 
       <div className="mb-4 flex flex-wrap gap-3">
         <div className="min-w-[190px] flex-1"><StatCard icon={MessageSquare} label="Questions (14d)" value={data.total_questions} numeric /></div>

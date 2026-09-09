@@ -1,6 +1,6 @@
-import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { BuildingsIcon as Buildings, DotsThreeIcon as MoreHorizontal, TrashIcon as Trash2, UserCheckIcon as UserCheck, UserMinusIcon as UserX } from '@phosphor-icons/react';
+import ActionMenu from '../components/ActionMenu';
 import EmptyState from '../components/EmptyState';
 import PageSkeleton from '../components/PageSkeleton';
 import { usePlatformOrganizationAction, usePlatformOrganizations } from '../api/hooks';
@@ -18,7 +18,6 @@ const STATUS_LABELS = {
 };
 
 function OrganizationRow({ organization, canManage, action }) {
-  const [menuOpen, setMenuOpen] = useState(false);
   const statusClass = STATUS_STYLES[organization.status] || 'text-muted dark:text-muted-dark';
 
   return (
@@ -48,60 +47,59 @@ function OrganizationRow({ organization, canManage, action }) {
       <td className="px-3 py-3 text-muted dark:text-muted-dark">{new Date(organization.created_at).toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' })}</td>
       <td className="px-5 py-3 text-right">
         {canManage && (
-          <div className="relative inline-block text-left">
-            <button
-              type="button" onClick={() => setMenuOpen((v) => !v)} aria-label="Company actions"
-              data-testid={`company-actions-${organization.slug}`}
-              className="inline-flex h-8 w-8 items-center justify-center rounded-lg border border-line text-muted transition-colors hover:border-primary/30 hover:bg-primary/5 hover:text-primary dark:border-line-dark dark:text-muted-dark dark:hover:bg-primary/10 dark:hover:text-primary-soft"
-            >
-              <MoreHorizontal className="h-4 w-4" />
-            </button>
-
-            {menuOpen && (
+          <ActionMenu
+            trigger={({ ref, toggle }) => (
+              <button
+                ref={ref} type="button" onClick={toggle} aria-label="Company actions"
+                data-testid={`company-actions-${organization.slug}`}
+                className="inline-flex h-8 w-8 items-center justify-center rounded-lg border border-line text-muted transition-colors hover:border-primary/30 hover:bg-primary/5 hover:text-primary dark:border-line-dark dark:text-muted-dark dark:hover:bg-primary/10 dark:hover:text-primary-soft"
+              >
+                <MoreHorizontal className="h-4 w-4" />
+              </button>
+            )}
+          >
+            {(close) => (
               <>
-                <div className="fixed inset-0 z-10" onClick={() => setMenuOpen(false)}></div>
-                <div className="absolute right-0 z-20 mt-2 w-56 space-y-0.5 overflow-hidden rounded-xl border border-line bg-card p-1.5 shadow-soft dark:border-line-dark dark:bg-card-dark">
-                  {organization.status === 'suspended' ? (
-                    <button
-                      type="button"
-                      data-testid={`reactivate-organization-${organization.slug}`}
-                      onClick={() => { setMenuOpen(false); action.mutate({ orgSlug: organization.slug, action: 'reactivate' }); }}
-                      className="flex w-full items-center gap-2.5 rounded-lg px-3 py-2.5 text-left text-sm font-medium text-success transition-colors hover:bg-success/10 dark:text-success-dark"
-                    >
-                      <UserCheck className="h-4 w-4 shrink-0" /> Reactivate
-                    </button>
-                  ) : (
-                    <button
-                      type="button"
-                      data-testid={`suspend-organization-${organization.slug}`}
-                      onClick={() => {
-                        setMenuOpen(false);
-                        if (window.confirm(`Suspend "${organization.name}"? Its members will lose access until it's reactivated.`)) {
-                          action.mutate({ orgSlug: organization.slug, action: 'suspend' });
-                        }
-                      }}
-                      className="flex w-full items-center gap-2.5 rounded-lg px-3 py-2.5 text-left text-sm font-medium text-warning transition-colors hover:bg-warning/10 dark:text-warning-dark"
-                    >
-                      <UserX className="h-4 w-4 shrink-0" /> Suspend
-                    </button>
-                  )}
+                {organization.status === 'suspended' ? (
                   <button
                     type="button"
-                    data-testid={`delete-organization-${organization.slug}`}
+                    data-testid={`reactivate-organization-${organization.slug}`}
+                    onClick={() => { close(); action.mutate({ orgSlug: organization.slug, action: 'reactivate' }); }}
+                    className="flex w-full items-center gap-2.5 rounded-lg px-3 py-2.5 text-left text-sm font-medium text-success transition-colors hover:bg-success/10 dark:text-success-dark"
+                  >
+                    <UserCheck className="h-4 w-4 shrink-0" /> Reactivate
+                  </button>
+                ) : (
+                  <button
+                    type="button"
+                    data-testid={`suspend-organization-${organization.slug}`}
                     onClick={() => {
-                      setMenuOpen(false);
-                      if (window.confirm(`Delete "${organization.name}" permanently? This removes all its members, documents, and data. This cannot be undone.`)) {
-                        action.mutate({ orgSlug: organization.slug, action: 'delete' });
+                      close();
+                      if (window.confirm(`Suspend "${organization.name}"? Its members will lose access until it's reactivated.`)) {
+                        action.mutate({ orgSlug: organization.slug, action: 'suspend' });
                       }
                     }}
-                    className="flex w-full items-center gap-2.5 rounded-lg px-3 py-2.5 text-left text-sm font-medium text-danger transition-colors hover:bg-danger/10 dark:text-danger-dark"
+                    className="flex w-full items-center gap-2.5 rounded-lg px-3 py-2.5 text-left text-sm font-medium text-warning transition-colors hover:bg-warning/10 dark:text-warning-dark"
                   >
-                    <Trash2 className="h-4 w-4 shrink-0" /> Delete
+                    <UserX className="h-4 w-4 shrink-0" /> Suspend
                   </button>
-                </div>
+                )}
+                <button
+                  type="button"
+                  data-testid={`delete-organization-${organization.slug}`}
+                  onClick={() => {
+                    close();
+                    if (window.confirm(`Delete "${organization.name}" permanently? This removes all its members, documents, and data. This cannot be undone.`)) {
+                      action.mutate({ orgSlug: organization.slug, action: 'delete' });
+                    }
+                  }}
+                  className="flex w-full items-center gap-2.5 rounded-lg px-3 py-2.5 text-left text-sm font-medium text-danger transition-colors hover:bg-danger/10 dark:text-danger-dark"
+                >
+                  <Trash2 className="h-4 w-4 shrink-0" /> Delete
+                </button>
               </>
             )}
-          </div>
+          </ActionMenu>
         )}
       </td>
     </tr>
@@ -121,7 +119,7 @@ export default function AdminOrganizations() {
         <p className="text-sm text-muted dark:text-muted-dark">Every company on the platform, regardless of membership. Metadata only — document content and Q&A answers stay private to their owner.</p>
       </div>
 
-      <div className="rounded-2xl border border-line bg-card shadow-soft dark:border-line-dark dark:bg-card-dark">
+      <div className="overflow-hidden rounded-2xl border border-line bg-card shadow-soft dark:border-line-dark dark:bg-card-dark">
         {data.organizations.length > 0 ? (
           <div className="overflow-auto">
             <table className="w-full min-w-[880px] text-left text-sm">

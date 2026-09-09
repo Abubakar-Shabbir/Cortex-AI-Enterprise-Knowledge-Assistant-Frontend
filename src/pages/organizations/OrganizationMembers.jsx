@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { CheckIcon as Check, DotsThreeIcon as MoreHorizontal, LockKeyIcon as LockKey, MagnifyingGlassIcon as Search, ProhibitIcon as Ban, ArrowsClockwiseIcon as Reactivate, TrashIcon as Trash2, UserPlusIcon as UserPlus, XIcon as X } from '@phosphor-icons/react';
+import { CheckIcon as Check, DotsThreeIcon as MoreHorizontal, GaugeIcon as Gauge, LockKeyIcon as LockKey, MagnifyingGlassIcon as Search, ProhibitIcon as Ban, ArrowsClockwiseIcon as Reactivate, TrashIcon as Trash2, UserPlusIcon as UserPlus, XIcon as X } from '@phosphor-icons/react';
+import ActionMenu from '../../components/ActionMenu';
 import EmptyState from '../../components/EmptyState';
 import PageHeader from '../../components/PageHeader';
 import PageSkeleton from '../../components/PageSkeleton';
@@ -55,8 +56,8 @@ function RegisterMemberModal({ orgSlug, onClose }) {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4" onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}>
-      <div className="w-full max-w-md rounded-2xl border border-line bg-card shadow-soft dark:border-line-dark dark:bg-card-dark">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm dark:bg-black/75" onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}>
+      <div className="w-full max-w-md rounded-2xl border border-line bg-card shadow-[0_25px_60px_-15px_rgba(0,0,0,0.35)] ring-1 ring-black/5 dark:border-line-dark dark:bg-card-dark dark:shadow-[0_25px_60px_-15px_rgba(0,0,0,0.8)] dark:ring-white/10">
         <div className="flex items-start justify-between gap-4 border-b border-line px-6 py-5 dark:border-line-dark">
           <h3 className="text-base font-semibold text-ink dark:text-ink-dark">Register Member</h3>
           <button onClick={onClose} className="shrink-0 rounded-lg p-1.5 text-muted transition-colors hover:bg-surface dark:text-muted-dark dark:hover:bg-white/5"><X className="h-4 w-4" /></button>
@@ -121,8 +122,8 @@ function ManageFeatureAccessModal({ member, action, onClose }) {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4" onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}>
-      <div className="w-full max-w-sm rounded-2xl border border-line bg-card shadow-soft dark:border-line-dark dark:bg-card-dark">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm dark:bg-black/75" onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}>
+      <div className="w-full max-w-sm rounded-2xl border border-line bg-card shadow-[0_25px_60px_-15px_rgba(0,0,0,0.35)] ring-1 ring-black/5 dark:border-line-dark dark:bg-card-dark dark:shadow-[0_25px_60px_-15px_rgba(0,0,0,0.8)] dark:ring-white/10">
         <div className="flex items-start justify-between gap-4 border-b border-line px-6 py-5 dark:border-line-dark">
           <h3 className="text-base font-semibold text-ink dark:text-ink-dark">Feature Access — {member.full_name || member.username}</h3>
           <button onClick={onClose} className="shrink-0 rounded-lg p-1.5 text-muted transition-colors hover:bg-surface dark:text-muted-dark dark:hover:bg-white/5"><X className="h-4 w-4" /></button>
@@ -163,8 +164,77 @@ function ManageFeatureAccessModal({ member, action, onClose }) {
   );
 }
 
-function MemberRow({ member, assignableRoles, currentUserId, action, onManageFeatures }) {
-  const [menuOpen, setMenuOpen] = useState(false);
+// Per-member usage sub-quota (question / AI Task run counts), kept
+// deliberately separate from the organization's own AI credit balance
+// (billing_service.py's sole org-wide spend-metering currency) - an
+// Owner uses this to narrow one member's monthly allowance without
+// touching what the rest of the organization can spend. An empty
+// field means "no member-specific cap", the backend's NULL convention.
+function ManageUsageLimitsModal({ member, action, onClose }) {
+  const [maxQueries, setMaxQueries] = useState(member.max_queries_per_month ?? '');
+  const [maxAiTasks, setMaxAiTasks] = useState(member.max_ai_task_runs_per_month ?? '');
+  const [error, setError] = useState('');
+  const usage = member.usage;
+
+  const onSubmit = (e) => {
+    e.preventDefault();
+    setError('');
+    action.mutate(
+      {
+        action: 'update_limits',
+        membership_id: member.membership_id,
+        max_queries_per_month: maxQueries === '' ? null : Number(maxQueries),
+        max_ai_task_runs_per_month: maxAiTasks === '' ? null : Number(maxAiTasks),
+      },
+      { onSuccess: onClose, onError: (err) => setError(err.message) },
+    );
+  };
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm dark:bg-black/75" onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}>
+      <div className="w-full max-w-sm rounded-2xl border border-line bg-card shadow-[0_25px_60px_-15px_rgba(0,0,0,0.35)] ring-1 ring-black/5 dark:border-line-dark dark:bg-card-dark dark:shadow-[0_25px_60px_-15px_rgba(0,0,0,0.8)] dark:ring-white/10">
+        <div className="flex items-start justify-between gap-4 border-b border-line px-6 py-5 dark:border-line-dark">
+          <h3 className="text-base font-semibold text-ink dark:text-ink-dark">Usage Limits — {member.full_name || member.username}</h3>
+          <button onClick={onClose} className="shrink-0 rounded-lg p-1.5 text-muted transition-colors hover:bg-surface dark:text-muted-dark dark:hover:bg-white/5"><X className="h-4 w-4" /></button>
+        </div>
+        <form onSubmit={onSubmit}>
+          <div className="space-y-4 px-6 py-5">
+            {error && <p className="rounded-lg border border-danger/20 bg-danger/10 px-3.5 py-2.5 text-sm text-danger dark:text-danger-dark">{error}</p>}
+            <p className="text-xs leading-relaxed text-muted dark:text-muted-dark">
+              Caps how much of the organization's usage this member alone can consume per billing period — separate from the organization's shared AI credit balance. Leave a field blank for no member-specific cap.
+            </p>
+            <div>
+              <label className="mb-1.5 block text-xs font-medium text-muted dark:text-muted-dark">
+                Max AI questions / month{usage ? ` (${usage.queries_used} used so far this period)` : ''}
+              </label>
+              <input
+                type="number" min="0" step="1" value={maxQueries} onChange={(e) => setMaxQueries(e.target.value)} placeholder="Unlimited"
+                className="w-full rounded-lg border border-line bg-surface px-3 py-2.5 text-sm text-ink placeholder:text-muted focus:border-2 focus:border-ink focus:outline-none dark:focus:border-ink-dark dark:border-line-dark dark:bg-white/5 dark:text-ink-dark dark:placeholder:text-muted-dark"
+              />
+            </div>
+            <div>
+              <label className="mb-1.5 block text-xs font-medium text-muted dark:text-muted-dark">
+                Max AI Task runs / month{usage ? ` (${usage.ai_task_runs_used} used so far this period)` : ''}
+              </label>
+              <input
+                type="number" min="0" step="1" value={maxAiTasks} onChange={(e) => setMaxAiTasks(e.target.value)} placeholder="Unlimited"
+                className="w-full rounded-lg border border-line bg-surface px-3 py-2.5 text-sm text-ink placeholder:text-muted focus:border-2 focus:border-ink focus:outline-none dark:focus:border-ink-dark dark:border-line-dark dark:bg-white/5 dark:text-ink-dark dark:placeholder:text-muted-dark"
+              />
+            </div>
+          </div>
+          <div className="flex items-center justify-end gap-2.5 border-t border-line bg-surface/60 px-6 py-4 dark:border-line-dark dark:bg-white/[0.03]">
+            <button type="button" onClick={onClose} className="rounded-lg px-4 py-2 text-sm font-medium text-muted transition-colors hover:bg-surface dark:text-muted-dark dark:hover:bg-white/5">Cancel</button>
+            <button type="submit" disabled={action.isPending} className="inline-flex items-center gap-1.5 rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-primary-dark disabled:opacity-60">
+              {action.isPending ? <Spinner size={16} /> : null} {action.isPending ? 'Saving…' : 'Save'}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+}
+
+function MemberRow({ member, assignableRoles, currentUserId, action, onManageFeatures, onManageLimits }) {
   const initials = (member.full_name || member.username)[0]?.toUpperCase();
   const isSelf = member.user_id === currentUserId;
   // An Owner's feature access can't be restricted (backend refuses the
@@ -197,54 +267,69 @@ function MemberRow({ member, assignableRoles, currentUserId, action, onManageFea
         </span>
       </td>
       <td className="px-3 py-3 text-muted dark:text-muted-dark">
-        {canManageFeatures ? `${featureTotal - disabledCount}/${featureTotal} features` : 'Full access'}
+        <div>{canManageFeatures ? `${featureTotal - disabledCount}/${featureTotal} features` : 'Full access'}</div>
+        {(member.max_queries_per_month != null || member.max_ai_task_runs_per_month != null) && (
+          <div className="mt-0.5 text-xs">
+            {member.max_queries_per_month != null && `${member.usage?.queries_used ?? 0}/${member.max_queries_per_month} queries`}
+            {member.max_queries_per_month != null && member.max_ai_task_runs_per_month != null && ' · '}
+            {member.max_ai_task_runs_per_month != null && `${member.usage?.ai_task_runs_used ?? 0}/${member.max_ai_task_runs_per_month} tasks`}
+          </div>
+        )}
       </td>
       <td className="px-3 py-3 text-muted dark:text-muted-dark">{new Date(member.joined_at).toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' })}</td>
       <td className="px-5 py-3 text-right">
-        <div className="relative inline-block text-left">
-          <button type="button" onClick={() => setMenuOpen((v) => !v)} aria-label="Member actions" className="inline-flex h-8 w-8 items-center justify-center rounded-lg border border-line text-muted transition-colors hover:border-primary/30 hover:bg-primary/5 hover:text-primary dark:border-line-dark dark:text-muted-dark dark:hover:bg-primary/10 dark:hover:text-primary-soft">
-            <MoreHorizontal className="h-4 w-4" />
-          </button>
-          {menuOpen && (
+        <ActionMenu
+          trigger={({ ref, toggle }) => (
+            <button ref={ref} type="button" onClick={toggle} aria-label="Member actions" className="inline-flex h-8 w-8 items-center justify-center rounded-lg border border-line text-muted transition-colors hover:border-primary/30 hover:bg-primary/5 hover:text-primary dark:border-line-dark dark:text-muted-dark dark:hover:bg-primary/10 dark:hover:text-primary-soft">
+              <MoreHorizontal className="h-4 w-4" />
+            </button>
+          )}
+        >
+          {(close) => (
             <>
-              <div className="fixed inset-0 z-10" onClick={() => setMenuOpen(false)}></div>
-              <div className="absolute right-0 z-20 mt-2 w-56 space-y-0.5 overflow-hidden rounded-xl border border-line bg-card p-1.5 shadow-soft dark:border-line-dark dark:bg-card-dark">
-                {roleOptions.map((r) => (
-                  <button
-                    key={r} type="button"
-                    onClick={() => { setMenuOpen(false); action.mutate({ action: 'update_role', membership_id: member.membership_id, role: r }); }}
-                    className="flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-left text-sm text-ink transition-colors hover:bg-surface dark:text-ink-dark dark:hover:bg-white/5"
-                  >
-                    <Check className="h-4 w-4 shrink-0" /> Make {ROLE_LABELS[r] || r}
-                  </button>
-                ))}
-                {canManageFeatures && (
-                  <button
-                    type="button" onClick={() => { setMenuOpen(false); onManageFeatures(member); }}
-                    className="flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-left text-sm text-ink transition-colors hover:bg-surface dark:text-ink-dark dark:hover:bg-white/5"
-                  >
-                    <LockKey className="h-4 w-4 shrink-0" /> Feature Access
-                  </button>
-                )}
-                {(roleOptions.length > 0 || canManageFeatures) && <div className="my-1 border-t border-line dark:border-line-dark"></div>}
+              {roleOptions.map((r) => (
                 <button
-                  type="button" onClick={() => { setMenuOpen(false); action.mutate({ action: member.status === 'active' ? 'suspend' : 'reactivate', membership_id: member.membership_id }); }}
-                  className={`flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-left text-sm transition-colors ${member.status === 'active' ? 'text-warning hover:bg-warning/10 dark:text-warning-dark' : 'text-success hover:bg-success/10 dark:text-success-dark'}`}
+                  key={r} type="button"
+                  onClick={() => { close(); action.mutate({ action: 'update_role', membership_id: member.membership_id, role: r }); }}
+                  className="flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-left text-sm text-ink transition-colors hover:bg-surface dark:text-ink-dark dark:hover:bg-white/5"
                 >
-                  {member.status === 'active' ? <Ban className="h-4 w-4 shrink-0" /> : <Reactivate className="h-4 w-4 shrink-0" />}
-                  {member.status === 'active' ? 'Suspend' : 'Reactivate'}
+                  <Check className="h-4 w-4 shrink-0" /> Make {ROLE_LABELS[r] || r}
                 </button>
+              ))}
+              {canManageFeatures && (
                 <button
-                  type="button"
-                  onClick={() => { setMenuOpen(false); if (window.confirm(`Remove ${member.full_name || member.username} from the organization? They will no longer be able to log in at all.`)) action.mutate({ action: 'remove', membership_id: member.membership_id }); }}
-                  className="flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-left text-sm text-danger transition-colors hover:bg-danger/10 dark:text-danger-dark"
+                  type="button" onClick={() => { close(); onManageFeatures(member); }}
+                  className="flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-left text-sm text-ink transition-colors hover:bg-surface dark:text-ink-dark dark:hover:bg-white/5"
                 >
-                  <Trash2 className="h-4 w-4 shrink-0" /> Remove
+                  <LockKey className="h-4 w-4 shrink-0" /> Feature Access
                 </button>
-              </div>
+              )}
+              {canManageFeatures && (
+                <button
+                  type="button" onClick={() => { close(); onManageLimits(member); }}
+                  className="flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-left text-sm text-ink transition-colors hover:bg-surface dark:text-ink-dark dark:hover:bg-white/5"
+                >
+                  <Gauge className="h-4 w-4 shrink-0" /> Usage Limits
+                </button>
+              )}
+              {(roleOptions.length > 0 || canManageFeatures) && <div className="my-1 border-t border-line dark:border-line-dark"></div>}
+              <button
+                type="button" onClick={() => { close(); action.mutate({ action: member.status === 'active' ? 'suspend' : 'reactivate', membership_id: member.membership_id }); }}
+                className={`flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-left text-sm transition-colors ${member.status === 'active' ? 'text-warning hover:bg-warning/10 dark:text-warning-dark' : 'text-success hover:bg-success/10 dark:text-success-dark'}`}
+              >
+                {member.status === 'active' ? <Ban className="h-4 w-4 shrink-0" /> : <Reactivate className="h-4 w-4 shrink-0" />}
+                {member.status === 'active' ? 'Suspend' : 'Reactivate'}
+              </button>
+              <button
+                type="button"
+                onClick={() => { close(); if (window.confirm(`Remove ${member.full_name || member.username} from the organization? They will no longer be able to log in at all.`)) action.mutate({ action: 'remove', membership_id: member.membership_id }); }}
+                className="flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-left text-sm text-danger transition-colors hover:bg-danger/10 dark:text-danger-dark"
+              >
+                <Trash2 className="h-4 w-4 shrink-0" /> Remove
+              </button>
             </>
           )}
-        </div>
+        </ActionMenu>
       </td>
     </tr>
   );
@@ -261,6 +346,7 @@ export default function OrganizationMembers() {
   // MemberRow - a <tr>-returning component can't also return a
   // fixed-overlay <div> sibling, since both would land inside <tbody>.
   const [featureAccessMember, setFeatureAccessMember] = useState(null);
+  const [limitsMember, setLimitsMember] = useState(null);
 
   const members = data?.members || [];
   const assignableRoles = data?.assignable_roles || [];
@@ -309,7 +395,7 @@ export default function OrganizationMembers() {
         </div>
       )}
 
-      <div className="mb-4 rounded-2xl border border-line bg-card shadow-soft dark:border-line-dark dark:bg-card-dark">
+      <div className="mb-4 overflow-hidden rounded-2xl border border-line bg-card shadow-soft dark:border-line-dark dark:bg-card-dark">
         {filteredMembers.length > 0 ? (
           <div className="overflow-auto">
             <table className="w-full min-w-[860px] text-left text-sm">
@@ -327,7 +413,7 @@ export default function OrganizationMembers() {
                 {filteredMembers.map((m) => (
                   <MemberRow
                     key={m.membership_id} member={m} assignableRoles={assignableRoles} currentUserId={data.current_user_id}
-                    action={action} onManageFeatures={setFeatureAccessMember}
+                    action={action} onManageFeatures={setFeatureAccessMember} onManageLimits={setLimitsMember}
                   />
                 ))}
               </tbody>
@@ -341,6 +427,9 @@ export default function OrganizationMembers() {
       {registerOpen && <RegisterMemberModal orgSlug={orgSlug} onClose={() => setRegisterOpen(false)} />}
       {featureAccessMember && (
         <ManageFeatureAccessModal member={featureAccessMember} action={action} onClose={() => setFeatureAccessMember(null)} />
+      )}
+      {limitsMember && (
+        <ManageUsageLimitsModal member={limitsMember} action={action} onClose={() => setLimitsMember(null)} />
       )}
     </>
   );

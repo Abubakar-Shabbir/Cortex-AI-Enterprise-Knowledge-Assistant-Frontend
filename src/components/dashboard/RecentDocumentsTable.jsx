@@ -1,7 +1,7 @@
-import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { EyeIcon as Eye, FileTextIcon as FileText, DotsThreeIcon as MoreHorizontal, TrashIcon as Trash2 } from '@phosphor-icons/react';
 import { useDeleteDocument } from '../../api/hooks';
+import ActionMenu from '../ActionMenu';
 import EmptyState from '../EmptyState';
 import Spinner from '../Spinner';
 import { timeAgo } from '../../lib/timeAgo';
@@ -20,7 +20,6 @@ const DOC_STATUS_STYLES = {
 // `false` since every row there already belongs to the one viewer, by
 // construction - an Owner column would just repeat the same name.
 export default function RecentDocumentsTable({ rows, showOwner = true }) {
-  const [openRowId, setOpenRowId] = useState(null);
   const deleteMutation = useDeleteDocument();
 
   return (
@@ -69,34 +68,39 @@ export default function RecentDocumentsTable({ rows, showOwner = true }) {
                     </span>
                   </td>
                   <td className="px-3.5 py-2 text-right">
-                    <div className="relative inline-block text-left">
-                      <button
-                        type="button"
-                        onClick={() => setOpenRowId((id) => (id === doc.id ? null : doc.id))}
-                        disabled={isDeletePending}
-                        className="rounded-lg p-1.5 text-muted hover:bg-surface disabled:opacity-50 dark:text-muted-dark dark:hover:bg-white/5"
-                        aria-label="Row actions"
-                      >
-                        {isDeletePending ? <Spinner size={16} /> : <MoreHorizontal className="h-4 w-4" />}
-                      </button>
-                      {openRowId === doc.id && (
-                        <div className="absolute right-0 z-20 mt-1 w-40 rounded-xl border border-line bg-card p-1.5 shadow-soft dark:border-line-dark dark:bg-card-dark">
-                          <Link to="/documents" className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-ink hover:bg-surface dark:text-ink-dark dark:hover:bg-white/5">
+                    <ActionMenu
+                      panelClassName="w-40"
+                      trigger={({ ref, toggle }) => (
+                        <button
+                          ref={ref}
+                          type="button"
+                          onClick={toggle}
+                          disabled={isDeletePending}
+                          className="rounded-lg p-1.5 text-muted hover:bg-surface disabled:opacity-50 dark:text-muted-dark dark:hover:bg-white/5"
+                          aria-label="Row actions"
+                        >
+                          {isDeletePending ? <Spinner size={16} /> : <MoreHorizontal className="h-4 w-4" />}
+                        </button>
+                      )}
+                    >
+                      {(close) => (
+                        <>
+                          <Link to="/documents" onClick={close} className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-ink hover:bg-surface dark:text-ink-dark dark:hover:bg-white/5">
                             <Eye className="h-3.5 w-3.5 text-muted dark:text-muted-dark" /> View
                           </Link>
                           <button
                             type="button"
                             onClick={() => {
-                              setOpenRowId(null);
+                              close();
                               if (window.confirm('Delete this document?')) deleteMutation.mutate(doc.id);
                             }}
                             className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-left text-sm text-danger hover:bg-danger/10 dark:text-danger-dark"
                           >
                             <Trash2 className="h-3.5 w-3.5" /> Delete
                           </button>
-                        </div>
+                        </>
                       )}
-                    </div>
+                    </ActionMenu>
                   </td>
                 </tr>
                 );

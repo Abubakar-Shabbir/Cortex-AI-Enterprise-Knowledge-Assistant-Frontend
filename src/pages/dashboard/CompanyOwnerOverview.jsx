@@ -1,13 +1,14 @@
 import { Link } from 'react-router-dom';
 import {
   BuildingsIcon as Buildings, ChatCircleIcon as MessageSquare, FileTextIcon as FileText, GearSixIcon as Settings,
-  HardDrivesIcon as HardDrive, LightningIcon as Lightning, ShareNetworkIcon as Share2, SparkleIcon as Sparkles,
+  HardDrivesIcon as HardDrive, ShareNetworkIcon as Share2, SparkleIcon as Sparkles,
   TrendUpIcon as TrendUp, UserCircleIcon as UserCircle, UserIcon as UserIconOutline, UsersIcon as Users,
 } from '@phosphor-icons/react';
+import AiUsageCard from '../../components/dashboard/AiUsageCard';
 import DocumentsOverTimeCard from '../../components/dashboard/DocumentsOverTimeCard';
 import DocumentTypesCard from '../../components/dashboard/DocumentTypesCard';
+import MemberActivityCard from '../../components/dashboard/MemberActivityCard';
 import RecentDocumentsTable from '../../components/dashboard/RecentDocumentsTable';
-import EmptyState from '../../components/EmptyState';
 import KpiCard from '../../components/KpiCard';
 import MiniStatCard from '../../components/MiniStatCard';
 import PageSkeleton from '../../components/PageSkeleton';
@@ -15,79 +16,6 @@ import StatsSyncBadge from '../../components/StatsSyncBadge';
 import { useTheme } from '../../hooks/useTheme';
 import { useOrganization } from '../../organizations/OrganizationContext';
 import { useOrganizationStats } from '../../api/hooks';
-
-function MemberActivityCard({ activity }) {
-  return (
-    <div className="rounded-xl border border-line bg-card shadow-soft dark:border-line-dark dark:bg-card-dark">
-      <div className="border-b border-line px-5 py-4 dark:border-line-dark">
-        <h3 className="text-sm font-semibold text-ink dark:text-ink-dark">Member Activity</h3>
-        <p className="mt-0.5 text-xs text-muted dark:text-muted-dark">Usage within this company only — counts only, never question/answer content</p>
-      </div>
-      {activity.length > 0 ? (
-        <div className="overflow-auto">
-          <table className="w-full min-w-[520px] text-left text-sm">
-            <thead>
-              <tr className="border-b border-line text-xs font-semibold uppercase tracking-wide text-muted dark:border-line-dark dark:text-muted-dark">
-                <th className="px-5 py-2.5">Member</th>
-                <th className="px-3 py-2.5 text-right">Documents</th>
-                <th className="px-3 py-2.5 text-right">Questions</th>
-                <th className="px-3 py-2.5 text-right">AI Tasks</th>
-                <th className="px-5 py-2.5 text-right">Last Active</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-line dark:divide-line-dark">
-              {activity.map((m) => (
-                <tr key={m.user_id}>
-                  <td className="px-5 py-2.5 font-medium text-ink dark:text-ink-dark">{m.full_name}</td>
-                  <td className="px-3 py-2.5 text-right tabular-nums text-ink dark:text-ink-dark">{m.documents_count}</td>
-                  <td className="px-3 py-2.5 text-right tabular-nums text-ink dark:text-ink-dark">{m.queries_count}</td>
-                  <td className="px-3 py-2.5 text-right tabular-nums text-ink dark:text-ink-dark">{m.ai_task_runs_count}</td>
-                  <td className="px-5 py-2.5 text-right text-xs text-muted dark:text-muted-dark">
-                    {m.last_active ? new Date(m.last_active).toLocaleDateString('en-US', { month: 'short', day: '2-digit' }) : '—'}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      ) : (
-        <EmptyState icon={Users} title="No member activity yet" />
-      )}
-    </div>
-  );
-}
-
-function AiUsageCard({ aiPerformance }) {
-  if (!aiPerformance?.has_data) {
-    return (
-      <div className="rounded-xl border border-line bg-card shadow-soft dark:border-line-dark dark:bg-card-dark">
-        <div className="border-b border-line px-5 py-4 dark:border-line-dark">
-          <h3 className="text-sm font-semibold text-ink dark:text-ink-dark">AI Usage</h3>
-        </div>
-        <EmptyState icon={Lightning} title="No AI activity yet" />
-      </div>
-    );
-  }
-
-  return (
-    <div className="rounded-xl border border-line bg-card shadow-soft dark:border-line-dark dark:bg-card-dark">
-      <div className="border-b border-line px-5 py-4 dark:border-line-dark">
-        <h3 className="text-sm font-semibold text-ink dark:text-ink-dark">AI Usage</h3>
-        <p className="mt-0.5 text-xs text-muted dark:text-muted-dark">{aiPerformance.total_requests} requests · {aiPerformance.success_rate}% success · {aiPerformance.avg_latency_ms}ms avg</p>
-      </div>
-      {(aiPerformance.provider_stats || []).length > 0 && (
-        <div className="divide-y divide-line dark:divide-line-dark">
-          {aiPerformance.provider_stats.map((p) => (
-            <div key={p.provider} className="flex items-center justify-between gap-3 px-5 py-3 text-sm">
-              <span className="font-medium text-ink dark:text-ink-dark">{p.provider}</span>
-              <span className="text-xs text-muted dark:text-muted-dark">{p.total} requests · {p.success_rate}% success</span>
-            </div>
-          ))}
-        </div>
-      )}
-    </div>
-  );
-}
 
 // Advanced Company-Owner dashboard - the "/" landing page for an
 // Owner viewing their active company workspace, replacing the old

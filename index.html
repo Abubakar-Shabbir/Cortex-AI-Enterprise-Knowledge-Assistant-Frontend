@@ -88,6 +88,19 @@
       @keyframes fade-in-up { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
       .fade-in-up { animation: fade-in-up .35s ease-out both; }
 
+      /* Transform-free twin of fade-in-up, for AppShell.jsx's <Outlet>
+         wrapper specifically - every page's content (and every fixed-
+         position modal anywhere inside it) lives inside that one div,
+         and fade-in-up's `transform: translateY(0)` end state (held
+         forever by animation-fill-mode: both) is a non-"none" transform
+         value, which per spec makes that div a new containing block for
+         every `position: fixed` descendant - so instead of centering on
+         the actual viewport, every modal in the app was quietly
+         centering on (and scrolling with) that div instead. Same fade,
+         opacity-only, so it never creates a containing block. */
+      @keyframes page-fade-in { from { opacity: 0; } to { opacity: 1; } }
+      .page-fade-in { animation: page-fade-in .35s ease-out both; }
+
       @keyframes ask-ai-cursor-blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
       .streaming-cursor::after {
         content: '';

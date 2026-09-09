@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
-import { ActivityIcon as Activity, WarningIcon as AlertTriangle, ArrowSquareOutIcon as ExternalLink, EyeIcon as Eye, FunnelIcon as Filter, FileArrowUpIcon as FileUp, GlobeIcon as Globe, LockIcon as Lock, MapPinIcon as MapPin, ArrowClockwiseIcon as RotateCw, ShieldWarningIcon as ShieldAlert, ShieldCheckIcon as ShieldCheck, SparkleIcon as Sparkles, SquareIcon as Square, TerminalWindowIcon as Terminal, WarningIcon as TriangleAlert, XIcon as X } from '@phosphor-icons/react';
+import { ActivityIcon as Activity, WarningIcon as AlertTriangle, ArrowSquareOutIcon as ExternalLink, EyeIcon as Eye, FunnelIcon as Filter, FileArrowUpIcon as FileUp, GlobeIcon as Globe, LockIcon as Lock, MapPinIcon as MapPin, ArrowClockwiseIcon as RotateCw, ShieldWarningIcon as ShieldAlert, ShieldCheckIcon as ShieldCheck, SparkleIcon as Sparkles, SquareIcon as Square, TerminalWindowIcon as Terminal, WarningIcon as TriangleAlert } from '@phosphor-icons/react';
+import Modal from '../components/Modal';
 import PageHeader from '../components/PageHeader';
 import Spinner from '../components/Spinner';
 import StatCard from '../components/StatCard';
@@ -27,19 +28,16 @@ function TraceDetailModal({ traceId, onClose }) {
   useEffect(() => { fetchAdminTraceDetail(traceId).then((data) => setState({ loading: false, data })); }, [traceId]);
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4" onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}>
-      <div className="max-h-[85vh] w-full max-w-2xl overflow-y-auto rounded-2xl border border-line bg-card p-6 shadow-2xl dark:border-line-dark dark:bg-card-dark">
-        {state.loading ? <SkeletonFields fields={4} /> : state.data && (
-          <div className="space-y-4">
-            <div className="flex items-start justify-between gap-3">
-              <div>
-                <p className="text-xs font-medium uppercase tracking-wide text-muted dark:text-muted-dark">{state.data.source} · <span className="font-mono">{state.data.trace_id}</span></p>
-                <p className="text-xs text-muted dark:text-muted-dark">{state.data.created_at}</p>
-              </div>
-              <button type="button" onClick={onClose} className="flex h-8 w-8 items-center justify-center rounded-lg text-muted hover:bg-surface dark:text-muted-dark dark:hover:bg-white/5"><X className="h-4 w-4" /></button>
-            </div>
+    <Modal
+      title={state.data ? `${state.data.source} · ${state.data.trace_id}` : 'Request Trace'}
+      icon={Terminal} maxWidth="max-w-2xl" onClose={onClose}
+      bodyClassName="max-h-[70vh] space-y-4 overflow-y-auto px-6 py-5"
+    >
+      {state.loading ? <SkeletonFields fields={4} /> : state.data && (
+        <>
+          <p className="-mt-2 text-xs text-muted dark:text-muted-dark">{state.data.created_at}</p>
 
-            <div className="grid grid-cols-3 gap-3 text-center text-xs sm:grid-cols-4">
+          <div className="grid grid-cols-3 gap-3 text-center text-xs sm:grid-cols-4">
               <div className="rounded-lg border border-line p-2 dark:border-line-dark"><div className="font-semibold text-ink dark:text-ink-dark">{state.data.total_duration_ms} ms</div><div className="text-muted dark:text-muted-dark">Total Duration</div></div>
               <div className="rounded-lg border border-line p-2 dark:border-line-dark"><div className="font-semibold text-ink dark:text-ink-dark">{state.data.bottleneck_label || '—'}</div><div className="text-muted dark:text-muted-dark">Bottleneck</div></div>
               <div className="rounded-lg border border-line p-2 dark:border-line-dark"><div className="font-semibold text-ink dark:text-ink-dark">{state.data.total_tokens ?? '—'}</div><div className="text-muted dark:text-muted-dark">Total Tokens</div></div>
@@ -79,10 +77,9 @@ function TraceDetailModal({ traceId, onClose }) {
                 )) : <p className="text-xs text-muted dark:text-muted-dark">No stage data recorded for this request.</p>}
               </div>
             </div>
-          </div>
-        )}
-      </div>
-    </div>
+        </>
+      )}
+    </Modal>
   );
 }
 
@@ -91,19 +88,16 @@ function ErrorDetailModal({ groupId, onClose, onOpenTrace }) {
   useEffect(() => { fetchAdminErrorGroupDetail(groupId).then((data) => setState({ loading: false, data })); }, [groupId]);
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4" onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}>
-      <div className="max-h-[85vh] w-full max-w-2xl overflow-y-auto rounded-2xl border border-line bg-card p-6 shadow-2xl dark:border-line-dark dark:bg-card-dark">
-        {state.loading ? <SkeletonFields fields={4} /> : state.data && (
-          <div className="space-y-4">
-            <div className="flex items-start justify-between gap-3">
-              <div>
-                <p className="text-xs font-medium uppercase tracking-wide text-muted dark:text-muted-dark">{state.data.level} · <span className="font-mono">{state.data.logger_name}</span></p>
-                <p className="text-xs text-muted dark:text-muted-dark">First seen {state.data.first_seen} · last seen {state.data.last_seen}</p>
-              </div>
-              <button type="button" onClick={onClose} className="flex h-8 w-8 items-center justify-center rounded-lg text-muted hover:bg-surface dark:text-muted-dark dark:hover:bg-white/5"><X className="h-4 w-4" /></button>
-            </div>
+    <Modal
+      title={state.data ? `${state.data.level} · ${state.data.logger_name}` : 'Error Group'}
+      icon={ShieldAlert} maxWidth="max-w-2xl" onClose={onClose}
+      bodyClassName="max-h-[70vh] space-y-4 overflow-y-auto px-6 py-5"
+    >
+      {state.loading ? <SkeletonFields fields={4} /> : state.data && (
+        <>
+          <p className="-mt-2 text-xs text-muted dark:text-muted-dark">First seen {state.data.first_seen} · last seen {state.data.last_seen}</p>
 
-            <div className="grid grid-cols-3 gap-3 text-center text-xs">
+          <div className="grid grid-cols-3 gap-3 text-center text-xs">
               <div className="rounded-lg border border-line p-2 dark:border-line-dark"><div className="font-semibold text-ink dark:text-ink-dark">{state.data.occurrence_count}</div><div className="text-muted dark:text-muted-dark">Occurrences</div></div>
               <div className="rounded-lg border border-line p-2 dark:border-line-dark"><div className="font-semibold text-ink dark:text-ink-dark">{state.data.severity}</div><div className="text-muted dark:text-muted-dark">Severity</div></div>
               <div className="rounded-lg border border-line p-2 dark:border-line-dark"><div className="font-semibold text-ink dark:text-ink-dark">{state.data.error_type || '—'}</div><div className="text-muted dark:text-muted-dark">Exception Type</div></div>
@@ -128,10 +122,9 @@ function ErrorDetailModal({ groupId, onClose, onOpenTrace }) {
                 )) : <p className="text-xs text-muted dark:text-muted-dark">No individual occurrence records kept for this error.</p>}
               </div>
             </div>
-          </div>
-        )}
-      </div>
-    </div>
+        </>
+      )}
+    </Modal>
   );
 }
 
@@ -239,10 +232,14 @@ export default function AdminSystemLogs() {
             </div>
           )}
 
-          <form onSubmit={(e) => onFilterSubmit(e)} className="mb-3 grid grid-cols-1 gap-2.5 rounded-2xl border border-line bg-card p-3.5 shadow-soft dark:border-line-dark dark:bg-card-dark sm:grid-cols-2 lg:grid-cols-7">
+          <form onSubmit={(e) => onFilterSubmit(e)} className="mb-3 grid grid-cols-1 gap-2.5 rounded-2xl border border-line bg-card p-3.5 shadow-soft dark:border-line-dark dark:bg-card-dark sm:grid-cols-2 lg:grid-cols-8">
             <div><label className="mb-1 block text-xs font-medium text-muted dark:text-muted-dark">Source</label>
               <select name="source" defaultValue={filters.source || ''} className="w-full rounded-lg border border-line bg-transparent px-3 py-2 text-sm text-ink focus:border-2 focus:border-ink focus:outline-none dark:focus:border-ink-dark dark:border-line-dark dark:text-ink-dark">
                 <option value="">Any</option><option value="ask_ai">Ask AI</option><option value="ai_task">AI Task</option>
+              </select></div>
+            <div><label className="mb-1 block text-xs font-medium text-muted dark:text-muted-dark">Company</label>
+              <select name="organization" defaultValue={filters.organization || ''} className="w-full rounded-lg border border-line bg-transparent px-3 py-2 text-sm text-ink focus:border-2 focus:border-ink focus:outline-none dark:focus:border-ink-dark dark:border-line-dark dark:text-ink-dark">
+                <option value="">Any</option>{data.filter_options.organizations.map((o) => <option key={o.slug} value={o.slug}>{o.name}</option>)}
               </select></div>
             <div><label className="mb-1 block text-xs font-medium text-muted dark:text-muted-dark">Status</label>
               <select name="status" defaultValue={filters.status || ''} className="w-full rounded-lg border border-line bg-transparent px-3 py-2 text-sm text-ink focus:border-2 focus:border-ink focus:outline-none dark:focus:border-ink-dark dark:border-line-dark dark:text-ink-dark">
@@ -273,10 +270,10 @@ export default function AdminSystemLogs() {
             {data.traces.length > 0 ? (
               <>
                 <div className="overflow-auto">
-                  <table className="w-full min-w-[960px] text-left text-sm">
+                  <table className="w-full min-w-[1060px] text-left text-sm">
                     <thead className="sticky top-0 z-10 bg-card dark:bg-card-dark">
                       <tr className="border-b border-line text-xs font-semibold uppercase tracking-wide text-muted dark:border-line-dark dark:text-muted-dark">
-                        <th className="px-4 py-2.5">Request ID</th><th className="px-3 py-2.5">Source</th><th className="px-3 py-2.5">User</th><th className="px-3 py-2.5">Status</th>
+                        <th className="px-4 py-2.5">Request ID</th><th className="px-3 py-2.5">Source</th><th className="px-3 py-2.5">User</th><th className="px-3 py-2.5">Company</th><th className="px-3 py-2.5">Status</th>
                         <th className="px-3 py-2.5">Provider / Model</th><th className="px-3 py-2.5 text-right">Duration</th><th className="px-3 py-2.5">Bottleneck</th>
                         <th className="px-3 py-2.5 text-right">Tokens</th><th className="px-3 py-2.5">When</th><th className="px-4 py-2.5 text-right">Actions</th>
                       </tr>
@@ -287,6 +284,7 @@ export default function AdminSystemLogs() {
                           <td className="px-4 py-2 font-mono text-xs text-ink dark:text-ink-dark">{trace.trace_id}</td>
                           <td className="px-3 py-2 text-muted dark:text-muted-dark">{trace.source_display}</td>
                           <td className="px-3 py-2 text-muted dark:text-muted-dark">{trace.user || '—'}</td>
+                          <td className="px-3 py-2 text-muted dark:text-muted-dark">{trace.organization ? trace.organization.name : 'Personal'}</td>
                           <td className="px-3 py-2"><span className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-semibold ${STATUS_CLASSES[trace.status] || 'bg-warning/10 text-warning dark:text-warning-dark'}`}>{trace.status_display}</span></td>
                           <td className="px-3 py-2 text-muted dark:text-muted-dark">
                             {trace.provider || '—'}
@@ -404,10 +402,14 @@ export default function AdminSystemLogs() {
             </div>
           )}
 
-          <form onSubmit={(e) => onFilterSubmit(e)} className="mb-3 grid grid-cols-1 gap-2.5 rounded-2xl border border-line bg-card p-3.5 shadow-soft dark:border-line-dark dark:bg-card-dark sm:grid-cols-2 lg:grid-cols-6">
+          <form onSubmit={(e) => onFilterSubmit(e)} className="mb-3 grid grid-cols-1 gap-2.5 rounded-2xl border border-line bg-card p-3.5 shadow-soft dark:border-line-dark dark:bg-card-dark sm:grid-cols-2 lg:grid-cols-7">
             <div><label className="mb-1 block text-xs font-medium text-muted dark:text-muted-dark">Event type</label>
               <select name="act_type" defaultValue={filters.act_type || ''} className="w-full rounded-lg border border-line bg-transparent px-3 py-2 text-sm text-ink focus:border-2 focus:border-ink focus:outline-none dark:focus:border-ink-dark dark:border-line-dark dark:text-ink-dark">
                 <option value="">Any</option>{data.activity_types.map((t) => <option key={t} value={t}>{t}</option>)}
+              </select></div>
+            <div><label className="mb-1 block text-xs font-medium text-muted dark:text-muted-dark">Company</label>
+              <select name="act_organization" defaultValue={filters.act_organization || ''} className="w-full rounded-lg border border-line bg-transparent px-3 py-2 text-sm text-ink focus:border-2 focus:border-ink focus:outline-none dark:focus:border-ink-dark dark:border-line-dark dark:text-ink-dark">
+                <option value="">Any</option>{data.organization_options.map((o) => <option key={o.slug} value={o.slug}>{o.name}</option>)}
               </select></div>
             <div><label className="mb-1 block text-xs font-medium text-muted dark:text-muted-dark">Actor</label><input type="text" name="act_actor" defaultValue={filters.act_actor} placeholder="username" className="w-full rounded-lg border border-line bg-transparent px-3 py-2 text-sm text-ink placeholder:text-muted focus:border-2 focus:border-ink focus:outline-none dark:focus:border-ink-dark dark:border-line-dark dark:text-ink-dark" /></div>
             <div><label className="mb-1 block text-xs font-medium text-muted dark:text-muted-dark">Description contains</label><input type="text" name="act_q" defaultValue={filters.act_q} placeholder="e.g. deleted" className="w-full rounded-lg border border-line bg-transparent px-3 py-2 text-sm text-ink placeholder:text-muted focus:border-2 focus:border-ink focus:outline-none dark:focus:border-ink-dark dark:border-line-dark dark:text-ink-dark" /></div>
@@ -416,7 +418,7 @@ export default function AdminSystemLogs() {
             )}
             <div><label className="mb-1 block text-xs font-medium text-muted dark:text-muted-dark">From</label><input type="date" name="act_date_from" defaultValue={filters.act_date_from} className="w-full rounded-lg border border-line bg-transparent px-3 py-2 text-sm text-ink focus:border-2 focus:border-ink focus:outline-none dark:focus:border-ink-dark dark:border-line-dark dark:text-ink-dark" /></div>
             <div><label className="mb-1 block text-xs font-medium text-muted dark:text-muted-dark">To</label><input type="date" name="act_date_to" defaultValue={filters.act_date_to} className="w-full rounded-lg border border-line bg-transparent px-3 py-2 text-sm text-ink focus:border-2 focus:border-ink focus:outline-none dark:focus:border-ink-dark dark:border-line-dark dark:text-ink-dark" /></div>
-            <div className="flex items-end gap-2 sm:col-span-2 lg:col-span-6">
+            <div className="flex items-end gap-2 sm:col-span-2 lg:col-span-7">
               <button type="submit" className="inline-flex items-center gap-2 rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-primary-dark"><Filter className="h-4 w-4" /> Apply</button>
               <button type="button" onClick={resetTab} className="inline-flex items-center gap-2 rounded-lg border border-line px-4 py-2 text-sm font-medium text-ink transition-colors hover:bg-surface dark:border-line-dark dark:text-ink-dark dark:hover:bg-white/5">Reset</button>
             </div>
@@ -426,10 +428,10 @@ export default function AdminSystemLogs() {
             {data.activity_results.length > 0 ? (
               <>
                 <div className="overflow-auto">
-                  <table className={`w-full text-left text-sm ${data.can_view_activity_location ? 'min-w-[860px]' : 'min-w-[640px]'}`}>
+                  <table className={`w-full text-left text-sm ${data.can_view_activity_location ? 'min-w-[980px]' : 'min-w-[760px]'}`}>
                     <thead className="sticky top-0 z-10 bg-card dark:bg-card-dark">
                       <tr className="border-b border-line text-xs font-semibold uppercase tracking-wide text-muted dark:border-line-dark dark:text-muted-dark">
-                        <th className="px-4 py-2.5">Event</th><th className="px-3 py-2.5">Type</th><th className="px-3 py-2.5">Actor</th>
+                        <th className="px-4 py-2.5">Event</th><th className="px-3 py-2.5">Type</th><th className="px-3 py-2.5">Actor</th><th className="px-3 py-2.5">Company</th>
                         {data.can_view_activity_location && <th className="px-3 py-2.5">IP / Location</th>}
                         <th className="px-4 py-2.5 text-right">When</th>
                       </tr>
@@ -447,6 +449,7 @@ export default function AdminSystemLogs() {
                           </td>
                           <td className="px-3 py-2"><span className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-semibold ${CATEGORY_CLASSES[event.category] || 'bg-muted/10 text-muted dark:text-muted-dark'}`}>{event.type}</span></td>
                           <td className="px-3 py-2 text-muted dark:text-muted-dark">{event.actor}</td>
+                          <td className="px-3 py-2 text-muted dark:text-muted-dark">{(event.organizations || []).length > 0 ? event.organizations.map((o) => o.name).join(', ') : '—'}</td>
                           {data.can_view_activity_location && (
                             <td className="px-3 py-2">
                               {event.ip_address ? (

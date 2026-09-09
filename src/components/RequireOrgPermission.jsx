@@ -25,13 +25,16 @@ import PageSkeleton from './PageSkeleton';
 // actually enforces this on every request regardless of what this
 // component decides - this is UX only, exactly like RequirePermission.
 //
-// A platform Admin/Super Admin (organizations.manage) can open ANY
-// organization's management pages even without being a member at all
-// (org_permission_service.get_user_org_role()'s deliberate platform-
-// oversight bypass - see its docstring) - mirrored here via
-// useSession().hasPermission('organizations.manage') so Admin >
-// Companies' "open this company" links don't 403 in the UI while the
-// backend would have allowed them.
+// A platform Admin/Super Admin (organizations.manage) can open a
+// company it isn't a member of at all, but ONLY its read-only stats
+// Overview (org_permission_service.BYPASS_ONLY_CODENAMES) - privacy:
+// oversight from Admin > Companies must not double as a backdoor into
+// that company's members/settings/billing/audit log. Mirrors the
+// backend's own restriction exactly (kept in sync deliberately, not
+// derived from it) so the UI never offers a link the API would then
+// 403 on, and vice versa.
+const ADMIN_BYPASS_CODENAMES = ['organization.view'];
+
 export default function RequireOrgPermission({ codename, anyOf }) {
   const { orgSlug } = useParams();
   const { organizations, loading } = useOrganization();
@@ -44,7 +47,9 @@ export default function RequireOrgPermission({ codename, anyOf }) {
   const org = organizations.find((o) => o.slug === orgSlug);
   const permissions = org?.my_permissions || [];
   const inOrg = anyOf ? anyOf.some((code) => permissions.includes(code)) : permissions.includes(codename);
-  const allowed = inOrg || hasPermission('organizations.manage');
+  const codenames = anyOf || [codename];
+  const bypassAllowed = codenames.some((code) => ADMIN_BYPASS_CODENAMES.includes(code)) && hasPermission('organizations.manage');
+  const allowed = inOrg || bypassAllowed;
 
   if (!allowed) {
     return (

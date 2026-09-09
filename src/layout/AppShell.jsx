@@ -28,8 +28,15 @@ function AppShellInner() {
             {/* Keyed by path so each real navigation re-triggers the fade
                (React remounts the div instead of leaving the old one in
                place), giving the SPA the same quiet cross-fade the
-               server-rendered pages get from the View Transitions API. */}
-            <div key={location.pathname} className="fade-in-up">
+               server-rendered pages get from the View Transitions API.
+               Uses page-fade-in (opacity-only), NOT fade-in-up - every
+               page's content, including every `position: fixed` modal
+               anywhere inside it, lives inside this div, and
+               fade-in-up's transform would turn it into a containing
+               block that breaks fixed positioning app-wide (see
+               index.html's comment on page-fade-in for the full
+               explanation). */}
+            <div key={location.pathname} className="page-fade-in">
               <Outlet />
             </div>
           </Suspense>
