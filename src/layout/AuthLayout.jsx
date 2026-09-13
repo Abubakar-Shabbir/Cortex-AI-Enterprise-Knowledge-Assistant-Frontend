@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
-import { LockIcon as Lock } from '@phosphor-icons/react';
+import { LockIcon as Lock, ShieldCheckIcon as ShieldCheck, GraphIcon as Graph, UsersThreeIcon as UsersThree } from '@phosphor-icons/react';
 import Logo from '../components/Logo';
 
 // Port of templates/auth_base.html — the split brand-panel shell every
@@ -11,7 +11,13 @@ import Logo from '../components/Logo';
 // and the same card chrome (auth-card, "Secure sign-in" footer) as the
 // Django template — see index.css's "Auth flow ambient styling"
 // section for the ported keyframes/classes.
-export default function AuthLayout({ title, children }) {
+//
+// `width` lets individual pages size the form card to their own
+// content (Signup's two-column field groups need more room than a
+// fixed 400px card gives them at desktop widths, where Tailwind's
+// `sm:` breakpoint fires off viewport width, not card width) without
+// changing the five other pages that share this shell.
+export default function AuthLayout({ title, children, width = 'max-w-[400px]' }) {
   const rootRef = useRef(null);
   const layerRef = useRef(null);
 
@@ -130,6 +136,21 @@ export default function AuthLayout({ title, children }) {
               </div>
             </li>
           </ul>
+
+          <div className="mt-9 grid grid-cols-3 gap-4 border-t border-white/10 pt-6">
+            <div>
+              <Graph className="h-4 w-4 text-white/60" />
+              <p className="mt-1.5 text-[11px] font-medium leading-snug text-white/60">Graph-linked sources</p>
+            </div>
+            <div>
+              <UsersThree className="h-4 w-4 text-white/60" />
+              <p className="mt-1.5 text-[11px] font-medium leading-snug text-white/60">Org-based access</p>
+            </div>
+            <div>
+              <ShieldCheck className="h-4 w-4 text-white/60" />
+              <p className="mt-1.5 text-[11px] font-medium leading-snug text-white/60">Encrypted end-to-end</p>
+            </div>
+          </div>
         </div>
 
         <div className="relative px-10 pb-10">
@@ -149,20 +170,21 @@ export default function AuthLayout({ title, children }) {
       {/* Form panel */}
       <div className="relative flex min-h-screen flex-1 flex-col items-center justify-center overflow-hidden px-6 py-10">
         <div className="pointer-events-none absolute right-[-10%] top-[-10%] h-96 w-96 rounded-full bg-primary/[0.04] blur-3xl dark:bg-primary/[0.08]" aria-hidden="true"></div>
+        <div className="pointer-events-none absolute bottom-[-14%] left-[-8%] h-80 w-80 rounded-full bg-accent/[0.03] blur-3xl dark:bg-accent/[0.06]" aria-hidden="true"></div>
 
         <Link to="/login" className="relative mb-8 flex items-center gap-2.5 text-primary lg:hidden dark:text-primary-soft">
           <Logo size="h-9 w-9" />
           <span className="text-sm font-semibold text-ink dark:text-ink-dark">Cortex</span>
         </Link>
 
-        <div className="relative w-full max-w-[400px]">
+        <div className={`relative w-full ${width}`}>
           <div className="auth-card overflow-hidden rounded-2xl border border-line bg-card shadow-soft dark:border-line-dark dark:bg-card-dark">
-            <div className="h-1 w-full bg-primary" aria-hidden="true"></div>
-            <div className="p-8">{children}</div>
+            <div className="auth-accent-bar h-1 w-full bg-primary" aria-hidden="true"></div>
+            <div className="p-6 sm:p-8">{children}</div>
           </div>
 
           <p className="mt-6 flex items-center justify-center gap-1.5 text-center text-xs text-muted dark:text-muted-dark">
-            <Lock className="h-3.5 w-3.5" /> Secure sign-in
+            <Lock className="h-3.5 w-3.5" /> Secure sign-in · 256-bit TLS
           </p>
         </div>
       </div>

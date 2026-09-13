@@ -53,6 +53,7 @@ export default function Topbar({ onOpenSidebar }) {
         <button
           onClick={toggle}
           data-tooltip={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
+          data-tooltip-align="end"
           className="rounded-lg border border-line p-2 text-muted transition-colors hover:bg-surface dark:border-line-dark dark:text-muted-dark dark:hover:bg-white/5"
           aria-label="Toggle dark mode"
         >

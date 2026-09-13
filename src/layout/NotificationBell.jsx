@@ -39,7 +39,7 @@ export default function NotificationBell() {
 
   return (
     <div ref={rootRef} className="relative">
-      <button onClick={toggleOpen} data-tooltip={open ? undefined : 'Notifications'} className="relative rounded-lg p-2 text-muted transition-colors hover:bg-surface dark:text-muted-dark dark:hover:bg-white/5" aria-label="Notifications">
+      <button onClick={toggleOpen} data-tooltip={open ? undefined : 'Notifications'} data-tooltip-align="end" className="relative rounded-lg p-2 text-muted transition-colors hover:bg-surface dark:text-muted-dark dark:hover:bg-white/5" aria-label="Notifications">
         <Bell className="h-4 w-4" />
         {unreadCount > 0 && (
           <span className="absolute -right-0.5 -top-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-primary px-0.5 text-[9px] font-semibold text-white">
@@ -50,7 +50,7 @@ export default function NotificationBell() {
       </button>
 
       {open && (
-        <div className="fade-in-up absolute right-0 z-30 mt-2 w-80 rounded-xl border border-line bg-card p-2 shadow-soft dark:border-line-dark dark:bg-card-dark">
+        <div className="fade-in-up absolute right-0 z-30 mt-2 w-80 max-w-[calc(100vw-1.5rem)] rounded-xl border border-line bg-card p-2 shadow-soft dark:border-line-dark dark:bg-card-dark">
           <div className="flex items-center justify-between px-2 py-1.5">
             <span className="text-xs font-semibold uppercase tracking-wide text-muted dark:text-muted-dark">Notifications</span>
             <div className="flex items-center gap-2.5">

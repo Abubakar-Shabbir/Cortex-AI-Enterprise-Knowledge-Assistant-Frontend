@@ -66,6 +66,29 @@ html, body, #root {
   [data-tooltip]::after, [data-tooltip]::before { transition: opacity 0.1s linear; }
 }
 
+/* Right-edge tooltip variant - the default [data-tooltip] above centers
+   its box on the trigger (`left: 50%; translateX(-50%)`), which pushes
+   the box past the right edge of the viewport for whichever icon sits
+   last in a toolbar (the topbar's dark/light toggle, the notification
+   bell). Add data-tooltip-align="end" to anchor the box's right edge
+   to the trigger's right edge instead, so it only ever grows leftward. */
+[data-tooltip][data-tooltip-align="end"]::after {
+  left: auto;
+  right: -6px;
+  transform: translateY(4px) scale(0.92);
+}
+[data-tooltip][data-tooltip-align="end"]::before {
+  left: auto;
+  right: 10px;
+  transform: translateY(4px);
+}
+[data-tooltip][data-tooltip-align="end"]:hover::after, [data-tooltip][data-tooltip-align="end"]:focus-visible::after {
+  transform: translateY(0) scale(1);
+}
+[data-tooltip][data-tooltip-align="end"]:hover::before, [data-tooltip][data-tooltip-align="end"]:focus-visible::before {
+  transform: translateY(0);
+}
+
 /* Always reserve the vertical scrollbar's width, whether or not the page
    is currently tall enough to need one. Without this, any page whose
    height crosses the viewport threshold (a new chat message, an expanded
@@ -179,6 +202,42 @@ html {
   background-size: 34px 34px;
 }
 
+/* Accent bar draws in once on mount instead of appearing pre-filled -
+   the one "loading strip" flourish, matching the system's existing
+   convention of a single restrained animation per element. */
+@keyframes accent-bar-fill { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+.auth-accent-bar { transform-origin: left; animation: accent-bar-fill 0.6s cubic-bezier(0.16, 1, 0.3, 1) both; }
+
+/* Flat toggle switch (Login's "Remember me") - a real checkbox under
+   the hood for a11y/forms, restyled as a track+thumb via the peer
+   utility so no extra JS state is needed. */
+.auth-toggle-track {
+  transition: background-color 0.15s ease;
+}
+.auth-toggle-thumb {
+  transition: transform 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+}
+input.auth-toggle-input:checked ~ .auth-toggle-track {
+  background-color: #FF385C;
+}
+input.auth-toggle-input:checked ~ .auth-toggle-track .auth-toggle-thumb {
+  transform: translateX(16px);
+}
+input.auth-toggle-input:focus-visible ~ .auth-toggle-track {
+  box-shadow: 0 0 0 3px rgba(255,56,92,0.25);
+}
+
+/* Custom <select> caret (native arrows render inconsistently across
+   platforms and clash with the icon-prefixed inputs beside them). */
+.auth-select {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+}
+.auth-select::-ms-expand {
+  display: none;
+}
+
 /* ============================================================
    Spinner - the one loading mark used everywhere (see
    components/Spinner.jsx): five short dots bouncing up and down in
@@ -203,7 +262,7 @@ html {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .auth-card, .auth-error-banner, .auth-pop-in,
+  .auth-card, .auth-error-banner, .auth-pop-in, .auth-accent-bar,
   .auth-glow-a, .auth-glow-b, .auth-node, .auth-flow-line, .auth-status-ping,
   .auth-particle {
     animation: none !important;

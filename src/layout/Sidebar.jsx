@@ -97,17 +97,29 @@ export default function Sidebar({ open, onClose }) {
             </button>
 
             {menuOpen && (
-              <div className="absolute bottom-full left-0 z-30 mb-2 w-56 rounded-xl border border-white/10 bg-sidebar-soft p-1.5 shadow-soft">
-                <Link to="/profile" onClick={() => setMenuOpen(false)} className="flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm text-ink-dark transition-colors duration-150 hover:bg-primary/15">
-                  <UserRound className="h-4 w-4 text-muted-dark" /> Profile
-                </Link>
-                <div className="my-1 border-t border-white/10"></div>
-                <button
-                  onClick={() => logout()}
-                  className="flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-left text-sm text-danger-dark transition-colors duration-150 hover:bg-danger/10"
-                >
-                  <LogOut className="h-4 w-4" /> Logout
-                </button>
+              <div className="fade-in-up absolute bottom-full left-0 z-30 mb-2 w-60 overflow-hidden rounded-xl border border-white/10 bg-sidebar-soft shadow-soft">
+                <div className="border-b border-white/10 px-3.5 py-3">
+                  <p className="truncate text-sm font-semibold text-white">{user?.first_name || user?.username}</p>
+                  <p className="truncate text-xs text-muted-dark">{user?.email || (role || 'Member')}</p>
+                </div>
+                <div className="p-1.5">
+                  <Link to="/profile" onClick={() => setMenuOpen(false)} className="group flex items-center gap-2.5 rounded-lg px-2.5 py-2 text-sm font-medium text-ink-dark transition-colors duration-150 hover:bg-primary/15">
+                    <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-white/10 text-muted-dark transition-colors group-hover:text-primary-soft">
+                      <UserRound className="h-3.5 w-3.5" />
+                    </span>
+                    View profile
+                  </Link>
+                  <div className="my-1 border-t border-white/10"></div>
+                  <button
+                    onClick={() => logout()}
+                    className="group flex w-full items-center gap-2.5 rounded-lg px-2.5 py-2 text-left text-sm font-medium text-danger-dark transition-colors duration-150 hover:bg-danger/10"
+                  >
+                    <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-danger/10 transition-colors group-hover:bg-danger/20">
+                      <LogOut className="h-3.5 w-3.5" />
+                    </span>
+                    Sign out
+                  </button>
+                </div>
               </div>
             )}
           </div>

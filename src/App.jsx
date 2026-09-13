@@ -5,6 +5,7 @@ import AppShell from './layout/AppShell';
 import AppLoader from './components/AppLoader';
 import RequirePermission from './components/RequirePermission';
 import RequireOrgPermission from './components/RequireOrgPermission';
+import Landing from './pages/Landing';
 import Login from './pages/Login';
 import Signup from './pages/Signup';
 import VerifyOtp from './pages/VerifyOtp';
@@ -63,6 +64,12 @@ function ProtectedLayout() {
     return <AppLoader variant="fullscreen" />;
   }
   if (!authenticated) {
+    // The root path is the public marketing site for signed-out
+    // visitors (Landing.jsx) rather than a bounce straight to /login -
+    // every other protected route still redirects to login as before.
+    if (location.pathname === '/') {
+      return <Landing />;
+    }
     return <Navigate to="/login" state={{ from: location.pathname }} replace />;
   }
   // A company-registered member's system-generated password
